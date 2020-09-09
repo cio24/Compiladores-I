@@ -16,7 +16,7 @@ public class Main {
 			System.out.println("Letra A "+ tm.getId('A'));
 			System.out.println("Division " + tm.getId('\''));
 			
-			/*
+			
 		ReturnableBufferedReader reader = new ReturnableBufferedReader(
 			    new InputStreamReader(
 			        new FileInputStream(args[args.length-1]),
@@ -82,6 +82,6 @@ public class Main {
 		}
 			reader.close();
 			
-	*/
+	
 	}
 }
