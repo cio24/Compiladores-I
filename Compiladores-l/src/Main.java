@@ -6,6 +6,17 @@ import java.nio.charset.Charset;
 public class Main {
 		
 		public static void main(String[] args) throws IOException {
+		
+			TransitionMatrix tm = new TransitionMatrix();
+			
+			System.out.println("espacio " + tm.getId(' '));
+			System.out.println("tab " + tm.getId('\t'));
+			System.out.println("salto de linea " + tm.getId('\n'));
+			System.out.println("numeral " + tm.getId('#'));
+			System.out.println("Letra A "+ tm.getId('A'));
+			System.out.println("Division " + tm.getId('\''));
+			
+			/*
 		ReturnableBufferedReader reader = new ReturnableBufferedReader(
 			    new InputStreamReader(
 			        new FileInputStream(args[args.length-1]),
@@ -70,5 +81,7 @@ public class Main {
 			
 		}
 			reader.close();
+			
+	*/
 	}
 }

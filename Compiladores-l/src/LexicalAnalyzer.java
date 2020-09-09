@@ -8,4 +8,5 @@ public class LexicalAnalyzer {
 	public String getNextToken() {
 		return null;
 	}
+	
 }
