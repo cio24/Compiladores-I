@@ -10,7 +10,7 @@ public class LexicalAnalyzer {
 	private TransitionMatrix transitionMatrix;
 	private ReturnableBufferedReader bufferedReader;
 	private int currentState;
-	private String tokenString;
+	private String lexem;
 	
 	
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException{
@@ -48,13 +48,15 @@ public class LexicalAnalyzer {
 	}
 
 	public void initializeLexem() {
-		// TODO Auto-generated method stub
-		
+		lexem="";
 	}
 
 	public void addNextCharacter() {
-		// TODO Auto-generated method stub
-		
+		//lexem=lexem+lastCharacterRead;
+	}
+	
+	public String getCurrentLexem() {
+		return lexem;
 	}
 	
 }

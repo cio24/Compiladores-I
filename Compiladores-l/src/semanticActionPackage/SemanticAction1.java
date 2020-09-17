@@ -1,6 +1,6 @@
 package semanticActionPackage;
 
-public class InitializeLexem extends SemanticAction {
+public class SemanticAction1 extends SemanticAction {
 	public void execute() {
 		lan.initializeLexem();
 	}
