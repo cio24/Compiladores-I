@@ -1,4 +1,7 @@
+package lexicalAnalyzerPackage;
 import java.util.Vector;
+
+import semanticActionPackage.SemanticAction;
 
 public class TransitionMatrix {
 	

@@ -1,3 +1,4 @@
+package lexicalAnalyzerPackage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -19,6 +20,7 @@ public class ReturnableBufferedReader extends BufferedReader {
 		
 		lastCharacterWasReturned=false;
 	}
+	
 	
 	private int lastCharacterRead;
 	
