@@ -46,5 +46,15 @@ public class LexicalAnalyzer {
 	*/
 		return null;
 	}
+
+	public void initializeLexem() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addNextCharacter() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

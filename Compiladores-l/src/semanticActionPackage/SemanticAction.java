@@ -1,5 +1,7 @@
 package semanticActionPackage;
+import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public interface SemanticAction {
-	LexicalAnalyzer la;
+public abstract class SemanticAction {
+	protected LexicalAnalyzer lan;
+	public abstract void execute();
 }
