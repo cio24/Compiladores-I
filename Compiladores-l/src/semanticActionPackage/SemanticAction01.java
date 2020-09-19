@@ -1,9 +1,8 @@
 package semanticActionPackage;
 
-public class SemanticAction2 extends SemanticAction{
-
+public class SemanticAction01 extends SemanticAction {
 	public void execute() {
+		lan.initializeLexem();
 		lan.addNextCharacter();
 	}
-
 }

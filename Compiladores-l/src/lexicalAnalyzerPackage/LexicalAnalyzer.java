@@ -8,14 +8,16 @@ import java.nio.charset.Charset;
 public class LexicalAnalyzer {
 	
 	private TransitionMatrix transitionMatrix;
-	private ReturnableBufferedReader bufferedReader;
+	private ReturnableBufferedReader fileReader;
 	private int currentState;
 	private String lexem;
+	private SymbolTable st;
+	private KeywordTable reservedKeywords;
 	
 	
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException{
 		transitionMatrix = new TransitionMatrix();
-		bufferedReader = new ReturnableBufferedReader(
+		fileReader = new ReturnableBufferedReader(
 			    new InputStreamReader(
 				        new FileInputStream(codePath),
 				        Charset.forName("UTF-8")));
@@ -24,9 +26,9 @@ public class LexicalAnalyzer {
 	}
 
 	public String getNextToken() {
-		/*
+
 		char c;
-		tokenString = "";
+		lexem = "";
 		currentState = 0;
 		int tokenId;
 
@@ -43,20 +45,33 @@ public class LexicalAnalyzer {
 		return null;
 	
 	}
-	*/
-		return null;
-	}
 
 	public void initializeLexem() {
 		lexem="";
 	}
 
 	public void addNextCharacter() {
-		//lexem=lexem+lastCharacterRead;
+		lexem=lexem+lastCharacterRead; ///Falta definir esto
 	}
 	
 	public String getCurrentLexem() {
 		return lexem;
+	}
+	
+	public void setToken(int to) {
+		
+	}
+	
+	public int getCurrentLine() {
+		return fileReader.getCurrentLine();
+	}
+	
+	public void returnLastCharacterRead() {
+		fileReader.returnLastCharacter();
+	}
+	
+	public int getLastCharacter() {
+		return lastCharacterRead;
 	}
 	
 }

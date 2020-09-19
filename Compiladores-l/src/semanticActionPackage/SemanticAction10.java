@@ -1,7 +1,10 @@
 package semanticActionPackage;
 
-public class SemanticAction1 extends SemanticAction {
+public class SemanticAction10 extends SemanticAction{
+
+	@Override
 	public void execute() {
 		lan.initializeLexem();
 	}
+
 }
