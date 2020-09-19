@@ -1,77 +1,92 @@
 package lexicalAnalyzerPackage;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
+import semanticActionPackage.SemanticAction;
+
 public class LexicalAnalyzer {
-	
+
 	private TransitionMatrix transitionMatrix;
 	private ReturnableBufferedReader fileReader;
-	private int currentState;
 	private String lexem;
 	private SymbolTable st;
 	private KeywordTable reservedKeywords;
-	
-	
-	public LexicalAnalyzer(String codePath) throws FileNotFoundException{
+	private char lastCharacterRead;
+	private int tokenId;
+
+	private LexicalAnalyzer(String codePath) throws FileNotFoundException {
 		transitionMatrix = new TransitionMatrix();
 		fileReader = new ReturnableBufferedReader(
-			    new InputStreamReader(
-				        new FileInputStream(codePath),
-				        Charset.forName("UTF-8")));
-		
-		
+				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
+		tokenId = -1;
 	}
 
-	public String getNextToken() {
-
-		char c;
+	public int getNextToken() throws IOException {
 		lexem = "";
-		currentState = 0;
-		int tokenId;
-
+		int currentState = 0;
 		
-		while (currentState != -1) {
-			  int characterCode = bufferedReader.readNextCharacter();
-			  if(characterCode == -1)
-				  return null;
-			  c = (char) characterCode;
-			  int nextState = transitionMatrix.getNextState(currentState, c);
-			  SemanticAction semanticAction = transitionMatrix.getSemanticAction(currentState,c);
-			  if(semantic)
+		while (tokenId < 0) {
+			
+			// siempre se va a encontar un token, por lo menos el token de final de archivo
+			int characterCode = fileReader.readNextCharacter();
+
+			// guardo el caracter leído por si lo usa una acción semántica
+			lastCharacterRead = (char) characterCode;
+
+			// ejecuto la acción semántica correspondiente al estado actual y el caracter leído
+			// notese que si la acción semántica encontro un token, tiene que usar el método de setTokenId();
+			transitionMatrix.getSemanticAction(currentState, lastCharacterRead).execute();
+
+			// paso al siguiente estado
+			currentState = transitionMatrix.getNextState(currentState, lastCharacterRead);
+			
+			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontró un token
+			//entonces se tuvo que actualizad el tokenId y no tendría que volver a entrar en el while, xq sino se romperia
+			//ya que estaría tratando de entrar en una posición invalida de la matriz
 		}
-		return null;
-	
+
+		// seteamos tokenId en -1 para cuando se le pida un nuevo token alanalizador léxico
+		tokenId = -1;
+
+		return tokenId;
+
+	}
+
+	public char getLastCharactedRead() {
+		return lastCharacterRead;
 	}
 
 	public void initializeLexem() {
-		lexem="";
+		lexem = "";
 	}
 
 	public void addNextCharacter() {
-		lexem=lexem+lastCharacterRead; ///Falta definir esto
+		//después vamos a ver si esto funciona bien xD
+		lexem = lexem + lastCharacterRead; /// Falta definir esto
 	}
-	
+
 	public String getCurrentLexem() {
 		return lexem;
 	}
-	
-	public void setToken(int to) {
-		
+
+	public void setTokenId(int tokenId) {
+		this.tokenId = tokenId;
 	}
-	
+
 	public int getCurrentLine() {
 		return fileReader.getCurrentLine();
 	}
-	
+
 	public void returnLastCharacterRead() {
 		fileReader.returnLastCharacter();
 	}
-	
+
 	public int getLastCharacter() {
 		return lastCharacterRead;
 	}
-	
+
 }
