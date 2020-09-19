@@ -11,8 +11,13 @@ public class SemanticAction05 extends SemanticAction{
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
+		int keywordtoken=lexicalAnalyzer.reservedKeywords.getKeywordToken(lexicalAnalyzer.getCurrentLexem());
+		if (keywordtoken!=-1)
+			lexicalAnalyzer.setTokenId(keywordtoken);
+		else
+			System.out.println("Error lexico en linea:"+lexicalAnalyzer.getCurrentLine()+". La palabra reservada no es valida");
 		
+			
 	}
 
 }

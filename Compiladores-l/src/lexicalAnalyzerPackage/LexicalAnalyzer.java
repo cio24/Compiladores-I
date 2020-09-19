@@ -14,7 +14,7 @@ public class LexicalAnalyzer {
 	private ReturnableBufferedReader fileReader;
 	private String lexem;
 	private SymbolTable st;
-	private KeywordTable reservedKeywords;
+	public KeywordTable reservedKeywords;
 	private char lastCharacterRead;
 	private int tokenId;
 
@@ -37,13 +37,16 @@ public class LexicalAnalyzer {
 			// guardo el caracter leído por si lo usa una acción semántica
 			lastCharacterRead = (char) characterCode;
 
-			// ejecuto la acción semántica correspondiente al estado actual y el caracter leído
-			// notese que si la acción semántica encontro un token, tiene que usar el método de setTokenId();
-			transitionMatrix.getSemanticAction(currentState, lastCharacterRead).execute();
+			int savedState=currentState;
 
 			// paso al siguiente estado
 			currentState = transitionMatrix.getNextState(currentState, lastCharacterRead);
-			
+					
+			// ejecuto la acción semántica correspondiente al estado actual y el caracter leído
+			// notese que si la acción semántica encontro un token, tiene que usar el método de setTokenId();
+			transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
+
+				
 			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontró un token
 			//entonces se tuvo que actualizad el tokenId y no tendría que volver a entrar en el while, xq sino se romperia
 			//ya que estaría tratando de entrar en una posición invalida de la matriz
