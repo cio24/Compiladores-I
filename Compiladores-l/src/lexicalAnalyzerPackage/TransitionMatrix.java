@@ -55,7 +55,7 @@ public class TransitionMatrix {
 	    v = transitionMatrix.get(1);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 3)
-	    		v.insertElementAt(i,2);
+	    		v.insertElementAt(2,i);
     		else
     			v.insertElementAt(i,FINAL_STATE);
 	    }
@@ -64,156 +64,156 @@ public class TransitionMatrix {
 	    v = transitionMatrix.get(2);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 3)
-	    		v.insertElementAt(i, 3);
+	    		v.insertElementAt(3,i);
 	    	else if(i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
-	    		v.insertElementAt(i,2);
+	    		v.insertElementAt(2,i);
 	    }
 	    
 	    //transición del estado 3
 	    v = transitionMatrix.get(3);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 2)
-	    		v.insertElementAt(i, 0);
+	    		v.insertElementAt(0,i);
 	    	else if(i == 3)
-	    		v.insertElementAt(i, 3);
+	    		v.insertElementAt(3,i);
 	    	else if(i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
-	    		v.insertElementAt(i,2);
+	    		v.insertElementAt(2,i);
 	    }
 	    
 	    //transición del estado 4
 	    v = transitionMatrix.get(4);	    
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 4 || i == 5 || i == 15 || i == 16 || i == 17 || i == 19)
-	    		v.insertElementAt(i, 4);
+	    		v.insertElementAt(4,i);
 	    	else
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    }
 	    
 	    //transición del estado 5
 	    v = transitionMatrix.get(5);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 5 || i == 18)
-	    		v.insertElementAt(i, 5);
+	    		v.insertElementAt(5,i);
 	    	else
-	    		v.insertElementAt(i,-1);
+	    		v.insertElementAt(-1,i);
 	    }
 	    
 	    //transición del estado 6
 	    v = transitionMatrix.get(6);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 5)
-	    		v.insertElementAt(i, 17);
+	    		v.insertElementAt(17,i);
 	    	else if(i == 13)
-	    		v.insertElementAt(i, 8);
+	    		v.insertElementAt(8,i);
 	    	else if(i == 14)
-	    		v.insertElementAt(i, FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else if(i == 19)
-	    		v.insertElementAt(i, 6);
+	    		v.insertElementAt(6,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //transición del estado 7
 	    v = transitionMatrix.get(7);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 1 || i == 20)
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    	else if(i == 12 || i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
-	    		v.insertElementAt(i,7);
+	    		v.insertElementAt(7,i);
 	    }
 	    
 	    //transición del estado 8
 	    v = transitionMatrix.get(8);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 4)
-	    		v.insertElementAt(i, 9);
+	    		v.insertElementAt(9,i);
 	    	if(i == 19)
-	    		v.insertElementAt(i, 8);
+	    		v.insertElementAt(8,i);
 	    	else
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    }
 	    
 	    //transición del estado 9
 	    v = transitionMatrix.get(9);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 10)
-	    		v.insertElementAt(i, 11);
+	    		v.insertElementAt(11,i);
 	    	else if(i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //transición del estado 10
 	    v = transitionMatrix.get(10);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else if(i == 19)
-	    		v.insertElementAt(i,8);
+	    		v.insertElementAt(8,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //transición del estado 11
 	    v = transitionMatrix.get(11);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else if(i == 19)
-	    		v.insertElementAt(i, 12);
+	    		v.insertElementAt(12,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //transición del estado 12
 	    v = transitionMatrix.get(12);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 19)
-	    		v.insertElementAt(i, 12);
+	    		v.insertElementAt(12,i);
 	    	else
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    }
 	    
 	    //transición del estado 13, 14 y 15
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	for(int j = 13; j <= 15; j++)
-	    	transitionMatrix.get(j).insertElementAt(i,FINAL_STATE);
+	    	transitionMatrix.get(j).insertElementAt(FINAL_STATE,i);
 	    }
 	    
 	    //transición del estado 16
 	    v = transitionMatrix.get(16);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 9 || i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //transición del estado 17
 	    v = transitionMatrix.get(17);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else if(i == 16)
-	    		v.insertElementAt(i,8);
+	    		v.insertElementAt(8,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //transición del estado 18
 	    v = transitionMatrix.get(18);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14 || i == 15)
-	    		v.insertElementAt(i,FINAL_STATE);
+	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
-	    		v.insertElementAt(i,0);
+	    		v.insertElementAt(0,i);
 	    }
 	    
 	    //aciones semánticas
