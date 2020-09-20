@@ -17,6 +17,7 @@ public class LexicalAnalyzer {
 	public KeywordTable reservedKeywords;
 	private char lastCharacterRead;
 	private int tokenId;
+	private int currentState;
 
 	private LexicalAnalyzer(String codePath) throws FileNotFoundException {
 		transitionMatrix = new TransitionMatrix();
@@ -27,7 +28,7 @@ public class LexicalAnalyzer {
 
 	public int getNextToken() throws IOException {
 		lexem = "";
-		int currentState = 0;
+		currentState = 0;
 		
 		while (tokenId < 0) {
 			
@@ -90,6 +91,10 @@ public class LexicalAnalyzer {
 
 	public int getLastCharacter() {
 		return lastCharacterRead;
+	}
+	
+	public void setNextState(int ns) {
+		currentState=ns;
 	}
 
 }

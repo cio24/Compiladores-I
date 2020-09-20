@@ -15,7 +15,11 @@ public class SemanticAction05 extends SemanticAction{
 		if (keywordtoken!=-1)
 			lexicalAnalyzer.setTokenId(keywordtoken);
 		else
-			System.out.println("Error lexico en linea:"+lexicalAnalyzer.getCurrentLine()+". La palabra reservada no es valida");
+		{
+			System.out.println("Error lexico en linea:"+lexicalAnalyzer.getCurrentLine()+". La palabra reservada no es valida");	
+			lexicalAnalyzer.setNextState(0);
+		}
+			
 		
 			
 	}

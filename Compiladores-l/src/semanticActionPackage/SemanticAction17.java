@@ -11,6 +11,7 @@ public class SemanticAction17 extends SemanticAction{
 
 	@Override
 	public void execute() {
+		lexicalAnalyzer.returnLastCharacterRead();
 		lexicalAnalyzer.setTokenId((int)'=');
 	}
 	

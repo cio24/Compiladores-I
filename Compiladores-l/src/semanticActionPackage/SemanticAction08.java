@@ -12,7 +12,9 @@ public class SemanticAction08 extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
+		//ingresar en la talba de simbolos
 		
+		lexicalAnalyzer.setTokenId(403);
 	}
 
 }

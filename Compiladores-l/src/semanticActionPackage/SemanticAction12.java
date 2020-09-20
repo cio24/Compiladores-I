@@ -12,7 +12,7 @@ public class SemanticAction12 extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		
+		lexicalAnalyzer.setTokenId(501);
 	}
 
 }
