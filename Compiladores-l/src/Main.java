@@ -1,16 +1,23 @@
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.util.Scanner;
 
-import lexicalAnalyzerPackage.ReturnableBufferedReader;
-import lexicalAnalyzerPackage.TransitionMatrix;
+import lexicalAnalyzerPackage.LexicalAnalyzer;
 
 public class Main {
 		
 		public static void main(String[] args) throws IOException {
 		
-			TransitionMatrix tm = new TransitionMatrix();
+			LexicalAnalyzer lexicalAnalyzer=new LexicalAnalyzer("C:\\Users\\Thomas\\Desktop\\FEyPI.txt");
+			
+			char c='s';
+			while(c=='s') {
+				lexicalAnalyzer.getNextToken();
+				Scanner sc = new Scanner(System.in);   
+				c = sc.next().charAt(0);
+			}
+			
+			
+			/*TransitionMatrix tm = new TransitionMatrix();
 			
 			System.out.println("espacio " + tm.getId(' '));
 			System.out.println("tab " + tm.getId('\t'));
@@ -85,6 +92,6 @@ public class Main {
 		}
 			reader.close();
 			
-	
+	*/
 	}
 }

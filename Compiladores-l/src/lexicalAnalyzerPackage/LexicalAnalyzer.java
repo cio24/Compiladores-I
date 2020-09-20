@@ -19,8 +19,8 @@ public class LexicalAnalyzer {
 	private int tokenId;
 	private int currentState;
 
-	private LexicalAnalyzer(String codePath) throws FileNotFoundException {
-		transitionMatrix = new TransitionMatrix();
+	public LexicalAnalyzer(String codePath) throws FileNotFoundException {
+		transitionMatrix = new TransitionMatrix(this);
 		fileReader = new ReturnableBufferedReader(
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
 		tokenId = -1;
@@ -29,6 +29,9 @@ public class LexicalAnalyzer {
 	public int getNextToken() throws IOException {
 		lexem = "";
 		currentState = 0;
+		
+		// seteamos tokenId en -1 para cuando se le pida un nuevo token alanalizador léxico
+		tokenId = -1;
 		
 		while (tokenId < 0) {
 			
@@ -53,10 +56,13 @@ public class LexicalAnalyzer {
 			//ya que estaría tratando de entrar en una posición invalida de la matriz
 		}
 
-		// seteamos tokenId en -1 para cuando se le pida un nuevo token alanalizador léxico
-		tokenId = -1;
 
+		
+		System.out.println("Token: "+tokenId+" encontrado.");
+		
 		return tokenId;
+		
+		
 
 	}
 
