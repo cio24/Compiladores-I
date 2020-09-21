@@ -9,7 +9,7 @@ public class ReturnableBufferedReader extends BufferedReader {
 		super(in, sz);
 		// TODO Auto-generated constructor stub
 		lastCharacterRead=0;
-		currentLine=1;
+		currentLine=0;
 		lastCharacterWasReturned=false;
 	}
 	
@@ -17,7 +17,7 @@ public class ReturnableBufferedReader extends BufferedReader {
 		super(in);
 		// TODO Auto-generated constructor stub
 		lastCharacterRead=0;
-		currentLine=1;
+		currentLine=0;
 		lastCharacterWasReturned=false;
 	}
 	

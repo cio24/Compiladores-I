@@ -48,10 +48,9 @@ public class LexicalAnalyzer {
 				lastCharacterRead = (char) characterCode; // guardo el caracter le�do por si lo usa una acci�n sem�ntica
 		
 			int savedState=currentState;
-
 			// paso al siguiente estado
 			currentState = transitionMatrix.getNextState(currentState, lastCharacterRead);
-					
+
 			// ejecuto la acci�n sem�ntica correspondiente al estado actual y el caracter le�do
 			// notese que si la acci�n sem�ntica encontro un token, tiene que usar el m�todo de setTokenId();
 			
@@ -67,6 +66,7 @@ public class LexicalAnalyzer {
 			System.out.println("Lexema leído: VACÍO");
 		else
 			System.out.println("Lexema leído: " + lexem);
+		
 		return tokenId;				
 
 	}

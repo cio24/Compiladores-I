@@ -131,7 +131,7 @@ public class TransitionMatrix {
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 4)
 	    		v.insertElementAt(9,i);
-	    	if(i == 19)
+	    	else if(i == 19)
 	    		v.insertElementAt(8,i);
 	    	else
 	    		v.insertElementAt(FINAL_STATE,i);

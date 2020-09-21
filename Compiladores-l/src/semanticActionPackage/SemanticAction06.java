@@ -22,6 +22,6 @@ public class SemanticAction06 extends SemanticAction {
 			System.out.print("Error lexico en linea:"+lexicalAnalyzer.getCurrentLine()+". Constante larga sin signo fuera de rango");
 			lexicalAnalyzer.setNextState(0);
 		}
-		}
+	}
 
 }

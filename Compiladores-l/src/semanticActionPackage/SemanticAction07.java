@@ -1,5 +1,7 @@
 package semanticActionPackage;
 
+import java.math.BigDecimal;
+
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import usefulClassesPackage.Constants;
 
@@ -15,9 +17,9 @@ public class SemanticAction07 extends SemanticAction {
 		// TODO Auto-generated method stub
 		String lexem=lexicalAnalyzer.getCurrentLexem();
 		String snumber=lexem.replace('d','e');
-		Double number=Double.parseDouble(snumber);
+		BigDecimal number= new BigDecimal(snumber);
 		
-		if (number<Double.parseDouble("1.7976931348623157e+308") && number>Double.parseDouble("2.2250738585072014e-308")) {
+		if (number.compareTo(Constants.MAX_RANGE_DOUBLE) < 0  && Constants.MIN_RANGE_DOUBLE.compareTo(number)< 0) {
 			lexicalAnalyzer.setTokenId(Constants.CONSTANTE_NUMERICA);
 			//Ingresar en la tabla de simbolos
 			}

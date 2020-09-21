@@ -1,5 +1,7 @@
 package usefulClassesPackage;
 
+import java.math.BigDecimal;
+
 public class Constants {
 	public static final int IF = 901;
 	public static final int THEN = 902;
@@ -12,14 +14,19 @@ public class Constants {
 	public static final int DOUBLE = 909;
 	public static final int LOOP = 910;
 	public static final int UNTIL = 911;
+	
 	public static final int IDENTIFICADOR = 401;
 	public static final int CONSTANTE_NUMERICA = 402;
 	public static final int CONSTANTE_CADENA_CARACTERES = 403;
+	
 	public static final int COMPARADOR_MEN_IGUAL = 501;
 	public static final int COMPARADOR_MAY_IGUAL = 502;
 	public static final int COMPARADOR_IGUAL = 503;
 	public static final int COMPARADOR_DISTINTO = 504;
 	
+	public static final BigDecimal MIN_RANGE_DOUBLE = new BigDecimal("2.2250738585072014e-308");
+	public static final BigDecimal MAX_RANGE_DOUBLE = new BigDecimal("1.7976931348623157e+308");
+
 	public static final String getConstantName(int id) {
 		switch(id) {
 		case 901:

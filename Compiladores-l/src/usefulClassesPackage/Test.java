@@ -5,10 +5,27 @@ import java.io.IOException;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
 public class Test {
-	public static final String TEST1_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/test.txt";
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
 
 	public Test() throws IOException {
-		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(TEST1_PATH);
+		System.out.println("TEST CADENAS: ");
+		test("cadenas.txt");
+		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
+		System.out.println("TEST COMENTARIOS: ");
+		test("comentarios.txt");
+		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
+		System.out.println("TEST DOUBLES: ");
+		test("doubles.txt");
+		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
+		System.out.println("TEST IDENTIFICADORES: ");
+		test("identificadores.txt");
+		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
+		System.out.println("TEST PALABRAS RESERVADAS: ");
+		test("palabras_reservadas.txt");
+	}
+	
+	public void test(String fileName) throws IOException {
+		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(BASE_PATH + fileName);
 		
 		String nombre;
 		int token = 0;
@@ -19,6 +36,7 @@ public class Test {
 				System.out.println("Token: "+(char)token);
 			else
 				System.out.println("Token: "+nombre);
+			System.out.println("***********");
 		}
 		System.out.println("Fin de archivo!");
 	}
