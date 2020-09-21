@@ -19,4 +19,47 @@ public class Constants {
 	public static final int COMPARADOR_MAY_IGUAL = 502;
 	public static final int COMPARADOR_IGUAL = 503;
 	public static final int COMPARADOR_DISTINTO = 504;
+	
+	public static final String getConstantName(int id) {
+		switch(id) {
+		case 901:
+			return "IF";
+		case 902:
+			return "THEN";
+		case 903:
+			return "ELSE";
+		case 904:
+			return "END_IF";
+		case 905:
+			return "OUT";
+		case 906:
+			return "FUNC";
+		case 907:
+			return "RETURN";
+		case 908:
+			return "ULONGINT";
+		case 909:
+			return "DOUBLE";
+		case 910:
+			return "LOOP";
+		case 911:
+			return "UNTIL";
+		case 401:
+			return "IDENTIFICADOR";
+		case 402:
+			return "CONSTANTE_NUMERICA";
+		case 403:
+			return "CONSTANTE_CADENA_CARACTERES";
+		case 501:
+			return "COMPARADOR_MEN_IGUAL";
+		case 502:
+			return "COMPARADOR_MAY_IGUAL";
+		case 503:
+			return "COMPARADOR_IGUAL";
+		case 504:
+			return "COMPARADOR_DISTINTO";
+		default:
+			return null;
+		}
+	}
 }

@@ -31,7 +31,7 @@ public class LexicalAnalyzer {
 		lexem = "";
 		currentState = 0;
 		
-		// seteamos tokenId en -1 para cuando se le pida un nuevo token alanalizador léxico
+		// seteamos tokenId en -1 para cuando se le pida un nuevo token alanalizador lï¿½xico
 		tokenId = -1;
 		
 		while (tokenId < 0) {
@@ -45,31 +45,29 @@ public class LexicalAnalyzer {
 			if(characterCode == -1)
 				lastCharacterRead = '~';
 			else
-				lastCharacterRead = (char) characterCode; // guardo el caracter leído por si lo usa una acción semántica
-
+				lastCharacterRead = (char) characterCode; // guardo el caracter leï¿½do por si lo usa una acciï¿½n semï¿½ntica
+		
 			int savedState=currentState;
 
 			// paso al siguiente estado
 			currentState = transitionMatrix.getNextState(currentState, lastCharacterRead);
 					
-			// ejecuto la acción semántica correspondiente al estado actual y el caracter leído
-			// notese que si la acción semántica encontro un token, tiene que usar el método de setTokenId();
+			// ejecuto la acciï¿½n semï¿½ntica correspondiente al estado actual y el caracter leï¿½do
+			// notese que si la acciï¿½n semï¿½ntica encontro un token, tiene que usar el mï¿½todo de setTokenId();
 			
 			transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
 
 				
-			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontró un token
-			//entonces se tuvo que actualizad el tokenId y no tendría que volver a entrar en el while, xq sino se romperia
-			//ya que estaría tratando de entrar en una posición invalida de la matriz
+			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontrï¿½ un token
+			//entonces se tuvo que actualizad el tokenId y no tendrï¿½a que volver a entrar en el while, xq sino se romperia
+			//ya que estarï¿½a tratando de entrar en una posiciï¿½n invalida de la matriz
 		}
-
-
 		
-		System.out.println("Token: "+tokenId+" encontrado.");
-		
-		return tokenId;
-		
-		
+		if(lexem == "")
+			System.out.println("Lexema leÃ­do: VACÃO");
+		else
+			System.out.println("Lexema leÃ­do: " + lexem);
+		return tokenId;				
 
 	}
 
@@ -82,7 +80,7 @@ public class LexicalAnalyzer {
 	}
 
 	public void addNextCharacter() {
-		//después vamos a ver si esto funciona bien xD
+		//despuï¿½s vamos a ver si esto funciona bien xD
 		lexem = lexem + lastCharacterRead; /// Falta definir esto
 	}
 

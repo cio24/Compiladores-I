@@ -519,7 +519,6 @@ public class TransitionMatrix {
 	}
 	
 	public int getNextState(int currentState, char c) {
-		System.out.println("getNextState: currentState:"+currentState+".char:"+c);
 		return transitionMatrix.get(currentState).get(this.getId(c));
 	}
 	
