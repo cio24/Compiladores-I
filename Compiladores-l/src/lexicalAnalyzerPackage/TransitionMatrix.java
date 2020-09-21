@@ -216,7 +216,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //aciones semánticas
+	    //*****ACCIONES SEMANTICAS*****//
 	    SemanticAction semanticAction01 = new SemanticAction01(lexicalAnalyzer);
 	    SemanticAction semanticAction02 = new SemanticAction02(lexicalAnalyzer);
 	    SemanticAction semanticAction03 = new SemanticAction03(lexicalAnalyzer);
@@ -241,17 +241,32 @@ public class TransitionMatrix {
 	    SemanticAction warning1 = new Warning1(lexicalAnalyzer);
 	    SemanticAction semanticActionNone = new SemanticActionNone(lexicalAnalyzer);
 	    
-	    for(int i = 0; i < CHAR_SETS; i++)
-	    	for(int j = 0; i < STATES; i++)
+	    for(int i = 0; i < STATES; i++)
+	    	for(int j = 0; j < CHAR_SETS; j++)
 	    		semanticMatrix.get(i).insertElementAt(semanticActionNone,j);
-	 
-	    Vector<SemanticAction> w = semanticMatrix.get(0);
+	    
+	   //transición del estado 0
+	    Vector<SemanticAction> w=semanticMatrix.get(0);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+			if(i == 3 || i==5 || i==20)
+	    		w.insertElementAt(error2,i);
+	    	else if(i==4 || i==13 || (i>=15 && i<=19))
+	    		w.insertElementAt(semanticAction01, i);
+	    	else if (i==10 || i==11)
+	    		w.insertElementAt(semanticAction11, i);
+	    	else if (i==12)
+	    		w.insertElementAt(semanticAction10,i);
+	    	else if (i==12)
+	    		w.insertElementAt(semanticAction10,i);
+	    }
+	    /*Vector<SemanticAction> w = semanticMatrix.get(0);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14 || i == 15)
 	    		v.insertElementAt(FINAL_STATE,i);
 	    	else
 	    		v.insertElementAt(0,i);
-	    }
+	    }*/
 	}
 	
 	private int getId(char c) {
