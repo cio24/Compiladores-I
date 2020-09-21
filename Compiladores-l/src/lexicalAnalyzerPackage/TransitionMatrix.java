@@ -245,7 +245,7 @@ public class TransitionMatrix {
 	    	for(int j = 0; j < CHAR_SETS; j++)
 	    		semanticMatrix.get(i).insertElementAt(semanticActionNone,j);
 	    
-	   //transición del estado 0
+	   //acciones semánticas para el estado 0
 	    Vector<SemanticAction> w=semanticMatrix.get(0);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -257,20 +257,213 @@ public class TransitionMatrix {
 	    		w.insertElementAt(semanticAction11, i);
 	    	else if (i==12)
 	    		w.insertElementAt(semanticAction10,i);
-	    	else if (i==12)
-	    		w.insertElementAt(semanticAction10,i);
+	    	else if (i==14)
+	    		w.insertElementAt(semanticAction19,i);
 	    }
-	    /*Vector<SemanticAction> w = semanticMatrix.get(0);
+	    
+	    //acciones semánticas para el estado 1
+	    w=semanticMatrix.get(1);
+
 	    for(int i = 0; i < CHAR_SETS; i++) {
-			if(i == 14 || i == 15)
-	    		v.insertElementAt(FINAL_STATE,i);
-	    	else
-	    		v.insertElementAt(0,i);
-	    }*/
+			if(i == 3)
+				continue;
+			w.insertElementAt(semanticAction04,i);
+	    }
+	    
+	    //acciones semánticas para el estado 2
+	    w=semanticMatrix.get(2);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+			if(i == 14)
+				w.insertElementAt(error1,i);
+			if(i == 20)
+				w.insertElementAt(warning1,i);
+	    }
+	    
+	    //acciones semánticas para el estado 3
+	    w=semanticMatrix.get(3);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+			if(i == 14)
+				w.insertElementAt(error1,i);
+			else if(i == 20)
+				w.insertElementAt(warning1,i);
+	    }
+	    
+	    //acciones semánticas para el estado 4
+	    w=semanticMatrix.get(4);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+			if(i == 4 || i == 5 || i == 15 || i == 16 || i == 17 || i == 19)
+				w.insertElementAt(semanticAction02,i);
+			else
+				w.insertElementAt(semanticAction03,i);
+	    }
+	    
+	    //acciones semánticas para el estado 5
+	    w=semanticMatrix.get(5);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+			if(i == 5 || i == 18)
+				w.insertElementAt(semanticAction02,i);
+			else
+				w.insertElementAt(semanticAction05,i);
+	    }
+	    
+	    //acciones semánticas para el estado 6
+	    w=semanticMatrix.get(6);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 5)
+	    		continue;
+	    	else if(i == 13 || i == 19)
+				w.insertElementAt(semanticAction02,i);
+			else if(i == 14)
+				w.insertElementAt(error1,i);
+			else
+				w.insertElementAt(error2,i);
+	    }
+	    
+	    //acciones semánticas para el estado 7
+	    w=semanticMatrix.get(7);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 1)
+	    		w.insertElementAt(error2,i);
+	    	else if(i == 12)
+				w.insertElementAt(semanticAction08,i);
+			else if( i == 14)
+				w.insertElementAt(error1,i);
+			else if(i == 20)
+				w.insertElementAt(error2,i);
+			else
+				w.insertElementAt(semanticAction02,i);
+	    }
+	    	
+		    //acciones semánticas para el estado 8
+		    w=semanticMatrix.get(8);
+
+		    for(int i = 0; i < CHAR_SETS; i++) {
+		    	if(i == 4 || i == 19)
+		    		w.insertElementAt(semanticAction02,i);
+				else
+					w.insertElementAt(semanticAction07,i);
+	    }
+		    
+		    //acciones semánticas para el estado 9
+		    w=semanticMatrix.get(9);
+
+		    for(int i = 0; i < CHAR_SETS; i++) {
+		    	if(i == 10)
+		    		w.insertElementAt(semanticAction02,i);
+		    	else if(i == 14)
+		    		w.insertElementAt(error1,i);
+				else
+					w.insertElementAt(error2,i);
+	    }
+		    
+		    //acciones semánticas para el estado 10
+		    w=semanticMatrix.get(10);
+
+		    for(int i = 0; i < CHAR_SETS; i++) {
+		    	if(i == 14)
+		    		w.insertElementAt(error1,i);
+		    	else if(i == 19)
+		    		w.insertElementAt(semanticAction02,i);
+				else
+					w.insertElementAt(error2,i);
+	    }
+		    
+	    //acciones semánticas para el estado 11
+	    w=semanticMatrix.get(11);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 14)
+	    		w.insertElementAt(error1,i);
+	    	else if(i == 19)
+	    		w.insertElementAt(semanticAction02,i);
+			else
+				w.insertElementAt(error2,i);
+	    }
+	    
+	    //acciones semánticas para el estado 12
+	    w=semanticMatrix.get(12);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 19)
+	    		w.insertElementAt(semanticAction02,i);
+			else
+				w.insertElementAt(semanticAction07,i);
+	    }
+	    
+	    //acciones semánticas para el estado 13
+	    w=semanticMatrix.get(13);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 9)
+	    		w.insertElementAt(semanticAction12,i);
+			else
+				w.insertElementAt(semanticAction13,i);
+	    }
+	    
+	    //acciones semánticas para el estado 14
+	    w=semanticMatrix.get(14);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 9)
+	    		w.insertElementAt(semanticAction14,i);
+			else
+				w.insertElementAt(semanticAction15,i);
+	    }
+	    
+	    //acciones semánticas para el estado 15
+	    w=semanticMatrix.get(15);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 9)
+	    		w.insertElementAt(semanticAction16,i);
+			else
+				w.insertElementAt(semanticAction17,i);
+	    }
+	    
+	    //acciones semánticas para el estado 16
+	    w=semanticMatrix.get(16);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 9)
+	    		w.insertElementAt(semanticAction18,i);
+	    	if(i == 14)
+	    		w.insertElementAt(error1,i);
+			else
+				w.insertElementAt(error2,i);
+	    }
+	    
+	    //acciones semánticas para el estado 17
+	    w=semanticMatrix.get(17);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 14)
+	    		w.insertElementAt(error1,i);
+	    	if(i == 16)
+	    		continue;
+			else
+				w.insertElementAt(error2,i);
+	    }
+	    
+	    //acciones semánticas para el estado 18
+	    w=semanticMatrix.get(18);
+
+	    for(int i = 0; i < CHAR_SETS; i++) {
+	    	if(i == 14)
+	    		w.insertElementAt(error1,i);
+	    	if(i == 15)
+	    		w.insertElementAt(semanticAction06,i);
+			else
+				w.insertElementAt(error2,i);
+	    }
 	}
 	
 	private int getId(char c) {
-		
 		switch(c){
 			case ' ':
 			case '\t':
@@ -308,7 +501,7 @@ public class TransitionMatrix {
 				return 12;
 			case '.':			
 				return 13;
-			case (char) -1: //hay que ver esto después xD				
+			case '~':			
 				return 14;
 			case 'l':
 				return 15;

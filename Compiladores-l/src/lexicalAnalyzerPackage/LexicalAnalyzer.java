@@ -20,6 +20,7 @@ public class LexicalAnalyzer {
 	private int currentState;
 
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException {
+		reservedKeywords = new KeywordTable();
 		transitionMatrix = new TransitionMatrix(this);
 		fileReader = new ReturnableBufferedReader(
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
@@ -38,8 +39,13 @@ public class LexicalAnalyzer {
 			// siempre se va a encontar un token, por lo menos el token de final de archivo
 			int characterCode = fileReader.readNextCharacter();
 
-			// guardo el caracter leído por si lo usa una acción semántica
-			lastCharacterRead = (char) characterCode;
+			if(characterCode == 13)
+				continue;
+			
+			if(characterCode == -1)
+				lastCharacterRead = '~';
+			else
+				lastCharacterRead = (char) characterCode; // guardo el caracter leído por si lo usa una acción semántica
 
 			int savedState=currentState;
 
@@ -49,7 +55,7 @@ public class LexicalAnalyzer {
 			// ejecuto la acción semántica correspondiente al estado actual y el caracter leído
 			// notese que si la acción semántica encontro un token, tiene que usar el método de setTokenId();
 			
-			///transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
+			transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
 
 				
 			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontró un token

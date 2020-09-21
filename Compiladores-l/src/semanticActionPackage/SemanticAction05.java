@@ -11,7 +11,7 @@ public class SemanticAction05 extends SemanticAction{
 
 	@Override
 	public void execute() {
-		int keywordtoken=lexicalAnalyzer.reservedKeywords.getKeywordToken(lexicalAnalyzer.getCurrentLexem());
+		int keywordtoken = lexicalAnalyzer.reservedKeywords.getKeywordToken(lexicalAnalyzer.getCurrentLexem());
 		if (keywordtoken!=-1)
 			lexicalAnalyzer.setTokenId(keywordtoken);
 		else

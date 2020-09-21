@@ -10,7 +10,7 @@ public class Error1 extends SemanticAction {
 	}
 
 	public void execute() {
-		lexicalAnalyzer.setTokenId(-99); 
+		lexicalAnalyzer.setTokenId('~'); 
 		System.out.println("Error Lexico en linea " + lexicalAnalyzer.getCurrentLine() + ": Fin de archivo inesperado");
 	}
 

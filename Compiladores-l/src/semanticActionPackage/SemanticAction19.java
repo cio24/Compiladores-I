@@ -11,7 +11,7 @@ public class SemanticAction19 extends SemanticAction{
 
 	@Override
 	public void execute() {
-		lexicalAnalyzer.setTokenId(-1); ///Supongo que -1 es el token de fin de archivo
+		lexicalAnalyzer.setTokenId('~'); ///Supongo que -1 es el token de fin de archivo
 	}
 	
 }
