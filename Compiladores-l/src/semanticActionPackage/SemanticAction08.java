@@ -1,6 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.Constants;
 
 public class SemanticAction08 extends SemanticAction {
 
@@ -14,7 +15,7 @@ public class SemanticAction08 extends SemanticAction {
 		// TODO Auto-generated method stub
 		//ingresar en la talba de simbolos
 		
-		lexicalAnalyzer.setTokenId(403);
+		lexicalAnalyzer.setTokenId(Constants.CONSTANTE_CADENA_CARACTERES);
 	}
 
 }

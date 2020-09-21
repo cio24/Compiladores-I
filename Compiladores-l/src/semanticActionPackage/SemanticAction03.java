@@ -1,6 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.Constants;
 
 public class SemanticAction03 extends SemanticAction {
 
@@ -22,7 +23,7 @@ public class SemanticAction03 extends SemanticAction {
 			System.out.println("Advertencia en linea:"+lexicalAnalyzer.getCurrentLine()+". Nombre de identificador supera los 20 caracteres: identificador truncado");
 			//Agregar a la tabla de simbolos si no esta
 		}
-		lexicalAnalyzer.setTokenId(401);
+		lexicalAnalyzer.setTokenId(Constants.IDENTIFICADOR);
 
 			
 	}

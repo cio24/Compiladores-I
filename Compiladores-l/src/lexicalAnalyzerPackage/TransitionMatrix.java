@@ -2,9 +2,6 @@ package lexicalAnalyzerPackage;
 import java.util.Vector;
 import semanticActionPackage.*;
 
-import semanticActionPackage.SemanticAction;
-import semanticActionPackage.SemanticAction01;
-
 public class TransitionMatrix {
 	
 	private Vector<Vector<Integer>> transitionMatrix;
@@ -12,6 +9,7 @@ public class TransitionMatrix {
 	private final static int STATES = 19;
 	private final static int CHAR_SETS = 22;
 	private final static int FINAL_STATE = -1;
+	@SuppressWarnings("unused")
 	private LexicalAnalyzer lexicalAnalyzer;
 	
 	public TransitionMatrix(LexicalAnalyzer lexicalAnalyzer) {
@@ -25,9 +23,9 @@ public class TransitionMatrix {
 	    	semanticMatrix.add(new Vector<SemanticAction>(CHAR_SETS));
 	    }
 	    
-	    //a continuaci髇 se agrega la transici髇 de los estados
+	    //a continuaci贸n se agrega la transici贸n de los estados
 	    
-	    //transici骲 del estado 0
+	    //transici贸n del estado 0
 	    Vector<Integer> v = transitionMatrix.get(0);
 	    v.insertElementAt(0,0);
 	    v.insertElementAt(0,1);
@@ -51,7 +49,7 @@ public class TransitionMatrix {
 	    v.insertElementAt(6,19);
 	    v.insertElementAt(0,20);
 	    
-	    //transici髇 del estado 1
+	    //transici贸n del estado 1
 	    v = transitionMatrix.get(1);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 3)
@@ -60,7 +58,7 @@ public class TransitionMatrix {
     			v.insertElementAt(FINAL_STATE,i); ////Cio chequea esto
 	    }
 	    
-	    //transici髇 del estado 2
+	    //transici贸n del estado 2
 	    v = transitionMatrix.get(2);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 3)
@@ -71,7 +69,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(2,i);
 	    }
 	    
-	    //transici髇 del estado 3
+	    //transici贸n del estado 3
 	    v = transitionMatrix.get(3);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 2)
@@ -84,7 +82,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(2,i);
 	    }
 	    
-	    //transici髇 del estado 4
+	    //transici贸n del estado 4
 	    v = transitionMatrix.get(4);	    
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 4 || i == 5 || i == 15 || i == 16 || i == 17 || i == 19)
@@ -93,7 +91,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(FINAL_STATE,i);
 	    }
 	    
-	    //transici髇 del estado 5
+	    //transici贸n del estado 5
 	    v = transitionMatrix.get(5);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 5 || i == 18)
@@ -102,7 +100,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(-1,i);
 	    }
 	    
-	    //transici髇 del estado 6
+	    //transici贸n del estado 6
 	    v = transitionMatrix.get(6);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 5)
@@ -117,7 +115,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //transici髇 del estado 7
+	    //transici贸n del estado 7
 	    v = transitionMatrix.get(7);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 1 || i == 20)
@@ -128,7 +126,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(7,i);
 	    }
 	    
-	    //transici髇 del estado 8
+	    //transici贸n del estado 8
 	    v = transitionMatrix.get(8);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 4)
@@ -139,7 +137,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(FINAL_STATE,i);
 	    }
 	    
-	    //transici髇 del estado 9
+	    //transici贸n del estado 9
 	    v = transitionMatrix.get(9);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 10)
@@ -150,7 +148,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //transici髇 del estado 10
+	    //transici贸n del estado 10
 	    v = transitionMatrix.get(10);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
@@ -161,7 +159,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //transici髇 del estado 11
+	    //transici贸n del estado 11
 	    v = transitionMatrix.get(11);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
@@ -172,7 +170,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //transici髇 del estado 12
+	    //transici贸n del estado 12
 	    v = transitionMatrix.get(12);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 19)
@@ -181,13 +179,13 @@ public class TransitionMatrix {
 	    		v.insertElementAt(FINAL_STATE,i);
 	    }
 	    
-	    //transici髇 del estado 13, 14 y 15
+	    //transici贸n del estado 13, 14 y 15
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	for(int j = 13; j <= 15; j++)
 	    	transitionMatrix.get(j).insertElementAt(FINAL_STATE,i);
 	    }
 	    
-	    //transici髇 del estado 16
+	    //transici贸n del estado 16
 	    v = transitionMatrix.get(16);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 9 || i == 14)
@@ -196,7 +194,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //transici髇 del estado 17
+	    //transici贸n del estado 17
 	    v = transitionMatrix.get(17);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14)
@@ -207,7 +205,7 @@ public class TransitionMatrix {
 	    		v.insertElementAt(0,i);
 	    }
 	    
-	    //transici髇 del estado 18
+	    //transici贸n del estado 18
 	    v = transitionMatrix.get(18);
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14 || i == 15)
@@ -245,7 +243,7 @@ public class TransitionMatrix {
 	    	for(int j = 0; j < CHAR_SETS; j++)
 	    		semanticMatrix.get(i).insertElementAt(semanticActionNone,j);
 	    
-	   //acciones sem醤ticas para el estado 0
+	   //acciones sem谩nticas para el estado 0
 	    Vector<SemanticAction> w=semanticMatrix.get(0);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -261,7 +259,7 @@ public class TransitionMatrix {
 	    		w.insertElementAt(semanticAction19,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 1
+	    //acciones sem谩nticas para el estado 1
 	    w=semanticMatrix.get(1);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -270,7 +268,7 @@ public class TransitionMatrix {
 			w.insertElementAt(semanticAction04,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 2
+	    //acciones sem谩nticas para el estado 2
 	    w=semanticMatrix.get(2);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -280,7 +278,7 @@ public class TransitionMatrix {
 				w.insertElementAt(warning1,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 3
+	    //acciones sem谩nticas para el estado 3
 	    w=semanticMatrix.get(3);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -290,7 +288,7 @@ public class TransitionMatrix {
 				w.insertElementAt(warning1,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 4
+	    //acciones sem谩nticas para el estado 4
 	    w=semanticMatrix.get(4);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -300,7 +298,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction03,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 5
+	    //acciones sem谩nticas para el estado 5
 	    w=semanticMatrix.get(5);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -310,7 +308,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction05,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 6
+	    //acciones sem谩nticas para el estado 6
 	    w=semanticMatrix.get(6);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -324,7 +322,7 @@ public class TransitionMatrix {
 				w.insertElementAt(error2,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 7
+	    //acciones sem谩nticas para el estado 7
 	    w=semanticMatrix.get(7);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -340,7 +338,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction02,i);
 	    }
 	    	
-		    //acciones sem醤ticas para el estado 8
+		    //acciones sem谩nticas para el estado 8
 		    w=semanticMatrix.get(8);
 
 		    for(int i = 0; i < CHAR_SETS; i++) {
@@ -350,7 +348,7 @@ public class TransitionMatrix {
 					w.insertElementAt(semanticAction07,i);
 	    }
 		    
-		    //acciones sem醤ticas para el estado 9
+		    //acciones sem谩nticas para el estado 9
 		    w=semanticMatrix.get(9);
 
 		    for(int i = 0; i < CHAR_SETS; i++) {
@@ -362,7 +360,7 @@ public class TransitionMatrix {
 					w.insertElementAt(error2,i);
 	    }
 		    
-		    //acciones sem醤ticas para el estado 10
+		    //acciones sem谩nticas para el estado 10
 		    w=semanticMatrix.get(10);
 
 		    for(int i = 0; i < CHAR_SETS; i++) {
@@ -374,7 +372,7 @@ public class TransitionMatrix {
 					w.insertElementAt(error2,i);
 	    }
 		    
-	    //acciones sem醤ticas para el estado 11
+	    //acciones sem谩nticas para el estado 11
 	    w=semanticMatrix.get(11);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -386,7 +384,7 @@ public class TransitionMatrix {
 				w.insertElementAt(error2,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 12
+	    //acciones sem谩nticas para el estado 12
 	    w=semanticMatrix.get(12);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -396,7 +394,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction07,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 13
+	    //acciones sem谩nticas para el estado 13
 	    w=semanticMatrix.get(13);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -406,7 +404,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction13,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 14
+	    //acciones sem谩nticas para el estado 14
 	    w=semanticMatrix.get(14);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -416,7 +414,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction15,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 15
+	    //acciones sem谩nticas para el estado 15
 	    w=semanticMatrix.get(15);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -426,7 +424,7 @@ public class TransitionMatrix {
 				w.insertElementAt(semanticAction17,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 16
+	    //acciones sem谩nticas para el estado 16
 	    w=semanticMatrix.get(16);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -438,7 +436,7 @@ public class TransitionMatrix {
 				w.insertElementAt(error2,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 17
+	    //acciones sem谩nticas para el estado 17
 	    w=semanticMatrix.get(17);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
@@ -450,7 +448,7 @@ public class TransitionMatrix {
 				w.insertElementAt(error2,i);
 	    }
 	    
-	    //acciones sem醤ticas para el estado 18
+	    //acciones sem谩nticas para el estado 18
 	    w=semanticMatrix.get(18);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {

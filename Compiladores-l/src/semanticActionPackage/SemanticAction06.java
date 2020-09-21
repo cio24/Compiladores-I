@@ -1,6 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.Constants;
 
 public class SemanticAction06 extends SemanticAction {
 
@@ -14,7 +15,7 @@ public class SemanticAction06 extends SemanticAction {
 		String lexem=lexicalAnalyzer.getCurrentLexem();
 		Integer value=Integer.parseInt(lexem);
 		if (value>=0 && value<=Math.pow(2, 32)-1) {
-			lexicalAnalyzer.setTokenId(402);
+			lexicalAnalyzer.setTokenId(Constants.CONSTANTE_NUMERICA);
 			//agregar a la tabla de simbolos
 		}
 		else {

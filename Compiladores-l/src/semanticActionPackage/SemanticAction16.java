@@ -1,6 +1,8 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.Constants;
+
 
 public class SemanticAction16 extends SemanticAction {
 
@@ -12,7 +14,7 @@ public class SemanticAction16 extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		lexicalAnalyzer.setTokenId(503);
+		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_IGUAL);
 	}
 
 }
