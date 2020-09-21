@@ -48,7 +48,8 @@ public class LexicalAnalyzer {
 					
 			// ejecuto la acción semántica correspondiente al estado actual y el caracter leído
 			// notese que si la acción semántica encontro un token, tiene que usar el método de setTokenId();
-			transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
+			
+			///transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
 
 				
 			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontró un token

@@ -57,7 +57,7 @@ public class TransitionMatrix {
 	    	if(i == 3)
 	    		v.insertElementAt(2,i);
     		else
-    			v.insertElementAt(i,FINAL_STATE);
+    			v.insertElementAt(FINAL_STATE,i); ////Cio chequea esto
 	    }
 	    
 	    //transición del estado 2
@@ -241,11 +241,17 @@ public class TransitionMatrix {
 	    SemanticAction warning1 = new Warning1(lexicalAnalyzer);
 	    SemanticAction semanticActionNone = new SemanticActionNone(lexicalAnalyzer);
 	    
-	    Vector<SemanticAction> w = semanticMatrix.get(0);
 	    for(int i = 0; i < CHAR_SETS; i++)
 	    	for(int j = 0; i < STATES; i++)
 	    		semanticMatrix.get(i).insertElementAt(semanticActionNone,j);
-	    
+	 
+	    Vector<SemanticAction> w = semanticMatrix.get(0);
+	    for(int i = 0; i < CHAR_SETS; i++) {
+			if(i == 14 || i == 15)
+	    		v.insertElementAt(FINAL_STATE,i);
+	    	else
+	    		v.insertElementAt(0,i);
+	    }
 	}
 	
 	private int getId(char c) {
@@ -307,6 +313,7 @@ public class TransitionMatrix {
 	}
 	
 	public int getNextState(int currentState, char c) {
+		System.out.println("getNextState: currentState:"+currentState+".char:"+c);
 		return transitionMatrix.get(currentState).get(this.getId(c));
 	}
 	
