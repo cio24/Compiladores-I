@@ -24,7 +24,6 @@ public class SymbolTable {
 	public Set<String> getAll() {
 		return this.symbolTable.keySet();
 	}
-
 	
 }
 
