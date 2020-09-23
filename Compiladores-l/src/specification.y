@@ -56,6 +56,7 @@ executable  :  ID  '='  expression
 			|  if_clause  
 			|  loop_clause
 			|  function_call
+			|  out_clause
 ;
 
 comparator  :  EQUAL
@@ -98,7 +99,6 @@ out_clause  :  OUT  '('  CSTRING  ')'
 expression  :  expression  '+'  term
 			|  expression  '-'  term
 			|  term
-			|  '-'  expression 
 ;
 
 term  :  term  '*'  factor
@@ -108,6 +108,7 @@ term  :  term  '*'  factor
 
 factor  :  ID 
 	    |  CONSTANT
+	    |  '-' CONSTANT
 ;
 
 /*-------> Gramatica de expresiones <-------*/
