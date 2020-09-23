@@ -14,6 +14,11 @@ public class Constants {
 	public static final int DOUBLE = 909;
 	public static final int LOOP = 910;
 	public static final int UNTIL = 911;
+	public static final int TRUE = 912;
+	public static final int FALSE = 913;
+	public static final int NA = 914;
+	public static final int SHADOWING = 915;
+	public static final int PROC = 916;
 	
 	public static final int IDENTIFICADOR = 401;
 	public static final int CONSTANTE_NUMERICA = 402;
