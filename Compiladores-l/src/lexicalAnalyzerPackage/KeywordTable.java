@@ -22,6 +22,11 @@ public class KeywordTable {
 		kws.add("DOUBLE");   kwstoken.add(Constants.DOUBLE);
 		kws.add("LOOP");     kwstoken.add(Constants.LOOP);
 		kws.add("UNTIL");    kwstoken.add(Constants.UNTIL);
+		kws.add("TRUE");     kwstoken.add(Constants.TRUE);
+		kws.add("FALSE");    kwstoken.add(Constants.FALSE);
+		kws.add("NA");       kwstoken.add(Constants.NA);
+		kws.add("SHADOWING");kwstoken.add(Constants.SHADOWING);
+		kws.add("PROC");     kwstoken.add(Constants.PROC);
 	}
 	
 	public int getKeywordToken(String kw) {
