@@ -77,8 +77,8 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block ENDIF
- 		   |  IF  '('  condition  ')'  sentence_block  ENDIF
+if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block END_IF
+ 		   |  IF  '('  condition  ')'  sentence_block  END_IF
 ;
 
 loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'
