@@ -18,7 +18,8 @@ public class SemanticAction07 extends SemanticAction {
 		String lexem=lexicalAnalyzer.getCurrentLexem();
 		String snumber=lexem.replace('d','e');
 		BigDecimal number= new BigDecimal(snumber);
-		
+
+		lexicalAnalyzer.returnLastCharacterRead();
 		if (number.compareTo(Constants.MAX_RANGE_DOUBLE) < 0  && Constants.MIN_RANGE_DOUBLE.compareTo(number)< 0) {
 			lexicalAnalyzer.setTokenId(Constants.CONSTANTE_NUMERICA);
 			//Ingresar en la tabla de simbolos

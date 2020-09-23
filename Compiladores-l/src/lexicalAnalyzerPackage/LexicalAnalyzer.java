@@ -26,11 +26,10 @@ public class LexicalAnalyzer {
 		st = new SymbolTable();
 		fileReader = new ReturnableBufferedReader(
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
-		tokenId = -1;
+		tokenId = -1;	
 	}
 
-	public int yylex(AtomicReference<ParserVal> reference) {
-		ParserVal yylval = new ParserVal();
+	public int yylex() {
 		lexem = "";
 		currentState = 0;
 		
@@ -69,8 +68,8 @@ public class LexicalAnalyzer {
 			//entonces se tuvo que actualizad el tokenId y no tendr�a que volver a entrar en el while, xq sino se romperia
 			//ya que estar�a tratando de entrar en una posici�n invalida de la matriz
 		}
+		System.out.println(lexem);
 		
-		reference.set(yylval);
 		if(tokenId == (int)'~')
 			return -1;
 		return tokenId;				
@@ -113,5 +112,5 @@ public class LexicalAnalyzer {
 	public void setNextState(int ns) {
 		currentState=ns;
 	}
-
+	
 }

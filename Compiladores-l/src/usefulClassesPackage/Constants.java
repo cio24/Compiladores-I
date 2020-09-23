@@ -29,47 +29,47 @@ public class Constants {
 	public final static short UP=280;
 	public final static short DOWN=281;
 	public final static short YYERRCODE=256;
-	
+		
 	public static final BigDecimal MIN_RANGE_DOUBLE = new BigDecimal("2.2250738585072014e-308");
 	public static final BigDecimal MAX_RANGE_DOUBLE = new BigDecimal("1.7976931348623157e+308");
 
 	public static final String getConstantName(int id) {
 		switch(id) {
-		case 901:
+		case 257:
 			return "IF";
-		case 902:
+		case 258:
 			return "THEN";
-		case 903:
+		case 259:
 			return "ELSE";
-		case 904:
+		case 260:
 			return "END_IF";
-		case 905:
+		case 261:
 			return "OUT";
-		case 906:
+		case 262:
 			return "FUNC";
-		case 907:
+		case 263:
 			return "RETURN";
-		case 908:
+		case 264:
 			return "ULONGINT";
-		case 909:
+		case 265:
 			return "DOUBLE";
-		case 910:
+		case 266:
 			return "LOOP";
-		case 911:
+		case 267:
 			return "UNTIL";
-		case 401:
+		case 268:
 			return "IDENTIFICADOR";
-		case 402:
+		case 269:
 			return "CONSTANTE_NUMERICA";
-		case 403:
+		case 270:
 			return "CONSTANTE_CADENA_CARACTERES";
-		case 501:
+		case 271:
 			return "COMPARADOR_MEN_IGUAL";
-		case 502:
+		case 272:
 			return "COMPARADOR_MAY_IGUAL";
-		case 503:
+		case 273:
 			return "COMPARADOR_IGUAL";
-		case 504:
+		case 274:
 			return "COMPARADOR_DISTINTO";
 		default:
 			return null;

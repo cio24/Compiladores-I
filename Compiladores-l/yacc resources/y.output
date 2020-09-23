@@ -2,7 +2,7 @@
 
    1  program : sentences
 
-   2  sentences : sentence
+   2  sentences : sentence ';'
    3            | sentence ';' sentences
 
    4  sentence : declaration
@@ -181,12 +181,11 @@ state 9
 
 
 state 10
-	sentences : sentence .  (2)
+	sentences : sentence . ';'  (2)
 	sentences : sentence . ';' sentences  (3)
 
 	';'  shift 27
-	$end  reduce 2
-	'}'  reduce 2
+	.  error
 
 
 state 11
@@ -332,6 +331,7 @@ state 26
 
 
 state 27
+	sentences : sentence ';' .  (2)
 	sentences : sentence ';' . sentences  (3)
 
 	IF  shift 1
@@ -341,7 +341,8 @@ state 27
 	LOOP  shift 5
 	ID  shift 6
 	PROC  shift 7
-	.  error
+	$end  reduce 2
+	'}'  reduce 2
 
 	sentences  goto 45
 	sentence  goto 10
@@ -360,12 +361,10 @@ state 28
 	variable_list : ID . ',' variable_list  (9)
 
 	','  shift 46
-	$end  reduce 8
 	ELSE  reduce 8
 	END_IF  reduce 8
 	UNTIL  reduce 8
 	';'  reduce 8
-	'}'  reduce 8
 
 
 state 29
@@ -426,7 +425,6 @@ state 35
 
 	'*'  shift 58
 	'/'  shift 59
-	$end  reduce 45
 	ELSE  reduce 45
 	END_IF  reduce 45
 	UNTIL  reduce 45
@@ -436,7 +434,6 @@ state 35
 	NEQUAL  reduce 45
 	';'  reduce 45
 	')'  reduce 45
-	'}'  reduce 45
 	'<'  reduce 45
 	'>'  reduce 45
 	'+'  reduce 45
@@ -499,12 +496,10 @@ state 43
 
 	'+'  shift 54
 	'-'  shift 55
-	$end  reduce 25
 	ELSE  reduce 25
 	END_IF  reduce 25
 	UNTIL  reduce 25
 	';'  reduce 25
-	'}'  reduce 25
 
 
 state 44
@@ -746,7 +741,6 @@ state 70
 
 	'*'  shift 58
 	'/'  shift 59
-	$end  reduce 43
 	ELSE  reduce 43
 	END_IF  reduce 43
 	UNTIL  reduce 43
@@ -756,7 +750,6 @@ state 70
 	NEQUAL  reduce 43
 	';'  reduce 43
 	')'  reduce 43
-	'}'  reduce 43
 	'<'  reduce 43
 	'>'  reduce 43
 	'+'  reduce 43
@@ -770,7 +763,6 @@ state 71
 
 	'*'  shift 58
 	'/'  shift 59
-	$end  reduce 44
 	ELSE  reduce 44
 	END_IF  reduce 44
 	UNTIL  reduce 44
@@ -780,7 +772,6 @@ state 71
 	NEQUAL  reduce 44
 	';'  reduce 44
 	')'  reduce 44
-	'}'  reduce 44
 	'<'  reduce 44
 	'>'  reduce 44
 	'+'  reduce 44

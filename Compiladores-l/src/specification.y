@@ -15,7 +15,7 @@ PROC NA SHADOWING TRUE FALSE UP DOWN
 program : sentences
 		;
 		
-sentences  :  sentence
+sentences  :  sentence ';'
 		   |  sentence  ';'  sentences
 ;
 
@@ -132,4 +132,8 @@ public Parser(String path) throws FileNotFoundException {
 public void yyerror(String s){
     System.out.println(s);
 
+}
+
+public int yylex(){
+	return la.yylex();
 }

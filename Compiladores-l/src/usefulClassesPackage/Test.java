@@ -12,7 +12,7 @@ public class Test {
 	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
 	
 	public Test() throws IOException {
-		test("program.txt");
+		test("program2.txt");
 		/*
 		System.out.println("TEST CADENAS: ");
 		test("cadenas.txt");
@@ -33,15 +33,16 @@ public class Test {
 	
 	public void test(String fileName) throws IOException {
 		Parser p = new Parser(BASE_PATH + fileName);
-		//p.yydebug = true;
+		p.yydebug = true;
 		p.yyparse();
-		/*
 		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(BASE_PATH + fileName);
-		
+
+		/*
+
 		String nombre;
 		int token = 0;
-		while(token != (int)'~') {
-			token = lexicalAnalyzer.getNextToken();			
+		while(token != -1) {
+			token = lexicalAnalyzer.yylex();			
 			nombre = Constants.getConstantName(token);
 			if(nombre == null)
 				System.out.println("Token: "+(char)token);
@@ -50,7 +51,8 @@ public class Test {
 			System.out.println("***********");
 		}
 		System.out.println("Fin de archivo!");
-		*/
+				*/
+
 	}
 	
 }
