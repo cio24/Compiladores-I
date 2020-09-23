@@ -3,31 +3,32 @@ package usefulClassesPackage;
 import java.math.BigDecimal;
 
 public class Constants {
-	public static final int IF = 901;
-	public static final int THEN = 902;
-	public static final int ELSE = 903;
-	public static final int END_IF = 904;
-	public static final int OUT = 905;
-	public static final int FUNC = 906;
-	public static final int RETURN = 907;
-	public static final int ULONGINT = 908;
-	public static final int DOUBLE = 909;
-	public static final int LOOP = 910;
-	public static final int UNTIL = 911;
-	public static final int TRUE = 912;
-	public static final int FALSE = 913;
-	public static final int NA = 914;
-	public static final int SHADOWING = 915;
-	public static final int PROC = 916;
-	
-	public static final int IDENTIFICADOR = 401;
-	public static final int CONSTANTE_NUMERICA = 402;
-	public static final int CONSTANTE_CADENA_CARACTERES = 403;
-	
-	public static final int COMPARADOR_MEN_IGUAL = 501;
-	public static final int COMPARADOR_MAY_IGUAL = 502;
-	public static final int COMPARADOR_IGUAL = 503;
-	public static final int COMPARADOR_DISTINTO = 504;
+	public final static int IF=257;
+	public final static int THEN=258;
+	public final static int ELSE=259;
+	public final static int END_IF=260;
+	public final static int OUT=261;
+	public final static int FUNC=262;
+	public final static int RETURN=263;
+	public final static int ULONGINT=264;
+	public final static int DOUBLE=265;
+	public final static int LOOP=266;
+	public static final int UNTIL=267;
+	public static final int IDENTIFICADOR = 268;
+	public static final int CONSTANTE_NUMERICA = 269;
+	public static final int CONSTANTE_CADENA_CARACTERES = 270;	
+	public static final int COMPARADOR_MEN_IGUAL = 271;
+	public static final int COMPARADOR_MAY_IGUAL = 272;
+	public static final int COMPARADOR_IGUAL = 273;
+	public static final int COMPARADOR_DISTINTO = 274;
+	public static final int PROC = 275;	
+	public static final int NA = 276;
+	public static final int SHADOWING = 277;
+	public static final int TRUE = 278;
+	public static final int FALSE = 279;
+	public final static short UP=280;
+	public final static short DOWN=281;
+	public final static short YYERRCODE=256;
 	
 	public static final BigDecimal MIN_RANGE_DOUBLE = new BigDecimal("2.2250738585072014e-308");
 	public static final BigDecimal MAX_RANGE_DOUBLE = new BigDecimal("1.7976931348623157e+308");

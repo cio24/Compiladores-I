@@ -1,7 +1,16 @@
+%{
+package lexicalAnalyzerPackage;
+
+import java.io.FileNotFoundException;
+import java.util.concurrent.atomic.AtomicReference;
+%}
+
+
 %token IF THEN ELSE END_IF OUT FUNC RETURN 
 ULONGINT DOUBLE LOOP UNTIL ID CONSTANT CSTRING LESSEQUAL GREATEQUAL EQUAL NEQUAL
 PROC NA SHADOWING TRUE FALSE UP DOWN
 
+%start program
 %%
 program : sentences
 		;
@@ -113,4 +122,14 @@ factor  :  ID
 
 /*-------> Gramatica de expresiones <-------*/
 %%
-⠀⠀⠀⠀⠀
+
+LexicalAnalyzer la;
+
+public Parser(String path) throws FileNotFoundException {
+	la = new LexicalAnalyzer(path);
+} 
+
+public void yyerror(String s){
+    System.out.println(s);
+
+}

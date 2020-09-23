@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.concurrent.atomic.AtomicReference;
 
 import semanticActionPackage.SemanticAction;
 
@@ -22,12 +23,14 @@ public class LexicalAnalyzer {
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException {
 		reservedKeywords = new KeywordTable();
 		transitionMatrix = new TransitionMatrix(this);
+		st = new SymbolTable();
 		fileReader = new ReturnableBufferedReader(
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
 		tokenId = -1;
 	}
 
-	public int getNextToken() throws IOException {
+	public int yylex(AtomicReference<ParserVal> reference) {
+		ParserVal yylval = new ParserVal();
 		lexem = "";
 		currentState = 0;
 		
@@ -36,9 +39,14 @@ public class LexicalAnalyzer {
 		
 		while (tokenId < 0) {
 			
-			// siempre se va a encontar un token, por lo menos el token de final de archivo
-			int characterCode = fileReader.readNextCharacter();
-
+			int characterCode = -1;
+			try {
+				// siempre se va a encontar un token, por lo menos el token de final de archivo
+				characterCode = fileReader.readNextCharacter();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 			if(characterCode == 13)
 				continue;
 			
@@ -62,11 +70,9 @@ public class LexicalAnalyzer {
 			//ya que estar�a tratando de entrar en una posici�n invalida de la matriz
 		}
 		
-		if(lexem == "")
-			System.out.println("Lexema leído: VACÍO");
-		else
-			System.out.println("Lexema leído: " + lexem);
-		
+		reference.set(yylval);
+		if(tokenId == (int)'~')
+			return -1;
 		return tokenId;				
 
 	}

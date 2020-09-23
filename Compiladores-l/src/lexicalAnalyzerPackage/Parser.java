@@ -16,14 +16,19 @@
 
 
 
+//#line 1 "../src/specification.y"
 
+package lexicalAnalyzerPackage;
 
+import java.io.FileNotFoundException;
+import java.util.concurrent.atomic.AtomicReference;
+//#line 23 "Parser.java"
 
 
 public class Parser
 {
 
-boolean yydebug;        //do I want debug output?
+public boolean yydebug;        //do I want debug output?
 int yynerrs;            //number of errors so far
 int yyerrflag;          //was there an error?
 int yychar;             //the current working character
@@ -398,10 +403,20 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 115 "../src/specification.y"
+//#line 124 "../src/specification.y"
 
-⠀⠀⠀⠀⠀
-//#line 333 "Parser.java"
+
+LexicalAnalyzer la;
+
+public Parser(String path) throws FileNotFoundException {
+	la = new LexicalAnalyzer(path);
+} 
+
+public void yyerror(String s){
+    System.out.println(s);
+
+}
+//#line 350 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -430,7 +445,7 @@ String yys;    //current token string
 //###############################################################
 // method: yyparse : parse input and execute indicated items
 //###############################################################
-int yyparse()
+public int yyparse()
 {
 boolean doaction;
   init_stacks();
@@ -450,7 +465,11 @@ boolean doaction;
       if (yydebug) debug("yyn:"+yyn+"  state:"+yystate+"  yychar:"+yychar);
       if (yychar < 0)      //we want a char?
         {
-        yychar = yylex();  //get next token
+			yyval = new ParserVal();
+			AtomicReference<ParserVal> ref = new AtomicReference<>();
+
+			yychar = la.yylex(ref);
+			yylval = ref.get(); // get next token
         if (yydebug) debug(" next yychar:"+yychar);
         //#### ERROR CHECK ####
         if (yychar < 0)    //it it didn't work/error
@@ -571,7 +590,11 @@ boolean doaction;
       val_push(yyval);           //also save the semantic value of parsing
       if (yychar < 0)            //we want another character?
         {
-        yychar = yylex();        //get next character
+			yyval = new ParserVal();
+			AtomicReference<ParserVal> ref = new AtomicReference<>();
+
+			yychar = la.yylex(ref);
+			yylval = ref.get(); // get next token
         if (yychar<0) yychar=0;  //clean, if necessary
         if (yydebug)
           yylexdebug(yystate,yychar);
