@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
 public class Parser
 {
 
-public boolean yydebug;        //do I want debug output?
+boolean yydebug;        //do I want debug output?
 int yynerrs;            //number of errors so far
 int yyerrflag;          //was there an error?
 int yychar;             //the current working character
@@ -448,7 +448,7 @@ String yys;    //current token string
 //###############################################################
 // method: yyparse : parse input and execute indicated items
 //###############################################################
-public int yyparse()
+int yyparse()
 {
 boolean doaction;
   init_stacks();

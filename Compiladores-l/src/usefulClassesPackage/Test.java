@@ -9,7 +9,7 @@ import lexicalAnalyzerPackage.LexicalAnalyzer;
 
 public class Test {
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
-	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
+	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	
 	public Test() throws IOException {
 		test("program2.txt");
@@ -33,7 +33,7 @@ public class Test {
 	
 	public void test(String fileName) throws IOException {
 		Parser p = new Parser(BASE_PATH + fileName);
-		p.yydebug = true;
+		p.yydebug = false;
 		p.yyparse();
 		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(BASE_PATH + fileName);
 

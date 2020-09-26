@@ -3,6 +3,9 @@ package lexicalAnalyzerPackage;
 
 import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.lang.Math;
+import java.io.*;
+import java.util.StringTokenizer;
 %}
 
 
@@ -12,27 +15,27 @@ PROC NA SHADOWING TRUE FALSE UP DOWN
 
 %start program
 %%
-program : sentences
+program : sentences  {showMessage("Pograma reducido,linea:"+la.getCurrentLine());}
 		;
 		
-sentences  :  sentence ';'
+sentences  :  sentence ';' 
 		   |  sentence  ';'  sentences
 ;
 
 
-sentence  :  declaration
-		  |  executable
+sentence  :  declaration	
+		  |  executable		
 ;
 
-declaration  :  type  variable_list
-			 |  procedure
+declaration  :  type  variable_list		{showMessage("Declaracion de variables reducida,linea:"+la.getCurrentLine());}
+			 |  procedure	{showMessage("Declaracion de procedimiento reducida,linea:"+la.getCurrentLine());}
 ;
 
 variable_list  :  ID  
 			   |  ID  ','  variable_list
 ;
 
-type  :  ULONGINT
+type  :  ULONGINT	
 	  |  DOUBLE
 ;
 
@@ -57,15 +60,15 @@ id_list  :  ID
 		 |  ID  ','  ID  ','  ID
 ;
 
-function_call  :  ID  '('  id_list  ')'
+function_call  :  ID  '('  id_list  ')'		
 		       |  ID  '('  ')'
 ;
 
-executable  :  ID  '='  expression
-			|  if_clause  
-			|  loop_clause
-			|  function_call
-			|  out_clause
+executable  :  ID  '='  expression	{showMessage("Asignacion reducida,linea:"+la.getCurrentLine());}
+			|  if_clause  		{showMessage("Control IF reducida,linea:"+la.getCurrentLine());}
+			|  loop_clause	    {showMessage("Constrol LOOP reducida,linea:"+la.getCurrentLine());}
+			|  function_call	{showMessage("Llamado a funcion reducida,linea:"+la.getCurrentLine());}
+			|  out_clause	{showMessage("Salida por pantalla reducida,linea:"+la.getCurrentLine());}
 ;
 
 comparator  :  EQUAL
@@ -76,7 +79,7 @@ comparator  :  EQUAL
             |  '>'
 ;
 
-condition  :  expression  comparator  expression 
+condition  :  expression  comparator  expression 	{showMessage("Condicion reducida,linea:"+la.getCurrentLine());}
 ;
 
 /*-------> Gramatica de control<-------*/
@@ -105,7 +108,7 @@ out_clause  :  OUT  '('  CSTRING  ')'
        
 /*-------> Gramatica de expresiones <-------*/
 
-expression  :  expression  '+'  term
+expression  :  expression  '+'  term	{showMessage("Expresion reducida,linea:"+la.getCurrentLine());}
 			|  expression  '-'  term
 			|  term
 ;
@@ -136,4 +139,8 @@ public void yyerror(String s){
 
 public int yylex(){
 	return la.yylex();
+}
+
+public void showMessage(String mg) {
+	System.out.println(mg);
 }

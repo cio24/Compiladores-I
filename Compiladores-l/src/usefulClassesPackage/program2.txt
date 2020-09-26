@@ -3,4 +3,5 @@ ULONGINT asdf;
 int = 124.0;
 IF (int == 125_ul){
 ULONGINT asdf;
+ULONGINT esc;
 } ENDIF;

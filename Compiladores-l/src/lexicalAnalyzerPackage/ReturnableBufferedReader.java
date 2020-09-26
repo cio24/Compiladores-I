@@ -9,7 +9,7 @@ public class ReturnableBufferedReader extends BufferedReader {
 		super(in, sz);
 		// TODO Auto-generated constructor stub
 		lastCharacterRead=0;
-		currentLine=0;
+		currentLine=1;
 		lastCharacterWasReturned=false;
 	}
 	
@@ -17,7 +17,7 @@ public class ReturnableBufferedReader extends BufferedReader {
 		super(in);
 		// TODO Auto-generated constructor stub
 		lastCharacterRead=0;
-		currentLine=0;
+		currentLine=1;
 		lastCharacterWasReturned=false;
 	}
 	
@@ -35,11 +35,10 @@ public class ReturnableBufferedReader extends BufferedReader {
 		if (lastCharacterWasReturned)
 			lastCharacterWasReturned=false;
 		else {
-			lastCharacterRead=this.read();
 			if ((char)lastCharacterRead=='\n')
 				currentLine++;
+			lastCharacterRead=this.read();	
 		}
-			
 		return lastCharacterRead;
 	}
 	
