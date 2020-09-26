@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction13 extends SemanticAction{
+public class SA15GreaterThanFound extends SemanticAction{
 
-	public SemanticAction13(LexicalAnalyzer lexicalAnalyzer) {
+	public SA15GreaterThanFound(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
@@ -12,7 +12,7 @@ public class SemanticAction13 extends SemanticAction{
 	@Override
 	public void execute() {
 		lexicalAnalyzer.returnLastCharacterRead();
-		lexicalAnalyzer.setTokenId((int)'<');
+		lexicalAnalyzer.setTokenId((int)'>');
 	}
 
 }

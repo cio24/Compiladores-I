@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction05 extends SemanticAction{
+public class SA05ResWordFound extends SemanticAction{
 
-	public SemanticAction05(LexicalAnalyzer lexicalAnalyzer) {
+	public SA05ResWordFound(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
@@ -17,7 +17,8 @@ public class SemanticAction05 extends SemanticAction{
 			lexicalAnalyzer.setTokenId(keywordtoken);
 		else
 		{
-			System.out.println("Error lexico en linea:"+lexicalAnalyzer.getCurrentLine()+". La palabra reservada no es valida");	
+			System.out.println("Error lexico: la palabra reservada "
+								+ "\"" + lexicalAnalyzer.getCurrentLexem() + "\" no existe (linea " + lexicalAnalyzer.getCurrentLine() + ")");	
 			lexicalAnalyzer.setNextState(0);
 		}
 			

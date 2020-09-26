@@ -8,25 +8,25 @@ public class Symbol {
 	public final static String _STRING = "String";
 
 	private String type = _DEFAULT_TYPE;
-	private String lexemme = "";
+	private String lexeme = "";
 	private int codeLine = -1;
 	
 	public Symbol(String lexemme) {
-		this.lexemme = lexemme;
+		this.lexeme = lexemme;
 	}
 
 	public Symbol(String lexemme, int codeLine) {
-		this.lexemme = lexemme;
+		this.lexeme = lexemme;
 		this.codeLine = codeLine;
 	}	
 
 	public Symbol(String lexemme, String type) {
-		this.lexemme = lexemme;
+		this.lexeme = lexemme;
 		this.type = type;
 	}
 	
 	public Symbol(String lexemme, int codeLine, String type) {
-		this.lexemme = lexemme;
+		this.lexeme = lexemme;
 		this.codeLine = codeLine;
 		this.type = type;
 	}
@@ -40,8 +40,8 @@ public class Symbol {
 		this.type = type;
 	}
 
-	public String getLexemme() {
-		return this.lexemme;
+	public String getLexeme() {
+		return this.lexeme;
 	}
 
 	public int getCodeLine() {

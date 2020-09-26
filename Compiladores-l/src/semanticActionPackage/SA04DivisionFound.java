@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction15 extends SemanticAction{
+public class SA04DivisionFound extends SemanticAction {
 
-	public SemanticAction15(LexicalAnalyzer lexicalAnalyzer) {
+	public SA04DivisionFound(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
@@ -12,7 +12,7 @@ public class SemanticAction15 extends SemanticAction{
 	@Override
 	public void execute() {
 		lexicalAnalyzer.returnLastCharacterRead();
-		lexicalAnalyzer.setTokenId((int)'>');
+		lexicalAnalyzer.setTokenId((int)'/');
 	}
 
 }

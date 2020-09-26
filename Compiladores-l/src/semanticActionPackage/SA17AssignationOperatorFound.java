@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction17 extends SemanticAction{
+public class SA17AssignationOperatorFound extends SemanticAction{
 
-	public SemanticAction17(LexicalAnalyzer lexicalAnalyzer) {
+	public SA17AssignationOperatorFound(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}

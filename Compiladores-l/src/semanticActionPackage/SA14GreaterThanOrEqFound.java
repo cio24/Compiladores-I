@@ -1,12 +1,12 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import usefulClassesPackage.Constants;
+import usefullClassesPackage.Constants;
 
 
-public class SemanticAction16 extends SemanticAction {
+public class SA14GreaterThanOrEqFound extends SemanticAction {
 
-	public SemanticAction16(LexicalAnalyzer lexicalAnalyzer) {
+	public SA14GreaterThanOrEqFound(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
@@ -14,7 +14,7 @@ public class SemanticAction16 extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_IGUAL);
+		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_MAY_IGUAL);
 	}
 
 }

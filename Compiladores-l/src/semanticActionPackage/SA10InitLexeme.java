@@ -2,17 +2,16 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction04 extends SemanticAction {
+public class SA10InitLexeme extends SemanticAction{
 
-	public SemanticAction04(LexicalAnalyzer lexicalAnalyzer) {
+	public SA10InitLexeme(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void execute() {
-		lexicalAnalyzer.returnLastCharacterRead();
-		lexicalAnalyzer.setTokenId((int)'/');
+		lexicalAnalyzer.initializeLexem();
 	}
 
 }

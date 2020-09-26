@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-import usefulClassesPackage.Test;
+import usefullClassesPackage.Test;
 
 public class Main {
 		

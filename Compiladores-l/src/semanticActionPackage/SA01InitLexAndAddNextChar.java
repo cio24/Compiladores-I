@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction01 extends SemanticAction {
+public class SA01InitLexAndAddNextChar extends SemanticAction {
 	
-	public SemanticAction01(LexicalAnalyzer lexicalAnalyzer) {
+	public SA01InitLexAndAddNextChar(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}

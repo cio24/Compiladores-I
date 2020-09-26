@@ -14,22 +14,26 @@ public class LexicalAnalyzer {
 	private TransitionMatrix transitionMatrix;
 	private ReturnableBufferedReader fileReader;
 	private String lexem;
-	private SymbolTable st;
+	public SymbolsTable symbolsTable;
 	public KeywordTable reservedKeywords;
 	private char lastCharacterRead;
 	private int tokenId;
 	private int currentState;
+	public ParserVal yylval;
+	AtomicReference<ParserVal> reference;
 
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException {
 		reservedKeywords = new KeywordTable();
 		transitionMatrix = new TransitionMatrix(this);
-		st = new SymbolTable();
+		symbolsTable = new SymbolsTable();
 		fileReader = new ReturnableBufferedReader(
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
 		tokenId = -1;	
 	}
 
-	public int yylex() {
+	public int yylex(AtomicReference<ParserVal> reference) {
+		this.reference = reference;
+		this.yylval = new ParserVal();
 		lexem = "";
 		currentState = 0;
 		
@@ -69,10 +73,10 @@ public class LexicalAnalyzer {
 			//ya que estar�a tratando de entrar en una posici�n invalida de la matriz
 		}
 		//if (lexem.length()>0) System.out.println(lexem);
-		
+		reference.set(yylval);
 		if(tokenId == (int)'~')
 			return -1;
-		System.out.println("Token encontrado, numero:"+tokenId+".linea:"+getCurrentLine());
+		//System.out.println("Token encontrado, numero:"+tokenId+".linea:"+getCurrentLine());
 		return tokenId;				
 
 	}

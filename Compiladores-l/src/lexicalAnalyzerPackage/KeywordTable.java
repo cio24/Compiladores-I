@@ -1,7 +1,8 @@
 package lexicalAnalyzerPackage;
 
 import java.util.Vector;
-import usefulClassesPackage.Constants;;
+
+import usefullClassesPackage.Constants;;
 
 public class KeywordTable {
 	private Vector<String> kws;

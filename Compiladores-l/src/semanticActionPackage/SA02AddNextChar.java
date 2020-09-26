@@ -2,16 +2,15 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class SemanticAction10 extends SemanticAction{
+public class SA02AddNextChar extends SemanticAction{
 
-	public SemanticAction10(LexicalAnalyzer lexicalAnalyzer) {
+	public SA02AddNextChar(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
 	public void execute() {
-		lexicalAnalyzer.initializeLexem();
+		lexicalAnalyzer.addNextCharacter();
 	}
 
 }

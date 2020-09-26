@@ -1,4 +1,4 @@
-package usefulClassesPackage;
+package usefullClassesPackage;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -9,8 +9,8 @@ import lexicalAnalyzerPackage.LexicalAnalyzer;
 
 public class Test {
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
-	
+	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
+	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefullClassesPackage\\";
 	public Test() throws IOException {
 		test("program2.txt");
 		/*
@@ -33,8 +33,8 @@ public class Test {
 	
 	public void test(String fileName) throws IOException {
 		Parser p = new Parser(BASE_PATH + fileName);
-		p.yydebug = false;
-		p.yyparse();
+		//p.yydebug = false;
+		p.parse();
 		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(BASE_PATH + fileName);
 
 		/*

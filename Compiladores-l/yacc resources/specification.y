@@ -15,11 +15,12 @@ PROC NA SHADOWING TRUE FALSE UP DOWN
 
 %start program
 %%
-program : sentences  {showMessage("Pograma reducido,linea:"+la.getCurrentLine());}
+program : sentences  {showMessage("Reduccion: programa completo");}
 		;
 		
 sentences  :  sentence ';' 
 		   |  sentence  ';'  sentences
+		   |  error {showMessage("Error sintactico: falta punto y coma (linea " + la.getCurrentLine() + ")" );} /*testeado*/
 ;
 
 
@@ -27,8 +28,10 @@ sentence  :  declaration
 		  |  executable		
 ;
 
-declaration  :  type  variable_list		{showMessage("Declaracion de variables reducida,linea:"+la.getCurrentLine());}
-			 |  procedure	{showMessage("Declaracion de procedimiento reducida,linea:"+la.getCurrentLine());}
+declaration  :  type  variable_list		{showMessage("Reduccion: declaracion de variables (linea " + la.getCurrentLine() +  ")" );}
+			 |  procedure	{showMessage("Reduccion: declaracion de procedimiento (linea " + la.getCurrentLine() + ")" );} /*((Symbol) la.yyval.obj).getLexeme()*/
+			 | variable_list {showMessage("Error sintactico: falta definir el tipo de variable de \"" + ((Symbol)$1.obj).getLexeme()  + "\" (linea " + la.getCurrentLine() + ")" );}  /*testeado*/
+			 | type {showMessage("Error sintactico: falta definir el identificador de la variable (linea " + la.getCurrentLine() + ")" );}
 ;
 
 variable_list  :  ID  
@@ -130,15 +133,15 @@ LexicalAnalyzer la;
 
 public Parser(String path) throws FileNotFoundException {
 	la = new LexicalAnalyzer(path);
-} 
+}
+
+public void parse(){
+	yyparse();
+}
 
 public void yyerror(String s){
     System.out.println(s);
 
-}
-
-public int yylex(){
-	return la.yylex();
 }
 
 public void showMessage(String mg) {

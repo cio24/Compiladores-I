@@ -3,12 +3,12 @@ package lexicalAnalyzerPackage;
 import java.util.HashMap;
 import java.util.Set;
 
-public class SymbolTable {
+public class SymbolsTable {
 
 	HashMap<String, Symbol> symbolTable;
 
 	// Takes in a string returns a symbol
-	public SymbolTable() {
+	public SymbolsTable() {
 		this.symbolTable = new HashMap<>();
 	}
 

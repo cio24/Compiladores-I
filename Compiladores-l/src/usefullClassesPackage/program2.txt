@@ -1,0 +1,8 @@
+
+
+
+DOUBLE aux1; /% es correcto %/
+DOUBLE; /% falta el identificador de la variable %/
+aux2; /% falta el tipo a la variable %/
+DOBLE aux3; /% no existe el identificador %/
+DOUBLE aux4 /% falta el punto y coma %/

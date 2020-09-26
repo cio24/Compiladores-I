@@ -215,27 +215,27 @@ public class TransitionMatrix {
 	    }
 	    
 	    //*****ACCIONES SEMANTICAS*****//
-	    SemanticAction semanticAction01 = new SemanticAction01(lexicalAnalyzer);
-	    SemanticAction semanticAction02 = new SemanticAction02(lexicalAnalyzer);
-	    SemanticAction semanticAction03 = new SemanticAction03(lexicalAnalyzer);
-	    SemanticAction semanticAction04 = new SemanticAction04(lexicalAnalyzer);
-	    SemanticAction semanticAction05 = new SemanticAction05(lexicalAnalyzer);
-	    SemanticAction semanticAction06 = new SemanticAction06(lexicalAnalyzer);
-	    SemanticAction semanticAction07 = new SemanticAction07(lexicalAnalyzer);
-	    SemanticAction semanticAction08 = new SemanticAction08(lexicalAnalyzer);
-	    SemanticAction semanticAction10 = new SemanticAction10(lexicalAnalyzer);
-	    SemanticAction semanticAction11 = new SemanticAction11(lexicalAnalyzer);
-	    SemanticAction semanticAction12 = new SemanticAction12(lexicalAnalyzer);
-	    SemanticAction semanticAction13 = new SemanticAction13(lexicalAnalyzer);
-	    SemanticAction semanticAction14 = new SemanticAction14(lexicalAnalyzer);
-	    SemanticAction semanticAction15 = new SemanticAction15(lexicalAnalyzer);
-	    SemanticAction semanticAction16 = new SemanticAction16(lexicalAnalyzer);
-	    SemanticAction semanticAction17 = new SemanticAction17(lexicalAnalyzer);
-	    SemanticAction semanticAction18 = new SemanticAction18(lexicalAnalyzer);
-	    SemanticAction semanticAction19 = new SemanticAction19(lexicalAnalyzer);
+	    SemanticAction semanticAction01 = new SA01InitLexAndAddNextChar(lexicalAnalyzer);
+	    SemanticAction semanticAction02 = new SA02AddNextChar(lexicalAnalyzer);
+	    SemanticAction semanticAction03 = new SA03IdFound(lexicalAnalyzer);
+	    SemanticAction semanticAction04 = new SA04DivisionFound(lexicalAnalyzer);
+	    SemanticAction semanticAction05 = new SA05ResWordFound(lexicalAnalyzer);
+	    SemanticAction semanticAction06 = new SA06LongConstantFound(lexicalAnalyzer);
+	    SemanticAction semanticAction07 = new SA07DoubleConstantFound(lexicalAnalyzer);
+	    SemanticAction semanticAction08 = new SA08StringFound(lexicalAnalyzer);
+	    SemanticAction semanticAction10 = new SA10InitLexeme(lexicalAnalyzer);
+	    SemanticAction semanticAction11 = new SA11SingleCharTokenFound(lexicalAnalyzer);
+	    SemanticAction semanticAction12 = new SA12LessThanOrEqFound(lexicalAnalyzer);
+	    SemanticAction semanticAction13 = new SA13LessThanFound(lexicalAnalyzer);
+	    SemanticAction semanticAction14 = new SA14GreaterThanOrEqFound(lexicalAnalyzer);
+	    SemanticAction semanticAction15 = new SA15GreaterThanFound(lexicalAnalyzer);
+	    SemanticAction semanticAction16 = new SA16EqualComparatorFound(lexicalAnalyzer);
+	    SemanticAction semanticAction17 = new SA17AssignationOperatorFound(lexicalAnalyzer);
+	    SemanticAction semanticAction18 = new SA18NotEqualOperatorFound(lexicalAnalyzer);
+	    SemanticAction semanticAction19 = new SA19EOFFound(lexicalAnalyzer);
 	    
-	    SemanticAction error1 = new Error1(lexicalAnalyzer);
-	    SemanticAction error2 = new Error2(lexicalAnalyzer);
+	    SemanticAction error1 = new Error1UnexpectedEOF(lexicalAnalyzer);
+	    SemanticAction error2 = new Error2UnexpectedChar(lexicalAnalyzer);
 	    SemanticAction warning1 = new Warning1(lexicalAnalyzer);
 	    SemanticAction semanticActionNone = new SemanticActionNone(lexicalAnalyzer);
 	    

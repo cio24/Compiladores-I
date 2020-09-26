@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
-public class Error1 extends SemanticAction {
+public class Error1UnexpectedEOF extends SemanticAction {
 
-	public Error1(LexicalAnalyzer lexicalAnalyzer) {
+	public Error1UnexpectedEOF(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
