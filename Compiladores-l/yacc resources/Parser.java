@@ -415,14 +415,23 @@ public void parse(){
 }
 
 public void yyerror(String s){
-    System.out.println(s);
+	if(s.equals("syntax error"))
+		System.out.println("Line " + la.getCurrentLine()+ ": " + s);
 
+}
+
+int yylex(){
+	yyval = new ParserVal();
+	AtomicReference<ParserVal> ref = new AtomicReference<>();
+	yychar = la.yylex(ref);
+	yylval = ref.get(); // get next token
+	return yychar;
 }
 
 public void showMessage(String mg) {
 	System.out.println(mg);
 }
-//#line 354 "Parser.java"
+//#line 363 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -628,7 +637,7 @@ case 46:
 //#line 114 "specification.y"
 {showMessage("Expresion reducida,linea:"+la.getCurrentLine());}
 break;
-//#line 555 "Parser.java"
+//#line 564 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
