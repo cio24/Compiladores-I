@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicReference;
 
 import semanticActionPackage.SemanticAction;
+import usefullClassesPackage.Constants;
 
 public class LexicalAnalyzer {
 
@@ -76,9 +77,20 @@ public class LexicalAnalyzer {
 		reference.set(yylval);
 		if(tokenId == (int)'~')
 			return -1;
-		System.out.println("[Line " + this.getCurrentLine() + "] Token "  +tokenId + " found");
+		
+		System.out.println("-- LEX (Line " + this.getCurrentLine() + ") Token \""  +getTokenString(tokenId) + "\" found");
+		
 		return tokenId;				
 
+	}
+	
+	public String getTokenString(int token) {
+		String nombre = Constants.getConstantName(token);
+		if(nombre == null)
+			return Character.toString((char)token);
+		else
+			return nombre;
+		
 	}
 
 	public char getLastCharactedRead() {
