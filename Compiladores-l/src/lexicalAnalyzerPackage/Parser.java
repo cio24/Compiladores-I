@@ -371,12 +371,12 @@ final static String yyrule[] = {
 "id_list : ID",
 "id_list : ID ',' ID",
 "id_list : ID ',' ID ',' ID",
-"function_call : ID '(' id_list ')'",
-"function_call : ID '(' ')'",
+"procedure_call : ID '(' id_list ')'",
+"procedure_call : ID '(' ')'",
 "executable : ID '=' expression",
 "executable : if_clause",
 "executable : loop_clause",
-"executable : function_call",
+"executable : procedure_call",
 "executable : out_clause",
 "comparator : EQUAL",
 "comparator : NEQUAL",
@@ -402,7 +402,7 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 131 "specification.y"
+//#line 134 "specification.y"
 
 LexicalAnalyzer la;
 
@@ -416,7 +416,7 @@ public void parse(){
 
 public void yyerror(String s){
 	if(s.equals("syntax error"))
-		System.out.println("Line " + la.getCurrentLine()+ ": " + s);
+		System.out.println("[Line " + la.getCurrentLine()+ "] " + s + ".");
 
 }
 
@@ -586,58 +586,82 @@ boolean doaction;
       {
 //########## USER-SUPPLIED ACTIONS ##########
 case 1:
-//#line 18 "specification.y"
-{showMessage("Reduccion: programa completo");}
+//#line 19 "specification.y"
+{showMessage( "[Line " + la.getCurrentLine() + "] Program completed!");}
 break;
 case 4:
-//#line 23 "specification.y"
-{showMessage("Error sintactico: falta punto y coma (linea " + la.getCurrentLine() + ")" );}
+//#line 24 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Syntax error: ';' expected but didn't found.");}
 break;
 case 7:
-//#line 31 "specification.y"
-{showMessage("Reduccion: declaracion de variables (linea " + la.getCurrentLine() +  ")" );}
+//#line 32 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Variable declaration found.");}
 break;
 case 8:
-//#line 32 "specification.y"
-{showMessage("Reduccion: declaracion de procedimiento (linea " + la.getCurrentLine() + ")" );}
+//#line 33 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}
 break;
 case 9:
-//#line 33 "specification.y"
-{showMessage("Error sintactico: falta definir el tipo de variable de \"" + ((Symbol)val_peek(0).obj).getLexeme()  + "\" (linea " + la.getCurrentLine() + ")" );}
+//#line 34 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Syntax error: there's no type for the identifier \"" + ((Symbol)val_peek(0).obj).getLexeme()  + "\".");}
 break;
 case 10:
-//#line 34 "specification.y"
-{showMessage("Error sintactico: falta definir el identificador de la variable (linea " + la.getCurrentLine() + ")" );}
+//#line 35 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Syntax error: identifier expected but didn't found.");}
+break;
+case 17:
+//#line 50 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}
+break;
+case 18:
+//#line 51 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}
+break;
+case 26:
+//#line 67 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Procedure call found.");}
+break;
+case 27:
+//#line 68 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Procedure call found.");}
 break;
 case 28:
-//#line 70 "specification.y"
-{showMessage("Asignacion reducida,linea:"+la.getCurrentLine());}
+//#line 71 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Assignment found.");}
 break;
 case 29:
-//#line 71 "specification.y"
-{showMessage("Control IF reducida,linea:"+la.getCurrentLine());}
+//#line 72 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] If clause found.");}
 break;
 case 30:
-//#line 72 "specification.y"
-{showMessage("Constrol LOOP reducida,linea:"+la.getCurrentLine());}
+//#line 73 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Loop clause found.");}
 break;
 case 31:
-//#line 73 "specification.y"
-{showMessage("Llamado a funcion reducida,linea:"+la.getCurrentLine());}
+//#line 74 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Function clause found.");}
 break;
 case 32:
-//#line 74 "specification.y"
-{showMessage("Salida por pantalla reducida,linea:"+la.getCurrentLine());}
+//#line 75 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Out clause found.");}
 break;
 case 39:
-//#line 85 "specification.y"
-{showMessage("Condicion reducida,linea:"+la.getCurrentLine());}
+//#line 86 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Condition found.");}
 break;
 case 46:
-//#line 114 "specification.y"
-{showMessage("Expresion reducida,linea:"+la.getCurrentLine());}
+//#line 115 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Addition expression found.");}
 break;
-//#line 564 "Parser.java"
+case 47:
+//#line 116 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Subtract expression found.");}
+break;
+case 48:
+//#line 117 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Term found.");}
+break;
+//#line 588 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

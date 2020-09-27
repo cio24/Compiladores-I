@@ -14,13 +14,13 @@ public class Constants {
 	public final static int DOUBLE=265;
 	public final static int LOOP=266;
 	public static final int UNTIL=267;
-	public static final int IDENTIFICADOR = 268;
-	public static final int CONSTANTE_NUMERICA = 269;
-	public static final int CONSTANTE_CADENA_CARACTERES = 270;	
-	public static final int COMPARADOR_MEN_IGUAL = 271;
-	public static final int COMPARADOR_MAY_IGUAL = 272;
-	public static final int COMPARADOR_IGUAL = 273;
-	public static final int COMPARADOR_DISTINTO = 274;
+	public static final int ID = 268;
+	public static final int CONSTANT = 269;
+	public static final int CSTRING = 270;	
+	public static final int LESSEQUAL = 271;
+	public static final int GREATEQUAL = 272;
+	public static final int EQUAL = 273;
+	public static final int NEQUAL = 274;
 	public static final int PROC = 275;	
 	public static final int NA = 276;
 	public static final int SHADOWING = 277;
@@ -58,19 +58,29 @@ public class Constants {
 		case 267:
 			return "UNTIL";
 		case 268:
-			return "IDENTIFICADOR";
+			return "ID";
 		case 269:
-			return "CONSTANTE_NUMERICA";
+			return "CONSTANT";
 		case 270:
-			return "CONSTANTE_CADENA_CARACTERES";
+			return "CSTRING";
 		case 271:
-			return "COMPARADOR_MEN_IGUAL";
+			return "LESSEQUAL";
 		case 272:
-			return "COMPARADOR_MAY_IGUAL";
+			return "GREATEQUAL";
 		case 273:
-			return "COMPARADOR_IGUAL";
+			return "EQUAL";
 		case 274:
-			return "COMPARADOR_DISTINTO";
+			return "NEQUAL";
+		case 275:
+			return "PROC";
+		case 276:
+			return "NA";
+		case 277:
+			return "SHADOWING";
+		case 278:
+			return "TRUE";
+		case 279:
+			return "FALSE";
 		default:
 			return null;
 		}

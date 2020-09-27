@@ -13,15 +13,14 @@ public class SA08StringFound extends SemanticAction {
 	}
 
 	@Override
-	public void execute() {
-		// TODO Auto-generated method stub
+	public void execute(){
 		//ingresar en la talba de simbolos
 		String lexeme = lexicalAnalyzer.getCurrentLexem();
 		Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
 		lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
 		lexicalAnalyzer.yylval.obj = symbol;
 		lexicalAnalyzer.yylval.sval = lexeme;
-		lexicalAnalyzer.setTokenId(Constants.CONSTANTE_CADENA_CARACTERES);
+		lexicalAnalyzer.setTokenId(Constants.CSTRING);
 	}
 
 }

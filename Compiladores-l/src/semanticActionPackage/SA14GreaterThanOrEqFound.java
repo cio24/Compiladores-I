@@ -14,7 +14,7 @@ public class SA14GreaterThanOrEqFound extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_MAY_IGUAL);
+		lexicalAnalyzer.setTokenId(Constants.GREATEQUAL);
 	}
 
 }

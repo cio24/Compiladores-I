@@ -23,7 +23,7 @@ public class SA07DoubleConstantFound extends SemanticAction {
 
 		lexicalAnalyzer.returnLastCharacterRead();
 		if (number.compareTo(Constants.MAX_RANGE_DOUBLE) < 0  && Constants.MIN_RANGE_DOUBLE.compareTo(number)< 0) {
-			lexicalAnalyzer.setTokenId(Constants.CONSTANTE_NUMERICA);
+			lexicalAnalyzer.setTokenId(Constants.CONSTANT);
 			//Ingresar en la tabla de simbolos
 			String lexeme = lexicalAnalyzer.getCurrentLexem();
 			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
@@ -33,7 +33,7 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			}
 		else 
 		{
-			System.out.println("Error lexico: valor de constante doble fuera de rango (linea " + lexicalAnalyzer.getCurrentLine());
+			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Lexical error: DOUBLE out of range.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

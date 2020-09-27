@@ -14,7 +14,7 @@ public class SA12LessThanOrEqFound extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_MEN_IGUAL);
+		lexicalAnalyzer.setTokenId(Constants.LESSEQUAL);
 	}
 
 }

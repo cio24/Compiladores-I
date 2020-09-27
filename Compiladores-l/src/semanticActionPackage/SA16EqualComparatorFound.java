@@ -14,7 +14,7 @@ public class SA16EqualComparatorFound extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_IGUAL);
+		lexicalAnalyzer.setTokenId(Constants.EQUAL);
 	}
 
 }

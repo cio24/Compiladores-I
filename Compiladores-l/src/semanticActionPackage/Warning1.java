@@ -12,7 +12,7 @@ public class Warning1 extends SemanticAction{
 
 	@Override
 	public void execute() {
-		System.out.println("Warning Lexico en linea " + lexicalAnalyzer.getCurrentLine() + ": Caracter inesperado dentro de comentario");
+		System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Warning: Unexpected character inside a comment.");
 	}
 
 }

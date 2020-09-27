@@ -13,7 +13,7 @@ public class SA18NotEqualOperatorFound extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		lexicalAnalyzer.setTokenId(Constants.COMPARADOR_DISTINTO);
+		lexicalAnalyzer.setTokenId(Constants.NEQUAL);
 	}
 
 }

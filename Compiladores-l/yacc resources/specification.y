@@ -15,12 +15,13 @@ PROC NA SHADOWING TRUE FALSE UP DOWN
 
 %start program
 %%
-program : sentences  {showMessage("Reduccion: programa completo");}
-		;
+
+program : sentences  				{showMessage( "[Line " + la.getCurrentLine() + "] Program completed!");}
+	;
 		
 sentences  :  sentence ';' 
-		   |  sentence  ';'  sentences
-		   |  error {showMessage("Error sintactico: falta punto y coma (linea " + la.getCurrentLine() + ")" );} /*testeado*/
+		   |  sentence ';' sentences
+		   |  error 				{showMessage("[Line " + la.getCurrentLine() + "] Syntax error: ';' expected but didn't found.");} /*testeado*/
 ;
 
 
@@ -28,10 +29,10 @@ sentence  :  declaration
 		  |  executable		
 ;
 
-declaration  :  type  variable_list		{showMessage("Reduccion: declaracion de variables (linea " + la.getCurrentLine() +  ")" );}
-			 |  procedure	{showMessage("Reduccion: declaracion de procedimiento (linea " + la.getCurrentLine() + ")" );} /*((Symbol) la.yyval.obj).getLexeme()*/
-			 | variable_list {showMessage("Error sintactico: falta definir el tipo de variable de \"" + ((Symbol)$1.obj).getLexeme()  + "\" (linea " + la.getCurrentLine() + ")" );}  /*testeado*/
-			 | type {showMessage("Error sintactico: falta definir el identificador de la variable (linea " + la.getCurrentLine() + ")" );}
+declaration  :  type  variable_list	{showMessage("[Line " + la.getCurrentLine() + "] Variable declaration found.");}
+			 |  procedure			{showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}
+			 | variable_list 		{showMessage("[Line " + la.getCurrentLine() + "] Syntax error: there's no type for the identifier \"" + ((Symbol)$1.obj).getLexeme()  + "\".");}  /*testeado*/
+			 | type 				{showMessage("[Line " + la.getCurrentLine() + "] Syntax error: identifier expected but didn't found.");}
 ;
 
 variable_list  :  ID  
@@ -46,8 +47,8 @@ true_false : TRUE
            | FALSE
 ;
 
-procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences  '}'
-           |  PROC  ID  '('  ')'  '{'  sentences  '}'
+procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences  '}' {showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}	
+           |  PROC  ID  '('  ')'  '{'  sentences  '}' 																 {showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}	
 ;
 
 parameter_list  :  parameter
@@ -63,15 +64,15 @@ id_list  :  ID
 		 |  ID  ','  ID  ','  ID
 ;
 
-function_call  :  ID  '('  id_list  ')'		
-		       |  ID  '('  ')'
+procedure_call :  ID  '('  id_list  ')' {showMessage("[Line " + la.getCurrentLine() + "] Procedure call found.");}	
+		       |  ID  '('  ')' 			{showMessage("[Line " + la.getCurrentLine() + "] Procedure call found.");}	
 ;
 
-executable  :  ID  '='  expression	{showMessage("Asignacion reducida,linea:"+la.getCurrentLine());}
-			|  if_clause  		{showMessage("Control IF reducida,linea:"+la.getCurrentLine());}
-			|  loop_clause	    {showMessage("Constrol LOOP reducida,linea:"+la.getCurrentLine());}
-			|  function_call	{showMessage("Llamado a funcion reducida,linea:"+la.getCurrentLine());}
-			|  out_clause	{showMessage("Salida por pantalla reducida,linea:"+la.getCurrentLine());}
+executable  :  ID  '='  expression	{showMessage("[Line " + la.getCurrentLine() + "] Assignment found.");}
+			|  if_clause  			{showMessage("[Line " + la.getCurrentLine() + "] If clause found.");}
+			|  loop_clause	    	{showMessage("[Line " + la.getCurrentLine() + "] Loop clause found.");}
+			|  procedure_call		{showMessage("[Line " + la.getCurrentLine() + "] Function clause found.");}
+			|  out_clause			{showMessage("[Line " + la.getCurrentLine() + "] Out clause found.");}
 ;
 
 comparator  :  EQUAL
@@ -82,7 +83,7 @@ comparator  :  EQUAL
             |  '>'
 ;
 
-condition  :  expression  comparator  expression 	{showMessage("Condicion reducida,linea:"+la.getCurrentLine());}
+condition  :  expression  comparator  expression 	{showMessage("[Line " + la.getCurrentLine() + "] Condition found.");}
 ;
 
 /*-------> Gramatica de control<-------*/
@@ -111,9 +112,9 @@ out_clause  :  OUT  '('  CSTRING  ')'
        
 /*-------> Gramatica de expresiones <-------*/
 
-expression  :  expression  '+'  term	{showMessage("Expresion reducida,linea:"+la.getCurrentLine());}
-			|  expression  '-'  term
-			|  term
+expression  :  expression  '+'  term {showMessage("[Line " + la.getCurrentLine() + "] Addition expression found.");}
+			|  expression  '-'  term {showMessage("[Line " + la.getCurrentLine() + "] Subtract expression found.");}
+			|  term 				 {showMessage("[Line " + la.getCurrentLine() + "] Term found.");}
 ;
 
 term  :  term  '*'  factor
@@ -125,6 +126,8 @@ factor  :  ID
 	    |  CONSTANT
 	    |  '-' CONSTANT
 ;
+
+
 
 /*-------> Gramatica de expresiones <-------*/
 %%
@@ -141,7 +144,7 @@ public void parse(){
 
 public void yyerror(String s){
 	if(s.equals("syntax error"))
-		System.out.println("Line " + la.getCurrentLine()+ ": " + s);
+		System.out.println("[Line " + la.getCurrentLine()+ "] " + s + ".");
 
 }
 

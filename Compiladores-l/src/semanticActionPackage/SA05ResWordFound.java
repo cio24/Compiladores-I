@@ -12,13 +12,15 @@ public class SA05ResWordFound extends SemanticAction{
 	@Override
 	public void execute() {
 		lexicalAnalyzer.returnLastCharacterRead();
-		int keywordtoken = lexicalAnalyzer.reservedKeywords.getKeywordToken(lexicalAnalyzer.getCurrentLexem());
-		if (keywordtoken!=-1)
+		String lexeme = lexicalAnalyzer.getCurrentLexem();
+		int keywordtoken = lexicalAnalyzer.reservedKeywords.getKeywordToken(lexeme);
+		if (keywordtoken!=-1) {
+			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Reserved word \"" + lexeme + "\" found.");
 			lexicalAnalyzer.setTokenId(keywordtoken);
+		}
 		else
 		{
-			System.out.println("Error lexico: la palabra reservada "
-								+ "\"" + lexicalAnalyzer.getCurrentLexem() + "\" no existe (linea " + lexicalAnalyzer.getCurrentLine() + ")");	
+			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Lexical error: there's no reserved word called \"" + lexeme + "\".");	
 			lexicalAnalyzer.setNextState(0);
 		}
 			

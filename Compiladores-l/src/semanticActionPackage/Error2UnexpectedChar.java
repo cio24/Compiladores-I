@@ -10,7 +10,7 @@ public class Error2UnexpectedChar extends SemanticAction{
 	}
 
 	public void execute() {
-		System.out.println("Error Lexico en linea " + lexicalAnalyzer.getCurrentLine() + ": Caracter inesperado");
+		System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Lexical error: Unexpected character.");
 	}
 
 }

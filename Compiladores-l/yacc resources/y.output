@@ -36,13 +36,13 @@
   24          | ID ',' ID
   25          | ID ',' ID ',' ID
 
-  26  function_call : ID '(' id_list ')'
-  27                | ID '(' ')'
+  26  procedure_call : ID '(' id_list ')'
+  27                 | ID '(' ')'
 
   28  executable : ID '=' expression
   29             | if_clause
   30             | loop_clause
-  31             | function_call
+  31             | procedure_call
   32             | out_clause
 
   33  comparator : EQUAL
@@ -97,7 +97,7 @@ state 0
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -155,7 +155,7 @@ state 6
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -165,8 +165,8 @@ state 6
 state 7
 	variable_list : ID .  (11)
 	variable_list : ID . ',' variable_list  (12)
-	function_call : ID . '(' id_list ')'  (26)
-	function_call : ID . '(' ')'  (27)
+	procedure_call : ID . '(' id_list ')'  (26)
+	procedure_call : ID . '(' ')'  (27)
 	executable : ID . '=' expression  (28)
 
 	','  shift 26
@@ -244,7 +244,7 @@ state 16
 
 
 state 17
-	executable : function_call .  (31)
+	executable : procedure_call .  (31)
 
 	.  reduce 31
 
@@ -309,7 +309,7 @@ state 23
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -338,8 +338,8 @@ state 26
 
 
 state 27
-	function_call : ID '(' . id_list ')'  (26)
-	function_call : ID '(' . ')'  (27)
+	procedure_call : ID '(' . id_list ')'  (26)
+	procedure_call : ID '(' . ')'  (27)
 
 	ID  shift 44
 	')'  shift 45
@@ -391,7 +391,7 @@ state 30
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -524,13 +524,13 @@ state 44
 
 
 state 45
-	function_call : ID '(' ')' .  (27)
+	procedure_call : ID '(' ')' .  (27)
 
 	.  reduce 27
 
 
 state 46
-	function_call : ID '(' id_list . ')'  (26)
+	procedure_call : ID '(' id_list . ')'  (26)
 
 	')'  shift 67
 	.  error
@@ -668,7 +668,7 @@ state 60
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -732,7 +732,7 @@ state 66
 
 
 state 67
-	function_call : ID '(' id_list ')' .  (26)
+	procedure_call : ID '(' id_list ')' .  (26)
 
 	.  reduce 26
 
@@ -877,7 +877,7 @@ state 80
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -927,7 +927,7 @@ state 84
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
@@ -1087,7 +1087,7 @@ state 104
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	function_call  goto 17
+	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20

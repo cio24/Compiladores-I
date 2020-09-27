@@ -18,7 +18,8 @@ public class SA06LongConstantFound extends SemanticAction {
 		String lexem=lexicalAnalyzer.getCurrentLexem();
 		Integer value=Integer.parseInt(lexem);
 		if (value>=0 && value<=Math.pow(2, 32)-1) {
-			lexicalAnalyzer.setTokenId(Constants.CONSTANTE_NUMERICA);
+			lexicalAnalyzer.setTokenId(Constants.CONSTANT);
+			
 			//agregar a la tabla de simbolos
 			String lexeme = lexicalAnalyzer.getCurrentLexem();
 			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
@@ -27,7 +28,7 @@ public class SA06LongConstantFound extends SemanticAction {
 			lexicalAnalyzer.yylval.sval = lexeme;
 		}
 		else {
-			System.out.print("Error lexico: constante larga sin signo fuera de rango (linea " + lexicalAnalyzer.getCurrentLine());
+			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Lexical error: ULONGINT out of range.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

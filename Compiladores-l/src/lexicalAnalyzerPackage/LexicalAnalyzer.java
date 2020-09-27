@@ -76,7 +76,7 @@ public class LexicalAnalyzer {
 		reference.set(yylval);
 		if(tokenId == (int)'~')
 			return -1;
-		//System.out.println("Token encontrado, numero:"+tokenId+".linea:"+getCurrentLine());
+		System.out.println("[Line " + this.getCurrentLine() + "] Token "  +tokenId + " found");
 		return tokenId;				
 
 	}
@@ -102,8 +102,24 @@ public class LexicalAnalyzer {
 		this.tokenId = tokenId;
 	}
 
-	public int getCurrentLine() {
-		return fileReader.getCurrentLine();
+	public String getCurrentLine() {
+		int line = fileReader.getCurrentLine();
+		String s;
+		if(line <= 9)
+			switch(line){
+				case 0: return "00";
+				case 1: return "01";
+				case 2: return "02";
+				case 3: return "03";
+				case 4: return "04";
+				case 5: return "05";
+				case 6: return "06";
+				case 7: return "07";
+				case 8: return "08";
+				default: return "09";
+			}
+		
+		return String.valueOf(fileReader.getCurrentLine());
 	}
 
 	public void returnLastCharacterRead() {
