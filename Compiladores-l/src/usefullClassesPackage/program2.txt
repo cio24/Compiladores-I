@@ -1,9 +1,3 @@
-PROC my_procedimiento ( ) NA = 0_ul SHADOWING = TRUE {	
-	IF ( 4_ul < 5_ul ) {
-		DOUBLE int;
-		int = 5_ul;
-		OUT('Texto de salida');
-	} ENDIF;
-};
+ULONGINT aux;
 
-my_procedimiento();
+aux = -3.0;

@@ -1,9 +1,11 @@
 %{
 package lexicalAnalyzerPackage;
 
+import usefullClassesPackage.Constants;
 import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.lang.Math;
+import java.math.BigDecimal;
 import java.io.*;
 import java.util.StringTokenizer;
 %}
@@ -157,7 +159,18 @@ term  :  term  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] Mult
 
 factor  :  ID 
 	    |  CONSTANT
-	    |  '-' CONSTANT
+	    |  '-' CONSTANT {
+	    				 Symbol symbol = (Symbol) $2.obj;
+	    				 if(symbol.getType().equals(Symbol._DOUBLE)){
+							String lexeme = symbol.getLexeme();
+							String snumber = lexeme.replace('d','e');
+							BigDecimal number= new BigDecimal(snumber);
+							BigDecimal min = new BigDecimal("2.2250738585072014d-308");
+							BigDecimal max = new BigDecimal("1.7976931348623157d+308");
+							if (!(number.compareTo(max) < 0  && min.compareTo(number)< 0))
+								showMessage("[Line " + la.getCurrentLine() + "] DOBLE negativo fuera de rango.");
+						}
+	    				}
 ;
 
 
