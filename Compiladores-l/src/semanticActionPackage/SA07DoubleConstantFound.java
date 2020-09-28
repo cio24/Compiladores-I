@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.ParserVal;
 import lexicalAnalyzerPackage.Symbol;
-import usefullClassesPackage.Constants;
+import usefulClassesPackage.Constants;
 
 public class SA07DoubleConstantFound extends SemanticAction {
 

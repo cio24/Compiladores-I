@@ -3,7 +3,7 @@ package semanticActionPackage;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.ParserVal;
 import lexicalAnalyzerPackage.Symbol;
-import usefullClassesPackage.Constants;
+import usefulClassesPackage.Constants;
 
 public class SA08StringFound extends SemanticAction {
 

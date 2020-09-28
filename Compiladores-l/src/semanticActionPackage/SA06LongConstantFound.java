@@ -4,7 +4,7 @@ import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.Parser;
 import lexicalAnalyzerPackage.ParserVal;
 import lexicalAnalyzerPackage.Symbol;
-import usefullClassesPackage.Constants;
+import usefulClassesPackage.Constants;
 
 public class SA06LongConstantFound extends SemanticAction {
 

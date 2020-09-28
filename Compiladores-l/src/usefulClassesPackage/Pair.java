@@ -1,4 +1,4 @@
-package usefullClassesPackage;
+package usefulClassesPackage;
 
 public class Pair {
 	Object el1,el2;

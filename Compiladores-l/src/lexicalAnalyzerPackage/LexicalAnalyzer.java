@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicReference;
 
 import semanticActionPackage.SemanticAction;
-import usefullClassesPackage.Constants;
+import usefulClassesPackage.Constants;
 
 public class LexicalAnalyzer {
 

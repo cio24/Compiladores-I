@@ -20,9 +20,11 @@
 
 package lexicalAnalyzerPackage;
 
-import usefullClassesPackage.Constants;
 import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicReference;
+
+import usefulClassesPackage.Constants;
+
 import java.lang.Math;
 import java.math.BigDecimal;
 import java.io.*;

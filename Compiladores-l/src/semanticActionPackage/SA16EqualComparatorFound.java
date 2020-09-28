@@ -1,7 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import usefullClassesPackage.Constants;
+import usefulClassesPackage.Constants;
 
 
 public class SA16EqualComparatorFound extends SemanticAction {
