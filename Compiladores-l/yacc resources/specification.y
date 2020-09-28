@@ -35,7 +35,7 @@ sentence  :  declaration
 
 declaration  : type  variable_list	{showMessage("[Line " + la.getCurrentLine() + "] Declaración de variable.");}
 			 | procedure			{showMessage("[Line " + la.getCurrentLine() + "] Declaración PROC.");}
-			 | variable_list 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + ((Symbol)$1.obj).getLexeme()  + "\".");}  /*testeado*/
+			 | variable_list 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
 			 | type 				{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: se esperaba un identificador y no se encontró.");}
 ;
 
@@ -160,11 +160,11 @@ term  :  term  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] Mult
 factor  :  ID 
 	    |  CONSTANT
 	    |  '-' CONSTANT {
-	    				 Symbol symbol = (Symbol) $2.obj;
+	    				 Symbol symbol = la.symbolsTable.getSymbol($2.sval);
 	    				 if(symbol.getType().equals(Symbol._DOUBLE)){
 							String lexeme = symbol.getLexeme();
 							String snumber = lexeme.replace('d','e');
-							BigDecimal number= new BigDecimal(snumber);
+							BigDecimal number = new BigDecimal(snumber);
 							BigDecimal min = new BigDecimal("2.2250738585072014d-308");
 							BigDecimal max = new BigDecimal("1.7976931348623157d+308");
 							if (!(number.compareTo(max) < 0  && min.compareTo(number)< 0))

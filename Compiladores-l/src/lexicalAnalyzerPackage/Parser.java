@@ -697,7 +697,7 @@ case 10:
 break;
 case 11:
 //#line 38 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + ((Symbol)val_peek(0).obj).getLexeme()  + "\".");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + val_peek(0).sval + "\".");}
 break;
 case 12:
 //#line 39 "specification.y"
@@ -866,11 +866,11 @@ break;
 case 85:
 //#line 162 "specification.y"
 {
-	    				 Symbol symbol = (Symbol) val_peek(0).obj;
+	    				 Symbol symbol = la.symbolsTable.getSymbol(val_peek(0).sval);
 	    				 if(symbol.getType().equals(Symbol._DOUBLE)){
 							String lexeme = symbol.getLexeme();
 							String snumber = lexeme.replace('d','e');
-							BigDecimal number= new BigDecimal(snumber);
+							BigDecimal number = new BigDecimal(snumber);
 							BigDecimal min = new BigDecimal("2.2250738585072014d-308");
 							BigDecimal max = new BigDecimal("1.7976931348623157d+308");
 							if (!(number.compareTo(max) < 0  && min.compareTo(number)< 0))
