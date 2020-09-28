@@ -16,20 +16,17 @@
 
 
 
-//#line 1 "specification.y"
-
+//#line 2 "specification.y"
 package lexicalAnalyzerPackage;
 
+import usefulClassesPackage.Constants;
 import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicReference;
-
-import usefulClassesPackage.Constants;
-
 import java.lang.Math;
 import java.math.BigDecimal;
 import java.io.*;
 import java.util.StringTokenizer;
-//#line 28 "Parser.java"
+//#line 27 "Parser.java"
 
 
 
@@ -508,8 +505,7 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 192 "specification.y"
-
+//#line 193 "specification.y"
 
 public LexicalAnalyzer la;
 
@@ -539,7 +535,7 @@ int yylex(){
 public void showMessage(String mg) {
 	System.out.println(mg);
 }
-//#line 469 "Parser.java"
+//#line 467 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -695,7 +691,7 @@ boolean doaction;
 //########## USER-SUPPLIED ACTIONS ##########
 case 1:
 //#line 21 "specification.y"
-{showMessage( "[Line " + la.getCurrentLine() + "] WARNING sintáctico: Programa vacío!");}
+{showMessage( "[Line " + la.getCurrentLine() + "] WARNING sintactico: Programa vacio!");}
 break;
 case 2:
 //#line 22 "specification.y"
@@ -703,27 +699,27 @@ case 2:
 break;
 case 3:
 //#line 23 "specification.y"
-{showMessage( "[Line " + la.getCurrentLine() + "] ERROR sintáctico: no se encontraron sentencias válidas.");}
+{showMessage( "[Line " + la.getCurrentLine() + "] ERROR sintactico: no se encontraron sentencias validas.");}
 break;
 case 6:
 //#line 28 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: ';' ausente al final de la sentencia.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");}
 break;
 case 9:
 //#line 36 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Declaración de variable.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de variable.");}
 break;
 case 10:
 //#line 37 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Declaración PROC.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Declaracion PROC.");}
 break;
 case 11:
 //#line 38 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + val_peek(0).sval + "\".");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + val_peek(0).sval + "\".");}
 break;
 case 12:
 //#line 39 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: se esperaba un identificador y no se encontró.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
 break;
 case 21:
 //#line 57 "specification.y"
@@ -735,27 +731,27 @@ case 22:
 break;
 case 23:
 //#line 59 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no se puede asignar una constante negativa al valor NA.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no se puede asignar una constante negativa al valor NA.");}
 break;
 case 24:
 //#line 60 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no se puede asignar una constante negativa al valor NA.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no se puede asignar una constante negativa al valor NA.");}
 break;
 case 28:
 //#line 66 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: un procedimiento puede recibir un máximo de trés parametros.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un máximo de tres parametros.");}
 break;
 case 30:
 //#line 70 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: falta identificador en declaración de parámetro.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta identificador en declaracion de parametro.");}
 break;
 case 31:
 //#line 71 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: falta tipo en declaración de parámetro.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
 break;
 case 35:
 //#line 77 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: un procedimiento puede recibir un máximo de trés parametros.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 break;
 case 36:
 //#line 78 "specification.y"
@@ -763,19 +759,19 @@ case 36:
 break;
 case 39:
 //#line 85 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Asignación.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Asignacion.");}
 break;
 case 40:
 //#line 86 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: asignación errónea. Se espera una expresión del lado derecho.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
 break;
 case 41:
 //#line 87 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: asignación errónea. Se espera un identificador del lado izquierdo.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 break;
 case 42:
 //#line 88 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: asignación errónea. ¿Quisiste decir '='?.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
 break;
 case 43:
 //#line 89 "specification.y"
@@ -787,7 +783,7 @@ case 44:
 break;
 case 45:
 //#line 91 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Invocación PROC.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Invocacion PROC.");}
 break;
 case 46:
 //#line 92 "specification.y"
@@ -795,51 +791,51 @@ case 46:
 break;
 case 53:
 //#line 103 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Condición.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Condicion.");}
 break;
 case 54:
 //#line 104 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: Comparación inválida. ¿Quisiste decir '=='?.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
 break;
 case 60:
 //#line 118 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: falta palabra reservada END_INF al final de la sentencia IF");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
 break;
 case 61:
 //#line 119 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: falta palabra reservada END_INF al final de la sentencia IF");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
 break;
 case 62:
 //#line 120 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: luego de la palabra reservada IF se espera una condición entre paréntesis.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
 break;
 case 63:
 //#line 121 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: luego de la palabra reservada IF se espera una condición entre paréntesis.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
 break;
 case 64:
 //#line 122 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
 break;
 case 65:
 //#line 123 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: se esperaba un bloque de sentencias dentro de la cláusula ELSE_IF.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula ELSE_IF.");}
 break;
 case 66:
 //#line 124 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
 break;
 case 68:
 //#line 128 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: falta la cláusula UNTIL en la sentencia LOOP");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
 break;
 case 69:
 //#line 129 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la cláusula UNTIL debe incluir una condición entre paréntesis");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la cláusula UNTIL debe incluir una condicion entre parentesis");}
 break;
 case 70:
 //#line 130 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia LOOP debe incluir un bloque de sentencias");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
 break;
 case 72:
 //#line 138 "specification.y"
@@ -855,31 +851,31 @@ case 74:
 break;
 case 75:
 //#line 147 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Término.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Termino.");}
 break;
 case 76:
 //#line 148 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado derecho de la suma debe contener un término válido.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
 break;
 case 77:
 //#line 149 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado derecho de la resta debe contener un término válido.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
 break;
 case 78:
 //#line 150 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado izquierdo de la suma debe contener una expresión válida.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
 break;
 case 79:
 //#line 151 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado izquierdo de la resta debe contener una expresión válida.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
 break;
 case 80:
 //#line 154 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Multiplicación.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Multiplicacion.");}
 break;
 case 81:
 //#line 155 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] División.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Division.");}
 break;
 case 82:
 //#line 156 "specification.y"
@@ -887,35 +883,35 @@ case 82:
 break;
 case 83:
 //#line 157 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado derecho de la múltiplicación debe llevar una constante o un identificador");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
 break;
 case 84:
 //#line 158 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado derecho de la división debe llevar una constante o un identificador");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
 break;
 case 85:
 //#line 159 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado izquierdo de la múltiplicación debe llevar una término o un factor");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
 break;
 case 86:
 //#line 160 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: el lado izquierdo de la división debe llevar un término o un factor");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
 break;
 case 89:
 //#line 166 "specification.y"
 {
-							/* Manejo la entrada positiva de esta constante		    				*/
+							/* Manejo la entrada positiva de esta constante		    				*/
 		    				 Symbol positivo = la.symbolsTable.getSymbol(val_peek(0).sval);
-		    				 if(positivo.removeRef() == 0){ /* Remove reference and if it reaches 0, remove SyboleTable entry*/
+		    				 if(positivo.removeRef() == 0){ /* Remove reference and if it reaches 0, remove SyboleTable entry*/
 		    				 	la.symbolsTable.removeSymbol(positivo.getLexeme());
 		    				 }
 		    				 
-		    				 /* TODO: QUE HACER CON - 4_ul ??????*/
+		    				 /* TODO: QUE HACER CON - 4_ul ??????*/
 		    				 
-		    				 /* Creo nueva entrada o actualizo la existente con una referencia*/
+		    				 /* Creo nueva entrada o actualizo la existente con una referencia*/
 		    				 Symbol negativo = la.symbolsTable.getSymbol("-"+val_peek(0).sval);
 		    				 if (negativo != null){
-		    				 	negativo.addRef();  /* Ya existe la entrada*/
+		    				 	negativo.addRef();  /* Ya existe la entrada*/
 		    				 }else{
 		    				 	String lexema = "-"+positivo.getLexeme();
 		    				 	Symbol nuevoNegativo = new Symbol(lexema,la.getCurrentLine(),positivo.getType());
@@ -925,7 +921,7 @@ case 89:
 	    				 		
 	    				 }
 break;
-//#line 850 "Parser.java"
+//#line 848 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

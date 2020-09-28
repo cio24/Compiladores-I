@@ -4,3 +4,4 @@ int = 124.0;
 IF (int == 125_ul){
 ULONGINT asdf;
 } ENDIF;
+pedro=56_ul/56_ul;

@@ -33,7 +33,7 @@ public class SymbolsTable {
 	}
 	
 	public void print(){ 
-		System.out.println("\n\n ****** TABLA DE SÍMBOLOS ******* ");
+		System.out.println("\n\n ****** TABLA DE SIMBOLOS ******* ");
 		for( HashMap.Entry<String, Symbol> entry : this.symbolTable.entrySet() ){
 		    System.out.println( entry.getKey() + " => " + entry.getValue() );
 		}
