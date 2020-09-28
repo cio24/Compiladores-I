@@ -24,7 +24,7 @@ program :  /* EMPTY */		{showMessage( "[Line " + la.getCurrentLine() + "] WARNIN
 	;
 		
 sentences  :  sentence ';' 				//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
-		   |  sentence ';' sentences	//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
+		   |  sentences sentence ';' 	//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
 		   |  sentence error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: ';' ausente al final de la sentencia.");} /*testeado*/
 ;
 
@@ -35,7 +35,7 @@ sentence  :  declaration
 
 declaration  : type  variable_list	{showMessage("[Line " + la.getCurrentLine() + "] Declaración de variable.");}
 			 | procedure			{showMessage("[Line " + la.getCurrentLine() + "] Declaración PROC.");}
-			 | variable_list 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + ((Symbol)$1.obj).getLexeme()  + "\".");}  /*testeado*/
+			 | variable_list 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
 			 | type 				{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: se esperaba un identificador y no se encontró.");}
 ;
 
@@ -54,8 +54,10 @@ true_false : TRUE
 sentences_proc : sentence ';',
 			   | sentence ';' sentences_proc 
 
-procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}	
-           |  PROC  ID  '('  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false   '{'  sentences_proc  '}' 			     {showMessage("[Line " + la.getCurrentLine() + "] Procedure declaration found.");}	
+procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+           |  PROC  ID  '('  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false   '{'  sentences_proc  '}' 			     {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+           | PROC  ID  '('  parameter_list  ')'  NA  '=' '-' CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no se puede asignar una constante negativa al valor NA.");}	
+           | PROC  ID  '('    ')'  NA  '=' '-' CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: no se puede asignar una constante negativa al valor NA.");}	
 ;
 
 parameter_list  :  parameter
@@ -83,6 +85,7 @@ procedure_call :  ID  '('  id_list  ')'
 executable  :  ID  '='  expression		{showMessage("[Line " + la.getCurrentLine() + "] Asignación.");}
 			|  ID  '='  error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: asignación errónea. Se espera una expresión del lado derecho.");}
 			|  error  '='  expression	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: asignación errónea. Se espera un identificador del lado izquierdo.");}
+			|  ID  EQUAL  expression 	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: asignación errónea. ¿Quisiste decir '='?.");}
 			|  if_clause  				{showMessage("[Line " + la.getCurrentLine() + "] Sentencia IF.");}
 			|  loop_clause	    		{showMessage("[Line " + la.getCurrentLine() + "] Sentencia LOOP.");}
 			|  procedure_call			{showMessage("[Line " + la.getCurrentLine() + "] Invocación PROC.");}
@@ -98,6 +101,7 @@ comparator  :  EQUAL
 ;
 
 condition  :  expression  comparator  expression 	{showMessage("[Line " + la.getCurrentLine() + "] Condición.");}
+		   |  expression '=' expression 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: Comparación inválida. ¿Quisiste decir '=='?.");}
 ;
 
 /*-------> Gramatica de control<-------*/
@@ -160,17 +164,26 @@ term  :  term  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] Mult
 factor  :  ID 
 	    |  CONSTANT
 	    |  '-' CONSTANT {
-	    				 Symbol symbol = (Symbol) $2.obj;
-	    				 if(symbol.getType().equals(Symbol._DOUBLE)){
-							String lexeme = symbol.getLexeme();
-							String snumber = lexeme.replace('d','e');
-							BigDecimal number= new BigDecimal(snumber);
-							BigDecimal min = new BigDecimal("2.2250738585072014d-308");
-							BigDecimal max = new BigDecimal("1.7976931348623157d+308");
-							if (!(number.compareTo(max) < 0  && min.compareTo(number)< 0))
-								showMessage("[Line " + la.getCurrentLine() + "] DOBLE negativo fuera de rango.");
-						}
-	    				}
+							// Manejo la entrada positiva de esta constante		    				
+		    				 Symbol positivo = la.symbolsTable.getSymbol($2.sval);
+		    				 if(positivo.removeRef() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
+		    				 	la.symbolsTable.removeSymbol(positivo.getLexeme());
+		    				 }
+		    				 
+		    				 // TODO: QUE HACER CON - 4_ul ??????
+		    				 
+		    				 // Creo nueva entrada o actualizo la existente con una referencia
+		    				 Symbol negativo = la.symbolsTable.getSymbol("-"+$2.sval);
+		    				 if (negativo != null){
+		    				 	negativo.addRef();  // Ya existe la entrada
+		    				 }else{
+		    				 	String lexema = "-"+positivo.getLexeme();
+		    				 	Symbol nuevoNegativo = new Symbol(lexema,la.getCurrentLine(),positivo.getType());
+		    				 	la.symbolsTable.addSymbol(lexema,nuevoNegativo);
+		    				 }
+	    				 	$2.sval = "-"+$2.sval;
+	    				 		
+	    				 }
 ;
 
 
@@ -178,7 +191,7 @@ factor  :  ID
 /*-------> Gramatica de expresiones <-------*/
 %%
 
-LexicalAnalyzer la;
+public LexicalAnalyzer la;
 
 public Parser(String path) throws FileNotFoundException {
 	la = new LexicalAnalyzer(path);

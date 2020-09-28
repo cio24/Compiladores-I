@@ -4,37 +4,21 @@ public class Symbol {
 	public final static String _DEFAULT_TYPE = "Default type";
 	public final static String _ID = "ID";
 	public final static String _DOUBLE = "Double";
-	public final static String _CONSTANT = "Constant";
+	public final static String _ULONGINT = "Long int unsigned";
 	public final static String _STRING = "String";
 
 	private String type = _DEFAULT_TYPE;
 	private String lexeme = "";
-	private int codeLine = -1;
+	private String codeLine = "00";
+	private int ref = 0;
 	
-	public Symbol(String lexemme) {
-		this.lexeme = lexemme;
-	}
-
-	public Symbol(String lexemme, int codeLine) {
-		this.lexeme = lexemme;
-		this.codeLine = codeLine;
-	}	
-
-	public Symbol(String lexemme, String type) {
-		this.lexeme = lexemme;
-		this.type = type;
-	}
-	
-	public Symbol(String lexemme, int codeLine, String type) {
+	public Symbol(String lexemme, String codeLine, String type) {
 		this.lexeme = lexemme;
 		this.codeLine = codeLine;
 		this.type = type;
+		this.ref = 1;
 	}
 		
-	@Override
-	public String toString() {
-		return "Symbol";
-	}
 
 	public void setType(String type) {
 		this.type = type;
@@ -44,7 +28,11 @@ public class Symbol {
 		return this.lexeme;
 	}
 
-	public int getCodeLine() {
+	public void setLexeme(String lexeme) {
+		this.lexeme = lexeme;
+	}
+
+	public String getCodeLine() {
 		return this.codeLine;
 	}
 
@@ -52,4 +40,22 @@ public class Symbol {
 		return this.type;
 	}
 
+	public int getRef() {
+		return this.ref;
+	}
+	
+	public int addRef() {
+		this.ref ++;
+		return this.ref;
+	}
+
+	public int removeRef() {
+		this.ref--;
+		return this.ref;
+	}
+	
+	@Override
+	public String toString() {
+		return "\n\tTipo: \"" + this.type + "\" | Referencias: " + this.ref; 
+	}
 }

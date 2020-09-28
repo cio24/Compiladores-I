@@ -8,12 +8,13 @@ import lexicalAnalyzerPackage.Parser;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 
 public class Test {
-	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefullClassesPackage/";
-	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefullClassesPackage\\";
+
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefullClassesPackage/";
+	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefullClassesPackage\\";
 	
 	public Test() throws IOException {
-		test("program2.txt");
+		test("program3.txt");
 		/*
 		System.out.println("TEST CADENAS: ");
 		test("cadenas.txt");
@@ -36,8 +37,7 @@ public class Test {
 		Parser p = new Parser(BASE_PATH + fileName);
 		//p.yydebug = false;
 		p.parse();
-		LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(BASE_PATH + fileName);
-
+		p.la.symbolsTable.print();
 		/*
 
 		String nombre;
