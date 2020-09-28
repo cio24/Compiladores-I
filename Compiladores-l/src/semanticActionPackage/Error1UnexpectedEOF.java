@@ -11,7 +11,7 @@ public class Error1UnexpectedEOF extends SemanticAction {
 
 	public void execute() {
 		lexicalAnalyzer.setTokenId('~'); 
-		System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Lexical error: Unexpected end of file.");
+		System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: Fin de archivo inesperado.");
 	}
 
 }

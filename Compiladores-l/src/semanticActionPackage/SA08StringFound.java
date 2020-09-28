@@ -16,7 +16,7 @@ public class SA08StringFound extends SemanticAction {
 	public void execute(){
 		//ingresar en la talba de simbolos
 		String lexeme = lexicalAnalyzer.getCurrentLexem();
-		Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
+		Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._STRING);
 		lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
 		lexicalAnalyzer.yylval.sval = lexeme;
 		lexicalAnalyzer.setTokenId(Constants.CSTRING);

@@ -236,6 +236,7 @@ public class TransitionMatrix {
 	    
 	    SemanticAction error1 = new Error1UnexpectedEOF(lexicalAnalyzer);
 	    SemanticAction error2 = new Error2UnexpectedChar(lexicalAnalyzer);
+	    SemanticAction error3 = new Error3UnexpectedChar(lexicalAnalyzer);
 	    SemanticAction warning1 = new Warning1(lexicalAnalyzer);
 	    SemanticAction semanticActionNone = new SemanticActionNone(lexicalAnalyzer);
 	    
@@ -248,7 +249,7 @@ public class TransitionMatrix {
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 3 || i==5 || i==20)
-	    		w.insertElementAt(error2,i);
+	    		w.insertElementAt(error3,i);
 	    	else if(i==4 || i==13 || (i>=15 && i<=19))
 	    		w.insertElementAt(semanticAction01, i);
 	    	else if (i==10 || i==11)

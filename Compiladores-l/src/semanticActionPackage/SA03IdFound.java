@@ -17,9 +17,8 @@ public class SA03IdFound extends SemanticAction {
 		lexicalAnalyzer.returnLastCharacterRead();
 		String lexeme = lexicalAnalyzer.getCurrentLexem();
 		if (lexeme.length()<=20) {
-			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
+			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
 			lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-			lexicalAnalyzer.yylval.obj = symbol;
 			lexicalAnalyzer.yylval.sval = lexeme;
 		}
 		else
@@ -29,7 +28,7 @@ public class SA03IdFound extends SemanticAction {
 			
 			//Agregar a la tabla de simbolos si no esta
 			if(lexicalAnalyzer.symbolsTable.getSymbol(lexeme) == null) {
-				Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
+				Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
 				lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
 				lexicalAnalyzer.yylval.sval = lexeme;
 			}
