@@ -28,7 +28,6 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			String lexeme = lexicalAnalyzer.getCurrentLexem();
 			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine());
 			lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-			lexicalAnalyzer.yylval.obj = symbol;
 			lexicalAnalyzer.yylval.sval = lexeme;
 			}
 		else 

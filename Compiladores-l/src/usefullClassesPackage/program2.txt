@@ -7,3 +7,4 @@ PROC my_procedimiento ( ) NA = 0_ul SHADOWING = TRUE {
 };
 
 my_procedimiento();
+aux = 1.7976931348623157d+308;
