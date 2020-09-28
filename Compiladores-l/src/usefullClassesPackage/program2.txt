@@ -1,7 +1,7 @@
 PROC my_procedimiento ( ) NA = 0_ul SHADOWING = TRUE {	
 	IF ( 4_ul < 5_ul ) {
 		DOUBLE int;
-		int = 5_ul;
+		int = 5_ul - 4_ul + 6_ul * 5.0;
 		OUT('Texto de salida');
 	} ENDIF;
 };
