@@ -54,7 +54,21 @@ true_false : TRUE
 sentences_proc : sentence ';',
 			   | sentence ';' sentences_proc 
 
-procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");
+System.out.println("Esto es parte del testo");
+System.out.println($1.sval);
+System.out.println($2.sval);
+System.out.println($3.sval);
+System.out.println($4.sval);
+System.out.println($5.sval);
+System.out.println($6.sval);
+System.out.println($7.sval);
+System.out.println($8.sval);
+System.out.println($9.sval);
+System.out.println($10.sval);
+System.out.println($11.sval);
+System.out.println($12.sval);
+}	
            |  PROC  ID  '('  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false   '{'  sentences_proc  '}' 			     {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
            | PROC  ID  '('  parameter_list  ')'  NA  '=' '-' CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no se puede asignar una constante negativa al valor NA.");}	
            | PROC  ID  '('    ')'  NA  '=' '-' CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no se puede asignar una constante negativa al valor NA.");}	
@@ -98,6 +112,12 @@ comparator  :  EQUAL
             |  GREATEQUAL
             |  '<'
             |  '>'
+ 			|  '<'  '<'					{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
+            |  '>'  '>'			        {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: token '>' duplicado.");}
+            |  LESSEQUAL  '='           {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '<='?.");}
+            |  GREATEQUAL  '='          {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '>='?.");}
+            |  NEQUAL  '='              {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
+            |  '<'  '>'                 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
 ;
 
 condition  :  expression  comparator  expression 	{showMessage("[Line " + la.getCurrentLine() + "] Condicion.");}
@@ -122,12 +142,15 @@ if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block END_
 		   |  IF  '('  condition  ')'  error  ELSE  sentence_block END_IF 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
 		   |  IF  '('  condition  ')'  sentence_block  ELSE  error END_IF 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula ELSE_IF.");}
  		   |  IF  '('  condition  ')'  error  END_IF 								{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+           |  IF  condition  sentence_block  ELSE  sentence_block END_IF			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+ 		   |  IF  condition  sentence_block  END_IF                                 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
 ;
 
 loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'
 			 |  LOOP  sentence_block  error							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
 			 |  LOOP  sentence_block  UNTIL  '('  error  ')'		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la cláusula UNTIL debe incluir una condicion entre parentesis");}
 			 |  LOOP  error  UNTIL  '('  condition  ')'				{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
+             |  LOOP  sentence_block  UNTIL  condition		        {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
 ;
 
 /*-------> Gramatica de control<-------*/
@@ -136,6 +159,7 @@ loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'
 
 out_clause  :  OUT  '('  CSTRING  ')'
 			|  OUT  '('  error  ')'  {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT solo acepta cadenas de caracteres.");}
+			|  OUT  CSTRING    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 ;
 
 /*-------> Gramatica de salida<-------*/
@@ -149,6 +173,7 @@ expression  :  expression  '+'  term 	{showMessage("[Line " + la.getCurrentLine(
 			|  expression  '-'  error 	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
 			|  error  '+'  term 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
 			|  error  '-'  term 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
+            |  expression  '+'  '+'  term 	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
 ;
 
 term  :  term  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] Multiplicacion.");}
@@ -158,7 +183,9 @@ term  :  term  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] Mult
   	  |  term '/' error    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
 	  |  error '*' factor    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
   	  |  error '/' factor    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
-	  
+	  |  term  '*'  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
+      |  term  '/'  '/'  factor {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
+
 ;
 
 factor  :  ID 

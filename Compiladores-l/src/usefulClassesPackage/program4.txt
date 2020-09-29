@@ -1,0 +1,2 @@
+PROC  proce (  DOUBLE parametro )  NA  =  5_ul SHADOWING  =  TRUE 
+{  OUT('pedrito');  };
