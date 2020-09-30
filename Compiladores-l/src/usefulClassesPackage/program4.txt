@@ -1,2 +1,2 @@
-PROC  proce (  DOUBLE parametro )  NA  =  5_ul SHADOWING  =  TRUE 
-{  OUT('pedrito');  };
+a=5.0  /   4.0
+b=6.0 * 4.0;

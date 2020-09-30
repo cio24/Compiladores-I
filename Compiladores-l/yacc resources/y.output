@@ -6,7 +6,7 @@
 
    4  sentences : sentence ';'
    5            | sentences sentence ';'
-   6            | sentence error
+   6            | sentence error ';'
 
    7  sentence : declaration
    8           | executable
@@ -116,14 +116,13 @@
   93       | factor
   94       | term '*' error
   95       | term '/' error
-  96       | error '*' factor
-  97       | error '/' factor
-  98       | term '*' '*' factor
-  99       | term '/' '/' factor
+  96       | error '/' factor
+  97       | term '*' '*' factor
+  98       | term '/' '/' factor
 
- 100  factor : ID
- 101         | CONSTANT
- 102         | '-' CONSTANT
+  99  factor : ID
+ 100         | CONSTANT
+ 101         | '-' CONSTANT
 
 state 0
 	$accept : . program $end  (0)
@@ -304,7 +303,7 @@ state 10
 
 state 11
 	sentences : sentence . ';'  (4)
-	sentences : sentence . error  (6)
+	sentences : sentence . error ';'  (6)
 
 	error  shift 44
 	';'  shift 45
@@ -390,26 +389,24 @@ state 21
 state 22
 	expression : error . '+' term  (88)
 	expression : error . '-' term  (89)
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+	term : error . '/' factor  (96)
 
 	'-'  shift 49
 	'+'  shift 50
-	'*'  shift 51
-	'/'  shift 52
+	'/'  shift 51
 	.  error
 
 
 state 23
-	factor : ID .  (100)
+	factor : ID .  (99)
 
-	.  reduce 100
+	.  reduce 99
 
 
 state 24
-	factor : CONSTANT .  (101)
+	factor : CONSTANT .  (100)
 
-	.  reduce 101
+	.  reduce 100
 
 
 state 25
@@ -423,22 +420,22 @@ state 25
 	if_clause : IF '(' . condition ')' sentence_block ELSE error END_IF  (71)
 	if_clause : IF '(' . condition ')' error END_IF  (72)
 
-	error  shift 53
+	error  shift 52
 	ID  shift 23
 	CONSTANT  shift 24
 	'-'  shift 26
 	.  error
 
 	expression  goto 27
-	condition  goto 54
+	condition  goto 53
 	term  goto 29
 	factor  goto 30
 
 
 state 26
-	factor : '-' . CONSTANT  (102)
+	factor : '-' . CONSTANT  (101)
 
-	CONSTANT  shift 55
+	CONSTANT  shift 54
 	.  error
 
 
@@ -451,18 +448,18 @@ state 27
 	expression : expression . '-' error  (87)
 	expression : expression . '+' '+' term  (90)
 
-	LESSEQUAL  shift 56
-	GREATEQUAL  shift 57
-	EQUAL  shift 58
-	NEQUAL  shift 59
-	'='  shift 60
-	'-'  shift 61
-	'<'  shift 62
-	'>'  shift 63
-	'+'  shift 64
+	LESSEQUAL  shift 55
+	GREATEQUAL  shift 56
+	EQUAL  shift 57
+	NEQUAL  shift 58
+	'='  shift 59
+	'-'  shift 60
+	'<'  shift 61
+	'>'  shift 62
+	'+'  shift 63
 	.  error
 
-	comparator  goto 65
+	comparator  goto 64
 
 
 state 28
@@ -490,7 +487,7 @@ state 28
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
-	sentence_block  goto 66
+	sentence_block  goto 65
 
 
 state 29
@@ -499,11 +496,11 @@ state 29
 	term : term . '/' factor  (92)
 	term : term . '*' error  (94)
 	term : term . '/' error  (95)
-	term : term . '*' '*' factor  (98)
-	term : term . '/' '/' factor  (99)
+	term : term . '*' '*' factor  (97)
+	term : term . '/' '/' factor  (98)
 
-	'*'  shift 67
-	'/'  shift 68
+	'*'  shift 66
+	'/'  shift 67
 	error  reduce 85
 	IF  reduce 85
 	ELSE  reduce 85
@@ -545,8 +542,8 @@ state 32
 	out_clause : OUT '(' . CSTRING ')'  (80)
 	out_clause : OUT '(' . error ')'  (81)
 
-	error  shift 69
-	CSTRING  shift 70
+	error  shift 68
+	CSTRING  shift 69
 	.  error
 
 
@@ -554,7 +551,7 @@ state 33
 	executable : error . '=' expression  (41)
 	loop_clause : LOOP error . UNTIL '(' condition ')'  (78)
 
-	UNTIL  shift 71
+	UNTIL  shift 70
 	'='  shift 21
 	.  error
 
@@ -571,10 +568,10 @@ state 34
 	LOOP  shift 6
 	ID  shift 7
 	PROC  shift 8
-	'}'  shift 72
+	'}'  shift 71
 	.  error
 
-	sentences  goto 73
+	sentences  goto 72
 	sentence  goto 11
 	declaration  goto 12
 	executable  goto 13
@@ -599,8 +596,8 @@ state 36
 	loop_clause : LOOP sentence_block . UNTIL '(' error ')'  (77)
 	loop_clause : LOOP sentence_block . UNTIL condition  (79)
 
-	error  shift 74
-	UNTIL  shift 75
+	error  shift 73
+	UNTIL  shift 74
 	.  error
 
 
@@ -613,7 +610,7 @@ state 37
 	'-'  shift 26
 	.  error
 
-	expression  goto 76
+	expression  goto 75
 	term  goto 29
 	factor  goto 30
 
@@ -624,32 +621,32 @@ state 38
 	ID  shift 46
 	.  error
 
-	variable_list  goto 77
+	variable_list  goto 76
 
 
 state 39
 	procedure_call : ID '(' . id_list ')'  (37)
 	procedure_call : ID '(' . ')'  (38)
 
-	error  shift 78
-	ID  shift 79
-	')'  shift 80
+	error  shift 77
+	ID  shift 78
+	')'  shift 79
 	.  error
 
-	id_list  goto 81
+	id_list  goto 80
 
 
 state 40
 	executable : ID '=' . expression  (39)
 	executable : ID '=' . error  (40)
 
-	error  shift 82
+	error  shift 81
 	ID  shift 23
 	CONSTANT  shift 24
 	'-'  shift 26
 	.  error
 
-	expression  goto 83
+	expression  goto 82
 	term  goto 29
 	factor  goto 30
 
@@ -660,7 +657,7 @@ state 41
 	procedure : PROC ID . '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 	procedure : PROC ID . '(' ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
 
-	'('  shift 84
+	'('  shift 83
 	.  error
 
 
@@ -674,14 +671,15 @@ state 42
 state 43
 	sentences : sentences sentence . ';'  (5)
 
-	';'  shift 85
+	';'  shift 84
 	.  error
 
 
 state 44
-	sentences : sentence error .  (6)
+	sentences : sentence error . ';'  (6)
 
-	.  reduce 6
+	';'  shift 85
+	.  error
 
 
 state 45
@@ -716,8 +714,8 @@ state 48
 	expression : expression . '-' error  (87)
 	expression : expression . '+' '+' term  (90)
 
-	'-'  shift 61
-	'+'  shift 64
+	'-'  shift 60
+	'+'  shift 63
 	error  reduce 41
 	ELSE  reduce 41
 	END_IF  reduce 41
@@ -752,7 +750,7 @@ state 50
 
 
 state 51
-	term : error '*' . factor  (96)
+	term : error '/' . factor  (96)
 
 	ID  shift 23
 	CONSTANT  shift 24
@@ -763,33 +761,20 @@ state 51
 
 
 state 52
-	term : error '/' . factor  (97)
-
-	ID  shift 23
-	CONSTANT  shift 24
-	'-'  shift 26
-	.  error
-
-	factor  goto 90
-
-
-state 53
 	if_clause : IF '(' error . ')' sentence_block ELSE sentence_block END_IF  (68)
 	if_clause : IF '(' error . ')' sentence_block END_IF  (69)
 	expression : error . '+' term  (88)
 	expression : error . '-' term  (89)
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+	term : error . '/' factor  (96)
 
-	')'  shift 91
+	')'  shift 90
 	'-'  shift 49
 	'+'  shift 50
-	'*'  shift 51
-	'/'  shift 52
+	'/'  shift 51
 	.  error
 
 
-state 54
+state 53
 	if_clause : IF '(' condition . ')' sentence_block ELSE sentence_block END_IF  (64)
 	if_clause : IF '(' condition . ')' sentence_block END_IF  (65)
 	if_clause : IF '(' condition . ')' sentence_block ELSE sentence_block error  (66)
@@ -798,56 +783,56 @@ state 54
 	if_clause : IF '(' condition . ')' sentence_block ELSE error END_IF  (71)
 	if_clause : IF '(' condition . ')' error END_IF  (72)
 
-	')'  shift 92
+	')'  shift 91
 	.  error
 
 
+state 54
+	factor : '-' CONSTANT .  (101)
+
+	.  reduce 101
+
+
 state 55
-	factor : '-' CONSTANT .  (102)
-
-	.  reduce 102
-
-
-state 56
 	comparator : LESSEQUAL .  (49)
 	comparator : LESSEQUAL . '='  (55)
 
-	'='  shift 93
+	'='  shift 92
 	error  reduce 49
 	ID  reduce 49
 	CONSTANT  reduce 49
 	'-'  reduce 49
 
 
-state 57
+state 56
 	comparator : GREATEQUAL .  (50)
 	comparator : GREATEQUAL . '='  (56)
 
-	'='  shift 94
+	'='  shift 93
 	error  reduce 50
 	ID  reduce 50
 	CONSTANT  reduce 50
 	'-'  reduce 50
 
 
-state 58
+state 57
 	comparator : EQUAL .  (47)
 
 	.  reduce 47
 
 
-state 59
+state 58
 	comparator : NEQUAL .  (48)
 	comparator : NEQUAL . '='  (57)
 
-	'='  shift 95
+	'='  shift 94
 	error  reduce 48
 	ID  reduce 48
 	CONSTANT  reduce 48
 	'-'  reduce 48
 
 
-state 60
+state 59
 	condition : expression '=' . expression  (60)
 
 	error  shift 22
@@ -856,66 +841,66 @@ state 60
 	'-'  shift 26
 	.  error
 
-	expression  goto 96
+	expression  goto 95
 	term  goto 29
 	factor  goto 30
 
 
-state 61
+state 60
 	expression : expression '-' . term  (84)
 	expression : expression '-' . error  (87)
 
-	error  shift 97
+	error  shift 96
 	ID  shift 23
 	CONSTANT  shift 24
 	'-'  shift 26
 	.  error
 
-	term  goto 98
+	term  goto 97
 	factor  goto 30
 
 
-state 62
+state 61
 	comparator : '<' .  (51)
 	comparator : '<' . '<'  (53)
 	comparator : '<' . '>'  (58)
 
-	'<'  shift 99
-	'>'  shift 100
+	'<'  shift 98
+	'>'  shift 99
 	error  reduce 51
 	ID  reduce 51
 	CONSTANT  reduce 51
 	'-'  reduce 51
 
 
-state 63
+state 62
 	comparator : '>' .  (52)
 	comparator : '>' . '>'  (54)
 
-	'>'  shift 101
+	'>'  shift 100
 	error  reduce 52
 	ID  reduce 52
 	CONSTANT  reduce 52
 	'-'  reduce 52
 
 
-state 64
+state 63
 	expression : expression '+' . term  (83)
 	expression : expression '+' . error  (86)
 	expression : expression '+' . '+' term  (90)
 
-	error  shift 102
+	error  shift 101
 	ID  shift 23
 	CONSTANT  shift 24
 	'-'  shift 26
-	'+'  shift 103
+	'+'  shift 102
 	.  error
 
-	term  goto 104
+	term  goto 103
 	factor  goto 30
 
 
-state 65
+state 64
 	condition : expression comparator . expression  (59)
 
 	error  shift 22
@@ -924,78 +909,78 @@ state 65
 	'-'  shift 26
 	.  error
 
-	expression  goto 105
+	expression  goto 104
 	term  goto 29
 	factor  goto 30
 
 
-state 66
+state 65
 	if_clause : IF condition sentence_block . ELSE sentence_block END_IF  (73)
 	if_clause : IF condition sentence_block . END_IF  (74)
 
-	ELSE  shift 106
-	END_IF  shift 107
+	ELSE  shift 105
+	END_IF  shift 106
 	.  error
+
+
+state 66
+	term : term '*' . factor  (91)
+	term : term '*' . error  (94)
+	term : term '*' . '*' factor  (97)
+
+	error  shift 107
+	ID  shift 23
+	CONSTANT  shift 24
+	'-'  shift 26
+	'*'  shift 108
+	.  error
+
+	factor  goto 109
 
 
 state 67
-	term : term '*' . factor  (91)
-	term : term '*' . error  (94)
-	term : term '*' . '*' factor  (98)
+	term : term '/' . factor  (92)
+	term : term '/' . error  (95)
+	term : term '/' . '/' factor  (98)
 
-	error  shift 108
+	error  shift 110
 	ID  shift 23
 	CONSTANT  shift 24
 	'-'  shift 26
-	'*'  shift 109
+	'/'  shift 111
 	.  error
 
-	factor  goto 110
+	factor  goto 112
 
 
 state 68
-	term : term '/' . factor  (92)
-	term : term '/' . error  (95)
-	term : term '/' . '/' factor  (99)
+	out_clause : OUT '(' error . ')'  (81)
 
-	error  shift 111
-	ID  shift 23
-	CONSTANT  shift 24
-	'-'  shift 26
-	'/'  shift 112
+	')'  shift 113
 	.  error
-
-	factor  goto 113
 
 
 state 69
-	out_clause : OUT '(' error . ')'  (81)
+	out_clause : OUT '(' CSTRING . ')'  (80)
 
 	')'  shift 114
 	.  error
 
 
 state 70
-	out_clause : OUT '(' CSTRING . ')'  (80)
+	loop_clause : LOOP error UNTIL . '(' condition ')'  (78)
 
-	')'  shift 115
+	'('  shift 115
 	.  error
 
 
 state 71
-	loop_clause : LOOP error UNTIL . '(' condition ')'  (78)
-
-	'('  shift 116
-	.  error
-
-
-state 72
 	sentence_block : '{' '}' .  (63)
 
 	.  reduce 63
 
 
-state 73
+state 72
 	sentences : sentences . sentence ';'  (5)
 	sentence_block : '{' sentences . '}'  (61)
 
@@ -1007,7 +992,7 @@ state 73
 	LOOP  shift 6
 	ID  shift 7
 	PROC  shift 8
-	'}'  shift 117
+	'}'  shift 116
 	.  error
 
 	sentence  goto 43
@@ -1022,13 +1007,13 @@ state 73
 	out_clause  goto 20
 
 
-state 74
+state 73
 	loop_clause : LOOP sentence_block error .  (76)
 
 	.  reduce 76
 
 
-state 75
+state 74
 	loop_clause : LOOP sentence_block UNTIL . '(' condition ')'  (75)
 	loop_clause : LOOP sentence_block UNTIL . '(' error ')'  (77)
 	loop_clause : LOOP sentence_block UNTIL . condition  (79)
@@ -1036,17 +1021,17 @@ state 75
 	error  shift 22
 	ID  shift 23
 	CONSTANT  shift 24
-	'('  shift 118
+	'('  shift 117
 	'-'  shift 26
 	.  error
 
 	expression  goto 27
-	condition  goto 119
+	condition  goto 118
 	term  goto 29
 	factor  goto 30
 
 
-state 76
+state 75
 	executable : ID EQUAL expression .  (42)
 	expression : expression . '+' term  (83)
 	expression : expression . '-' term  (84)
@@ -1054,8 +1039,8 @@ state 76
 	expression : expression . '-' error  (87)
 	expression : expression . '+' '+' term  (90)
 
-	'-'  shift 61
-	'+'  shift 64
+	'-'  shift 60
+	'+'  shift 63
 	error  reduce 42
 	ELSE  reduce 42
 	END_IF  reduce 42
@@ -1063,52 +1048,50 @@ state 76
 	';'  reduce 42
 
 
-state 77
+state 76
 	variable_list : ID ',' variable_list .  (14)
 
 	.  reduce 14
 
 
-state 78
+state 77
 	id_list : error .  (36)
 
 	.  reduce 36
 
 
-state 79
+state 78
 	id_list : ID .  (32)
 	id_list : ID . ',' ID  (33)
 	id_list : ID . ',' ID ',' ID  (34)
 	id_list : ID . ',' ID ',' ID ',' ID  (35)
 
-	','  shift 120
+	','  shift 119
 	')'  reduce 32
 
 
-state 80
+state 79
 	procedure_call : ID '(' ')' .  (38)
 
 	.  reduce 38
 
 
-state 81
+state 80
 	procedure_call : ID '(' id_list . ')'  (37)
 
-	')'  shift 121
+	')'  shift 120
 	.  error
 
 
-state 82
+state 81
 	executable : ID '=' error .  (40)
 	expression : error . '+' term  (88)
 	expression : error . '-' term  (89)
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+	term : error . '/' factor  (96)
 
 	'-'  shift 49
 	'+'  shift 50
-	'*'  shift 51
-	'/'  shift 52
+	'/'  shift 51
 	error  reduce 40
 	ELSE  reduce 40
 	END_IF  reduce 40
@@ -1116,7 +1099,7 @@ state 82
 	';'  reduce 40
 
 
-state 83
+state 82
 	executable : ID '=' expression .  (39)
 	expression : expression . '+' term  (83)
 	expression : expression . '-' term  (84)
@@ -1124,8 +1107,8 @@ state 83
 	expression : expression . '-' error  (87)
 	expression : expression . '+' '+' term  (90)
 
-	'-'  shift 61
-	'+'  shift 64
+	'-'  shift 60
+	'+'  shift 63
 	error  reduce 39
 	ELSE  reduce 39
 	END_IF  reduce 39
@@ -1133,7 +1116,7 @@ state 83
 	';'  reduce 39
 
 
-state 84
+state 83
 	procedure : PROC ID '(' . parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
 	procedure : PROC ID '(' . ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (22)
 	procedure : PROC ID '(' . parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
@@ -1141,27 +1124,31 @@ state 84
 
 	ULONGINT  shift 4
 	DOUBLE  shift 5
-	ID  shift 122
-	')'  shift 123
+	ID  shift 121
+	')'  shift 122
 	.  error
 
-	type  goto 124
-	parameter_list  goto 125
-	parameter  goto 126
+	type  goto 123
+	parameter_list  goto 124
+	parameter  goto 125
 
 
-state 85
+state 84
 	sentences : sentences sentence ';' .  (5)
 
 	.  reduce 5
 
 
-state 86
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+state 85
+	sentences : sentence error ';' .  (6)
 
-	'*'  shift 51
-	'/'  shift 52
+	.  reduce 6
+
+
+state 86
+	term : error . '/' factor  (96)
+
+	'/'  shift 51
 	.  error
 
 
@@ -1171,11 +1158,11 @@ state 87
 	term : term . '/' factor  (92)
 	term : term . '*' error  (94)
 	term : term . '/' error  (95)
-	term : term . '*' '*' factor  (98)
-	term : term . '/' '/' factor  (99)
+	term : term . '*' '*' factor  (97)
+	term : term . '/' '/' factor  (98)
 
-	'*'  shift 67
-	'/'  shift 68
+	'*'  shift 66
+	'/'  shift 67
 	error  reduce 89
 	IF  reduce 89
 	ELSE  reduce 89
@@ -1207,11 +1194,11 @@ state 88
 	term : term . '/' factor  (92)
 	term : term . '*' error  (94)
 	term : term . '/' error  (95)
-	term : term . '*' '*' factor  (98)
-	term : term . '/' '/' factor  (99)
+	term : term . '*' '*' factor  (97)
+	term : term . '/' '/' factor  (98)
 
-	'*'  shift 67
-	'/'  shift 68
+	'*'  shift 66
+	'/'  shift 67
 	error  reduce 88
 	IF  reduce 88
 	ELSE  reduce 88
@@ -1238,18 +1225,12 @@ state 88
 
 
 state 89
-	term : error '*' factor .  (96)
+	term : error '/' factor .  (96)
 
 	.  reduce 96
 
 
 state 90
-	term : error '/' factor .  (97)
-
-	.  reduce 97
-
-
-state 91
 	if_clause : IF '(' error ')' . sentence_block ELSE sentence_block END_IF  (68)
 	if_clause : IF '(' error ')' . sentence_block END_IF  (69)
 
@@ -1274,10 +1255,10 @@ state 91
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
-	sentence_block  goto 127
+	sentence_block  goto 126
 
 
-state 92
+state 91
 	if_clause : IF '(' condition ')' . sentence_block ELSE sentence_block END_IF  (64)
 	if_clause : IF '(' condition ')' . sentence_block END_IF  (65)
 	if_clause : IF '(' condition ')' . sentence_block ELSE sentence_block error  (66)
@@ -1286,7 +1267,7 @@ state 92
 	if_clause : IF '(' condition ')' . sentence_block ELSE error END_IF  (71)
 	if_clause : IF '(' condition ')' . error END_IF  (72)
 
-	error  shift 128
+	error  shift 127
 	IF  shift 2
 	OUT  shift 3
 	ULONGINT  shift 4
@@ -1307,28 +1288,28 @@ state 92
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
-	sentence_block  goto 129
+	sentence_block  goto 128
 
 
-state 93
+state 92
 	comparator : LESSEQUAL '=' .  (55)
 
 	.  reduce 55
 
 
-state 94
+state 93
 	comparator : GREATEQUAL '=' .  (56)
 
 	.  reduce 56
 
 
-state 95
+state 94
 	comparator : NEQUAL '=' .  (57)
 
 	.  reduce 57
 
 
-state 96
+state 95
 	condition : expression '=' expression .  (60)
 	expression : expression . '+' term  (83)
 	expression : expression . '-' term  (84)
@@ -1336,8 +1317,8 @@ state 96
 	expression : expression . '-' error  (87)
 	expression : expression . '+' '+' term  (90)
 
-	'-'  shift 61
-	'+'  shift 64
+	'-'  shift 60
+	'+'  shift 63
 	error  reduce 60
 	IF  reduce 60
 	ELSE  reduce 60
@@ -1354,13 +1335,11 @@ state 96
 	'{'  reduce 60
 
 
-state 97
+state 96
 	expression : expression '-' error .  (87)
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+	term : error . '/' factor  (96)
 
-	'*'  shift 51
-	'/'  shift 52
+	'/'  shift 51
 	error  reduce 87
 	IF  reduce 87
 	ELSE  reduce 87
@@ -1386,17 +1365,17 @@ state 97
 	'+'  reduce 87
 
 
-state 98
+state 97
 	expression : expression '-' term .  (84)
 	term : term . '*' factor  (91)
 	term : term . '/' factor  (92)
 	term : term . '*' error  (94)
 	term : term . '/' error  (95)
-	term : term . '*' '*' factor  (98)
-	term : term . '/' '/' factor  (99)
+	term : term . '*' '*' factor  (97)
+	term : term . '/' '/' factor  (98)
 
-	'*'  shift 67
-	'/'  shift 68
+	'*'  shift 66
+	'/'  shift 67
 	error  reduce 84
 	IF  reduce 84
 	ELSE  reduce 84
@@ -1422,31 +1401,29 @@ state 98
 	'+'  reduce 84
 
 
-state 99
+state 98
 	comparator : '<' '<' .  (53)
 
 	.  reduce 53
 
 
-state 100
+state 99
 	comparator : '<' '>' .  (58)
 
 	.  reduce 58
 
 
-state 101
+state 100
 	comparator : '>' '>' .  (54)
 
 	.  reduce 54
 
 
-state 102
+state 101
 	expression : expression '+' error .  (86)
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+	term : error . '/' factor  (96)
 
-	'*'  shift 51
-	'/'  shift 52
+	'/'  shift 51
 	error  reduce 86
 	IF  reduce 86
 	ELSE  reduce 86
@@ -1472,7 +1449,7 @@ state 102
 	'+'  reduce 86
 
 
-state 103
+state 102
 	expression : expression '+' '+' . term  (90)
 
 	error  shift 86
@@ -1481,21 +1458,21 @@ state 103
 	'-'  shift 26
 	.  error
 
-	term  goto 130
+	term  goto 129
 	factor  goto 30
 
 
-state 104
+state 103
 	expression : expression '+' term .  (83)
 	term : term . '*' factor  (91)
 	term : term . '/' factor  (92)
 	term : term . '*' error  (94)
 	term : term . '/' error  (95)
-	term : term . '*' '*' factor  (98)
-	term : term . '/' '/' factor  (99)
+	term : term . '*' '*' factor  (97)
+	term : term . '/' '/' factor  (98)
 
-	'*'  shift 67
-	'/'  shift 68
+	'*'  shift 66
+	'/'  shift 67
 	error  reduce 83
 	IF  reduce 83
 	ELSE  reduce 83
@@ -1521,7 +1498,7 @@ state 104
 	'+'  reduce 83
 
 
-state 105
+state 104
 	condition : expression comparator expression .  (59)
 	expression : expression . '+' term  (83)
 	expression : expression . '-' term  (84)
@@ -1529,8 +1506,8 @@ state 105
 	expression : expression . '-' error  (87)
 	expression : expression . '+' '+' term  (90)
 
-	'-'  shift 61
-	'+'  shift 64
+	'-'  shift 60
+	'+'  shift 63
 	error  reduce 59
 	IF  reduce 59
 	ELSE  reduce 59
@@ -1547,7 +1524,7 @@ state 105
 	'{'  reduce 59
 
 
-state 106
+state 105
 	if_clause : IF condition sentence_block ELSE . sentence_block END_IF  (73)
 
 	error  shift 42
@@ -1571,23 +1548,46 @@ state 106
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
-	sentence_block  goto 131
+	sentence_block  goto 130
 
 
-state 107
+state 106
 	if_clause : IF condition sentence_block END_IF .  (74)
 
 	.  reduce 74
 
 
-state 108
+state 107
 	term : term '*' error .  (94)
 
 	.  reduce 94
 
 
+state 108
+	term : term '*' '*' . factor  (97)
+
+	ID  shift 23
+	CONSTANT  shift 24
+	'-'  shift 26
+	.  error
+
+	factor  goto 131
+
+
 state 109
-	term : term '*' '*' . factor  (98)
+	term : term '*' factor .  (91)
+
+	.  reduce 91
+
+
+state 110
+	term : term '/' error .  (95)
+
+	.  reduce 95
+
+
+state 111
+	term : term '/' '/' . factor  (98)
 
 	ID  shift 23
 	CONSTANT  shift 24
@@ -1597,48 +1597,25 @@ state 109
 	factor  goto 132
 
 
-state 110
-	term : term '*' factor .  (91)
-
-	.  reduce 91
-
-
-state 111
-	term : term '/' error .  (95)
-
-	.  reduce 95
-
-
 state 112
-	term : term '/' '/' . factor  (99)
-
-	ID  shift 23
-	CONSTANT  shift 24
-	'-'  shift 26
-	.  error
-
-	factor  goto 133
-
-
-state 113
 	term : term '/' factor .  (92)
 
 	.  reduce 92
 
 
-state 114
+state 113
 	out_clause : OUT '(' error ')' .  (81)
 
 	.  reduce 81
 
 
-state 115
+state 114
 	out_clause : OUT '(' CSTRING ')' .  (80)
 
 	.  reduce 80
 
 
-state 116
+state 115
 	loop_clause : LOOP error UNTIL '(' . condition ')'  (78)
 
 	error  shift 22
@@ -1648,139 +1625,139 @@ state 116
 	.  error
 
 	expression  goto 27
-	condition  goto 134
+	condition  goto 133
 	term  goto 29
 	factor  goto 30
 
 
-state 117
+state 116
 	sentence_block : '{' sentences '}' .  (61)
 
 	.  reduce 61
 
 
-state 118
+state 117
 	loop_clause : LOOP sentence_block UNTIL '(' . condition ')'  (75)
 	loop_clause : LOOP sentence_block UNTIL '(' . error ')'  (77)
 
-	error  shift 135
+	error  shift 134
 	ID  shift 23
 	CONSTANT  shift 24
 	'-'  shift 26
 	.  error
 
 	expression  goto 27
-	condition  goto 136
+	condition  goto 135
 	term  goto 29
 	factor  goto 30
 
 
-state 119
+state 118
 	loop_clause : LOOP sentence_block UNTIL condition .  (79)
 
 	.  reduce 79
 
 
-state 120
+state 119
 	id_list : ID ',' . ID  (33)
 	id_list : ID ',' . ID ',' ID  (34)
 	id_list : ID ',' . ID ',' ID ',' ID  (35)
 
-	ID  shift 137
+	ID  shift 136
 	.  error
 
 
-state 121
+state 120
 	procedure_call : ID '(' id_list ')' .  (37)
 
 	.  reduce 37
 
 
-state 122
+state 121
 	parameter : ID .  (31)
 
 	.  reduce 31
 
 
-state 123
+state 122
 	procedure : PROC ID '(' ')' . NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (22)
 	procedure : PROC ID '(' ')' . NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
 
-	NA  shift 138
+	NA  shift 137
 	.  error
 
 
-state 124
+state 123
 	parameter : type . ID  (29)
 	parameter : type .  (30)
 
-	ID  shift 139
+	ID  shift 138
 	','  reduce 30
 	')'  reduce 30
 
 
-state 125
+state 124
 	procedure : PROC ID '(' parameter_list . ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
 	procedure : PROC ID '(' parameter_list . ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 
-	')'  shift 140
+	')'  shift 139
 	.  error
 
 
-state 126
+state 125
 	parameter_list : parameter .  (25)
 	parameter_list : parameter . ',' parameter  (26)
 	parameter_list : parameter . ',' parameter ',' parameter  (27)
 	parameter_list : parameter . ',' parameter ',' parameter ',' parameter  (28)
 
-	','  shift 141
+	','  shift 140
 	')'  reduce 25
 
 
-state 127
+state 126
 	if_clause : IF '(' error ')' sentence_block . ELSE sentence_block END_IF  (68)
 	if_clause : IF '(' error ')' sentence_block . END_IF  (69)
 
-	ELSE  shift 142
-	END_IF  shift 143
+	ELSE  shift 141
+	END_IF  shift 142
 	.  error
 
 
-state 128
+state 127
 	executable : error . '=' expression  (41)
 	if_clause : IF '(' condition ')' error . ELSE sentence_block END_IF  (70)
 	if_clause : IF '(' condition ')' error . END_IF  (72)
 
-	ELSE  shift 144
-	END_IF  shift 145
+	ELSE  shift 143
+	END_IF  shift 144
 	'='  shift 21
 	.  error
 
 
-state 129
+state 128
 	if_clause : IF '(' condition ')' sentence_block . ELSE sentence_block END_IF  (64)
 	if_clause : IF '(' condition ')' sentence_block . END_IF  (65)
 	if_clause : IF '(' condition ')' sentence_block . ELSE sentence_block error  (66)
 	if_clause : IF '(' condition ')' sentence_block . error  (67)
 	if_clause : IF '(' condition ')' sentence_block . ELSE error END_IF  (71)
 
-	error  shift 146
-	ELSE  shift 147
-	END_IF  shift 148
+	error  shift 145
+	ELSE  shift 146
+	END_IF  shift 147
 	.  error
 
 
-state 130
+state 129
 	expression : expression '+' '+' term .  (90)
 	term : term . '*' factor  (91)
 	term : term . '/' factor  (92)
 	term : term . '*' error  (94)
 	term : term . '/' error  (95)
-	term : term . '*' '*' factor  (98)
-	term : term . '/' '/' factor  (99)
+	term : term . '*' '*' factor  (97)
+	term : term . '/' '/' factor  (98)
 
-	'*'  shift 67
-	'/'  shift 68
+	'*'  shift 66
+	'/'  shift 67
 	error  reduce 90
 	IF  reduce 90
 	ELSE  reduce 90
@@ -1806,101 +1783,132 @@ state 130
 	'+'  reduce 90
 
 
-state 131
+state 130
 	if_clause : IF condition sentence_block ELSE sentence_block . END_IF  (73)
 
-	END_IF  shift 149
+	END_IF  shift 148
 	.  error
 
 
+state 131
+	term : term '*' '*' factor .  (97)
+
+	.  reduce 97
+
+
 state 132
-	term : term '*' '*' factor .  (98)
+	term : term '/' '/' factor .  (98)
 
 	.  reduce 98
 
 
 state 133
-	term : term '/' '/' factor .  (99)
+	loop_clause : LOOP error UNTIL '(' condition . ')'  (78)
 
-	.  reduce 99
+	')'  shift 149
+	.  error
 
 
 state 134
-	loop_clause : LOOP error UNTIL '(' condition . ')'  (78)
+	loop_clause : LOOP sentence_block UNTIL '(' error . ')'  (77)
+	expression : error . '+' term  (88)
+	expression : error . '-' term  (89)
+	term : error . '/' factor  (96)
 
 	')'  shift 150
+	'-'  shift 49
+	'+'  shift 50
+	'/'  shift 51
 	.  error
 
 
 state 135
-	loop_clause : LOOP sentence_block UNTIL '(' error . ')'  (77)
-	expression : error . '+' term  (88)
-	expression : error . '-' term  (89)
-	term : error . '*' factor  (96)
-	term : error . '/' factor  (97)
+	loop_clause : LOOP sentence_block UNTIL '(' condition . ')'  (75)
 
 	')'  shift 151
-	'-'  shift 49
-	'+'  shift 50
-	'*'  shift 51
-	'/'  shift 52
 	.  error
 
 
 state 136
-	loop_clause : LOOP sentence_block UNTIL '(' condition . ')'  (75)
-
-	')'  shift 152
-	.  error
-
-
-state 137
 	id_list : ID ',' ID .  (33)
 	id_list : ID ',' ID . ',' ID  (34)
 	id_list : ID ',' ID . ',' ID ',' ID  (35)
 
-	','  shift 153
+	','  shift 152
 	')'  reduce 33
 
 
-state 138
+state 137
 	procedure : PROC ID '(' ')' NA . '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (22)
 	procedure : PROC ID '(' ')' NA . '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
 
-	'='  shift 154
+	'='  shift 153
 	.  error
 
 
-state 139
+state 138
 	parameter : type ID .  (29)
 
 	.  reduce 29
 
 
-state 140
+state 139
 	procedure : PROC ID '(' parameter_list ')' . NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
 	procedure : PROC ID '(' parameter_list ')' . NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 
-	NA  shift 155
+	NA  shift 154
 	.  error
 
 
-state 141
+state 140
 	parameter_list : parameter ',' . parameter  (26)
 	parameter_list : parameter ',' . parameter ',' parameter  (27)
 	parameter_list : parameter ',' . parameter ',' parameter ',' parameter  (28)
 
 	ULONGINT  shift 4
 	DOUBLE  shift 5
-	ID  shift 122
+	ID  shift 121
 	.  error
 
-	type  goto 124
-	parameter  goto 156
+	type  goto 123
+	parameter  goto 155
+
+
+state 141
+	if_clause : IF '(' error ')' sentence_block ELSE . sentence_block END_IF  (68)
+
+	error  shift 42
+	IF  shift 2
+	OUT  shift 3
+	ULONGINT  shift 4
+	DOUBLE  shift 5
+	LOOP  shift 6
+	ID  shift 7
+	PROC  shift 8
+	'{'  shift 34
+	.  error
+
+	sentence  goto 35
+	declaration  goto 12
+	executable  goto 13
+	type  goto 14
+	variable_list  goto 15
+	procedure  goto 16
+	procedure_call  goto 17
+	if_clause  goto 18
+	loop_clause  goto 19
+	out_clause  goto 20
+	sentence_block  goto 156
 
 
 state 142
-	if_clause : IF '(' error ')' sentence_block ELSE . sentence_block END_IF  (68)
+	if_clause : IF '(' error ')' sentence_block END_IF .  (69)
+
+	.  reduce 69
+
+
+state 143
+	if_clause : IF '(' condition ')' error ELSE . sentence_block END_IF  (70)
 
 	error  shift 42
 	IF  shift 2
@@ -1926,57 +1934,24 @@ state 142
 	sentence_block  goto 157
 
 
-state 143
-	if_clause : IF '(' error ')' sentence_block END_IF .  (69)
-
-	.  reduce 69
-
-
 state 144
-	if_clause : IF '(' condition ')' error ELSE . sentence_block END_IF  (70)
-
-	error  shift 42
-	IF  shift 2
-	OUT  shift 3
-	ULONGINT  shift 4
-	DOUBLE  shift 5
-	LOOP  shift 6
-	ID  shift 7
-	PROC  shift 8
-	'{'  shift 34
-	.  error
-
-	sentence  goto 35
-	declaration  goto 12
-	executable  goto 13
-	type  goto 14
-	variable_list  goto 15
-	procedure  goto 16
-	procedure_call  goto 17
-	if_clause  goto 18
-	loop_clause  goto 19
-	out_clause  goto 20
-	sentence_block  goto 158
-
-
-state 145
 	if_clause : IF '(' condition ')' error END_IF .  (72)
 
 	.  reduce 72
 
 
-state 146
+state 145
 	if_clause : IF '(' condition ')' sentence_block error .  (67)
 
 	.  reduce 67
 
 
-state 147
+state 146
 	if_clause : IF '(' condition ')' sentence_block ELSE . sentence_block END_IF  (64)
 	if_clause : IF '(' condition ')' sentence_block ELSE . sentence_block error  (66)
 	if_clause : IF '(' condition ')' sentence_block ELSE . error END_IF  (71)
 
-	error  shift 159
+	error  shift 158
 	IF  shift 2
 	OUT  shift 3
 	ULONGINT  shift 4
@@ -1997,324 +1972,324 @@ state 147
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
-	sentence_block  goto 160
+	sentence_block  goto 159
 
 
-state 148
+state 147
 	if_clause : IF '(' condition ')' sentence_block END_IF .  (65)
 
 	.  reduce 65
 
 
-state 149
+state 148
 	if_clause : IF condition sentence_block ELSE sentence_block END_IF .  (73)
 
 	.  reduce 73
 
 
-state 150
+state 149
 	loop_clause : LOOP error UNTIL '(' condition ')' .  (78)
 
 	.  reduce 78
 
 
-state 151
+state 150
 	loop_clause : LOOP sentence_block UNTIL '(' error ')' .  (77)
 
 	.  reduce 77
 
 
-state 152
+state 151
 	loop_clause : LOOP sentence_block UNTIL '(' condition ')' .  (75)
 
 	.  reduce 75
 
 
-state 153
+state 152
 	id_list : ID ',' ID ',' . ID  (34)
 	id_list : ID ',' ID ',' . ID ',' ID  (35)
 
-	ID  shift 161
+	ID  shift 160
+	.  error
+
+
+state 153
+	procedure : PROC ID '(' ')' NA '=' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (22)
+	procedure : PROC ID '(' ')' NA '=' . '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
+
+	CONSTANT  shift 161
+	'-'  shift 162
 	.  error
 
 
 state 154
-	procedure : PROC ID '(' ')' NA '=' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (22)
-	procedure : PROC ID '(' ')' NA '=' . '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
+	procedure : PROC ID '(' parameter_list ')' NA . '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA . '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 
-	CONSTANT  shift 162
-	'-'  shift 163
+	'='  shift 163
 	.  error
 
 
 state 155
-	procedure : PROC ID '(' parameter_list ')' NA . '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
-	procedure : PROC ID '(' parameter_list ')' NA . '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
-
-	'='  shift 164
-	.  error
-
-
-state 156
 	parameter_list : parameter ',' parameter .  (26)
 	parameter_list : parameter ',' parameter . ',' parameter  (27)
 	parameter_list : parameter ',' parameter . ',' parameter ',' parameter  (28)
 
-	','  shift 165
+	','  shift 164
 	')'  reduce 26
 
 
-state 157
+state 156
 	if_clause : IF '(' error ')' sentence_block ELSE sentence_block . END_IF  (68)
+
+	END_IF  shift 165
+	.  error
+
+
+state 157
+	if_clause : IF '(' condition ')' error ELSE sentence_block . END_IF  (70)
 
 	END_IF  shift 166
 	.  error
 
 
 state 158
-	if_clause : IF '(' condition ')' error ELSE sentence_block . END_IF  (70)
-
-	END_IF  shift 167
-	.  error
-
-
-state 159
 	executable : error . '=' expression  (41)
 	if_clause : IF '(' condition ')' sentence_block ELSE error . END_IF  (71)
 
-	END_IF  shift 168
+	END_IF  shift 167
 	'='  shift 21
 	.  error
 
 
-state 160
+state 159
 	if_clause : IF '(' condition ')' sentence_block ELSE sentence_block . END_IF  (64)
 	if_clause : IF '(' condition ')' sentence_block ELSE sentence_block . error  (66)
 
-	error  shift 169
-	END_IF  shift 170
+	error  shift 168
+	END_IF  shift 169
 	.  error
 
 
-state 161
+state 160
 	id_list : ID ',' ID ',' ID .  (34)
 	id_list : ID ',' ID ',' ID . ',' ID  (35)
 
-	','  shift 171
+	','  shift 170
 	')'  reduce 34
 
 
-state 162
+state 161
 	procedure : PROC ID '(' ')' NA '=' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (22)
 
-	SHADOWING  shift 172
+	SHADOWING  shift 171
+	.  error
+
+
+state 162
+	procedure : PROC ID '(' ')' NA '=' '-' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
+
+	CONSTANT  shift 172
 	.  error
 
 
 state 163
-	procedure : PROC ID '(' ')' NA '=' '-' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (24)
+	procedure : PROC ID '(' parameter_list ')' NA '=' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA '=' . '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 
 	CONSTANT  shift 173
+	'-'  shift 174
 	.  error
 
 
 state 164
-	procedure : PROC ID '(' parameter_list ')' NA '=' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (21)
-	procedure : PROC ID '(' parameter_list ')' NA '=' . '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
-
-	CONSTANT  shift 174
-	'-'  shift 175
-	.  error
-
-
-state 165
 	parameter_list : parameter ',' parameter ',' . parameter  (27)
 	parameter_list : parameter ',' parameter ',' . parameter ',' parameter  (28)
 
 	ULONGINT  shift 4
 	DOUBLE  shift 5
-	ID  shift 122
+	ID  shift 121
 	.  error
 
-	type  goto 124
-	parameter  goto 176
+	type  goto 123
+	parameter  goto 175
 
 
-state 166
+state 165
 	if_clause : IF '(' error ')' sentence_block ELSE sentence_block END_IF .  (68)
 
 	.  reduce 68
 
 
-state 167
+state 166
 	if_clause : IF '(' condition ')' error ELSE sentence_block END_IF .  (70)
 
 	.  reduce 70
 
 
-state 168
+state 167
 	if_clause : IF '(' condition ')' sentence_block ELSE error END_IF .  (71)
 
 	.  reduce 71
 
 
-state 169
+state 168
 	if_clause : IF '(' condition ')' sentence_block ELSE sentence_block error .  (66)
 
 	.  reduce 66
 
 
-state 170
+state 169
 	if_clause : IF '(' condition ')' sentence_block ELSE sentence_block END_IF .  (64)
 
 	.  reduce 64
 
 
-state 171
+state 170
 	id_list : ID ',' ID ',' ID ',' . ID  (35)
 
-	ID  shift 177
+	ID  shift 176
+	.  error
+
+
+state 171
+	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (22)
+
+	'='  shift 177
 	.  error
 
 
 state 172
-	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (22)
+	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (24)
 
-	'='  shift 178
+	SHADOWING  shift 178
 	.  error
 
 
 state 173
-	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (24)
+	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (21)
 
 	SHADOWING  shift 179
 	.  error
 
 
 state 174
-	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA '=' '-' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 
-	SHADOWING  shift 180
+	CONSTANT  shift 180
 	.  error
 
 
 state 175
-	procedure : PROC ID '(' parameter_list ')' NA '=' '-' . CONSTANT SHADOWING '=' true_false '{' sentences_proc '}'  (23)
-
-	CONSTANT  shift 181
-	.  error
-
-
-state 176
 	parameter_list : parameter ',' parameter ',' parameter .  (27)
 	parameter_list : parameter ',' parameter ',' parameter . ',' parameter  (28)
 
-	','  shift 182
+	','  shift 181
 	')'  reduce 27
 
 
-state 177
+state 176
 	id_list : ID ',' ID ',' ID ',' ID .  (35)
 
 	.  reduce 35
 
 
-state 178
+state 177
 	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING '=' . true_false '{' sentences_proc '}'  (22)
 
-	TRUE  shift 183
-	FALSE  shift 184
+	TRUE  shift 182
+	FALSE  shift 183
 	.  error
 
-	true_false  goto 185
+	true_false  goto 184
+
+
+state 178
+	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (24)
+
+	'='  shift 185
+	.  error
 
 
 state 179
-	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (24)
+	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (21)
 
 	'='  shift 186
 	.  error
 
 
 state 180
-	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (23)
 
-	'='  shift 187
+	SHADOWING  shift 187
 	.  error
 
 
 state 181
-	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT . SHADOWING '=' true_false '{' sentences_proc '}'  (23)
-
-	SHADOWING  shift 188
-	.  error
-
-
-state 182
 	parameter_list : parameter ',' parameter ',' parameter ',' . parameter  (28)
 
 	ULONGINT  shift 4
 	DOUBLE  shift 5
-	ID  shift 122
+	ID  shift 121
 	.  error
 
-	type  goto 124
-	parameter  goto 189
+	type  goto 123
+	parameter  goto 188
 
 
-state 183
+state 182
 	true_false : TRUE .  (17)
 
 	.  reduce 17
 
 
-state 184
+state 183
 	true_false : FALSE .  (18)
 
 	.  reduce 18
 
 
-state 185
+state 184
 	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING '=' true_false . '{' sentences_proc '}'  (22)
 
-	'{'  shift 190
+	'{'  shift 189
 	.  error
 
 
-state 186
+state 185
 	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING '=' . true_false '{' sentences_proc '}'  (24)
 
-	TRUE  shift 183
-	FALSE  shift 184
+	TRUE  shift 182
+	FALSE  shift 183
+	.  error
+
+	true_false  goto 190
+
+
+state 186
+	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' . true_false '{' sentences_proc '}'  (21)
+
+	TRUE  shift 182
+	FALSE  shift 183
 	.  error
 
 	true_false  goto 191
 
 
 state 187
-	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' . true_false '{' sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (23)
 
-	TRUE  shift 183
-	FALSE  shift 184
+	'='  shift 192
 	.  error
-
-	true_false  goto 192
 
 
 state 188
-	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING . '=' true_false '{' sentences_proc '}'  (23)
-
-	'='  shift 193
-	.  error
-
-
-state 189
 	parameter_list : parameter ',' parameter ',' parameter ',' parameter .  (28)
 
 	.  reduce 28
 
 
-state 190
+state 189
 	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING '=' true_false '{' . sentences_proc '}'  (22)
 
 	error  shift 42
@@ -2327,59 +2302,59 @@ state 190
 	PROC  shift 8
 	.  error
 
-	sentence  goto 194
+	sentence  goto 193
 	declaration  goto 12
 	executable  goto 13
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	sentences_proc  goto 195
+	sentences_proc  goto 194
 	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
 
 
-state 191
+state 190
 	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING '=' true_false . '{' sentences_proc '}'  (24)
+
+	'{'  shift 195
+	.  error
+
+
+state 191
+	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false . '{' sentences_proc '}'  (21)
 
 	'{'  shift 196
 	.  error
 
 
 state 192
-	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false . '{' sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' . true_false '{' sentences_proc '}'  (23)
 
-	'{'  shift 197
+	TRUE  shift 182
+	FALSE  shift 183
 	.  error
+
+	true_false  goto 197
 
 
 state 193
-	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' . true_false '{' sentences_proc '}'  (23)
-
-	TRUE  shift 183
-	FALSE  shift 184
-	.  error
-
-	true_false  goto 198
-
-
-state 194
 	sentences_proc : sentence . ';'  (19)
 	sentences_proc : sentence . ';' sentences_proc  (20)
 
-	';'  shift 199
+	';'  shift 198
+	.  error
+
+
+state 194
+	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc . '}'  (22)
+
+	'}'  shift 199
 	.  error
 
 
 state 195
-	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc . '}'  (22)
-
-	'}'  shift 200
-	.  error
-
-
-state 196
 	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' . sentences_proc '}'  (24)
 
 	error  shift 42
@@ -2392,7 +2367,33 @@ state 196
 	PROC  shift 8
 	.  error
 
-	sentence  goto 194
+	sentence  goto 193
+	declaration  goto 12
+	executable  goto 13
+	type  goto 14
+	variable_list  goto 15
+	procedure  goto 16
+	sentences_proc  goto 200
+	procedure_call  goto 17
+	if_clause  goto 18
+	loop_clause  goto 19
+	out_clause  goto 20
+
+
+state 196
+	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false '{' . sentences_proc '}'  (21)
+
+	error  shift 42
+	IF  shift 2
+	OUT  shift 3
+	ULONGINT  shift 4
+	DOUBLE  shift 5
+	LOOP  shift 6
+	ID  shift 7
+	PROC  shift 8
+	.  error
+
+	sentence  goto 193
 	declaration  goto 12
 	executable  goto 13
 	type  goto 14
@@ -2406,39 +2407,13 @@ state 196
 
 
 state 197
-	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false '{' . sentences_proc '}'  (21)
+	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false . '{' sentences_proc '}'  (23)
 
-	error  shift 42
-	IF  shift 2
-	OUT  shift 3
-	ULONGINT  shift 4
-	DOUBLE  shift 5
-	LOOP  shift 6
-	ID  shift 7
-	PROC  shift 8
+	'{'  shift 202
 	.  error
-
-	sentence  goto 194
-	declaration  goto 12
-	executable  goto 13
-	type  goto 14
-	variable_list  goto 15
-	procedure  goto 16
-	sentences_proc  goto 202
-	procedure_call  goto 17
-	if_clause  goto 18
-	loop_clause  goto 19
-	out_clause  goto 20
 
 
 state 198
-	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false . '{' sentences_proc '}'  (23)
-
-	'{'  shift 203
-	.  error
-
-
-state 199
 	sentences_proc : sentence ';' .  (19)
 	sentences_proc : sentence ';' . sentences_proc  (20)
 
@@ -2452,40 +2427,40 @@ state 199
 	PROC  shift 8
 	'}'  reduce 19
 
-	sentence  goto 194
+	sentence  goto 193
 	declaration  goto 12
 	executable  goto 13
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	sentences_proc  goto 204
+	sentences_proc  goto 203
 	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
 
 
-state 200
+state 199
 	procedure : PROC ID '(' ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}' .  (22)
 
 	.  reduce 22
 
 
-state 201
+state 200
 	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc . '}'  (24)
+
+	'}'  shift 204
+	.  error
+
+
+state 201
+	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc . '}'  (21)
 
 	'}'  shift 205
 	.  error
 
 
 state 202
-	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc . '}'  (21)
-
-	'}'  shift 206
-	.  error
-
-
-state 203
 	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' . sentences_proc '}'  (23)
 
 	error  shift 42
@@ -2498,49 +2473,49 @@ state 203
 	PROC  shift 8
 	.  error
 
-	sentence  goto 194
+	sentence  goto 193
 	declaration  goto 12
 	executable  goto 13
 	type  goto 14
 	variable_list  goto 15
 	procedure  goto 16
-	sentences_proc  goto 207
+	sentences_proc  goto 206
 	procedure_call  goto 17
 	if_clause  goto 18
 	loop_clause  goto 19
 	out_clause  goto 20
 
 
-state 204
+state 203
 	sentences_proc : sentence ';' sentences_proc .  (20)
 
 	.  reduce 20
 
 
-state 205
+state 204
 	procedure : PROC ID '(' ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}' .  (24)
 
 	.  reduce 24
 
 
-state 206
+state 205
 	procedure : PROC ID '(' parameter_list ')' NA '=' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}' .  (21)
 
 	.  reduce 21
 
 
-state 207
+state 206
 	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc . '}'  (23)
 
-	'}'  shift 208
+	'}'  shift 207
 	.  error
 
 
-state 208
+state 207
 	procedure : PROC ID '(' parameter_list ')' NA '=' '-' CONSTANT SHADOWING '=' true_false '{' sentences_proc '}' .  (23)
 
 	.  reduce 23
 
 
 40 terminals, 24 nonterminals
-103 grammar rules, 209 states
+102 grammar rules, 208 states
