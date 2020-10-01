@@ -26,6 +26,7 @@ program :  /* EMPTY */		{showMessage( "[Line " + la.getCurrentLine() + "] WARNIN
 sentences  :  sentence ';' 				//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
 		   |  sentences sentence ';' 	//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
 		   |  sentence error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");} /*testeado*/
+		   |  error	';'					{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mala, maldita.");} /*testeado*/
 ;
 
 
@@ -53,31 +54,31 @@ true_false : TRUE
 
 sentences_proc : sentence ';',
 			   | sentence ';' sentences_proc 
+;
 
-procedure  :  PROC  ID  '('  parameter_list  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");
-System.out.println("Esto es parte del testo");
-System.out.println($1.sval);
-System.out.println($2.sval);
-System.out.println($3.sval);
-System.out.println($4.sval);
-System.out.println($5.sval);
-System.out.println($6.sval);
-System.out.println($7.sval);
-System.out.println($8.sval);
-System.out.println($9.sval);
-System.out.println($10.sval);
-System.out.println($11.sval);
-System.out.println($12.sval);
-}	
-           |  PROC  ID  '('  ')'  NA  '='  CONSTANT  SHADOWING  '='  true_false   '{'  sentences_proc  '}' 			     {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
-           | PROC  ID  '('  parameter_list  ')'  NA  '=' '-' CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no se puede asignar una constante negativa al valor NA.");}	
-           | PROC  ID  '('    ')'  NA  '=' '-' CONSTANT  SHADOWING  '='  true_false  '{'  sentences_proc  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no se puede asignar una constante negativa al valor NA.");}	
+procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}
+		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition  {showMessage("[Line " + la.getCurrentLine() + "] ERROR: sintactico: falta definir el cuerpo del procedimiento.");}	
+		   |  PROC  ID  '('   ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+	       |  PROC  ID  '(' error  ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
+;
+
+na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
+				   | '='  CONSTANT  SHADOWING  '='  true_false {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra NA");}
+				   | NA CONSTANT  SHADOWING  '='  true_false {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del NA.");}
+				   | NA '=' SHADOWING  '='  true_false {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el valor del NA.");}
+				   | NA  '='  CONSTANT '='  true_false {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra SHADOWING.");}
+				   | NA  '='  CONSTANT  SHADOWING true_false {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del SHADOWING.");}
+;
+
+proc_body : '{' sentences_proc  '}' 
+		  | '{' error  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: cuerpo del procedimiento mal definido.");}
+		  | '{' '}'
 ;
 
 parameter_list  :  parameter
 				|  parameter  ','  parameter
 				|  parameter  ','  parameter  ','  parameter
-				|  parameter  ','  parameter  ','  parameter  ',' parameter	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un máximo de tres parametros.");}
+				|  parameter  ','  parameter  ','  parameter  ',' parameter_list	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un máximo de tres parametros.");}
 ;
 
 parameter  :  type  ID
@@ -85,10 +86,10 @@ parameter  :  type  ID
 		   |  ID 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
 ;
 
-id_list  :  ID
-		 |  ID  ','  ID
+id_list  :  ID								
+		 |  ID  ','  ID						{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 		 |  ID  ','  ID  ','  ID	
-		 |  ID  ','  ID  ','  ID  ',' ID	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
+		 |  ID  ','  ID  ','  ID  ',' id_list {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 		 |  error 							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la lista de identificadores esta mal conformada.");}
 ;
 
