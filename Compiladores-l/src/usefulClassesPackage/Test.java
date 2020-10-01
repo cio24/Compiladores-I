@@ -14,7 +14,7 @@ public class Test {
 	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	
 	public Test() throws IOException {
-		test("program4.txt");
+		test("program3.txt");
 		/*
 		System.out.println("TEST CADENAS: ");
 		test("cadenas.txt");

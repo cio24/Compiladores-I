@@ -237,10 +237,11 @@ public void yyerror(String s){
 }
 
 int yylex(){
-	yyval = new ParserVal();
+	yylval = new ParserVal();
 	AtomicReference<ParserVal> ref = new AtomicReference<>();
-	yychar = la.yylex(ref);
-	yylval = ref.get(); // get next token
+	yychar = la.yylex(ref,yylval);
+	//yylval = ref.get(); // get next token
+	//yylval = la.yylval;
 	return yychar;
 }
 

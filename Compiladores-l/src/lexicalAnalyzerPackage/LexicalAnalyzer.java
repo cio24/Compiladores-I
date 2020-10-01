@@ -32,9 +32,9 @@ public class LexicalAnalyzer {
 		tokenId = -1;	
 	}
 
-	public int yylex(AtomicReference<ParserVal> reference) {
+	public int yylex(AtomicReference<ParserVal> reference,ParserVal yylval) {
 		this.reference = reference;
-		this.yylval = new ParserVal();
+		this.yylval = yylval;
 		lexem = "";
 		currentState = 0;
 		
@@ -74,7 +74,7 @@ public class LexicalAnalyzer {
 			//ya que estar�a tratando de entrar en una posici�n invalida de la matriz
 		}
 		//if (lexem.length()>0) System.out.println(lexem);
-		reference.set(yylval);
+		//reference.set(yylval);
 		if(tokenId == (int)'~')
 			return -1;
 		
