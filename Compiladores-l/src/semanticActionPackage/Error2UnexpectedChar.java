@@ -11,7 +11,13 @@ public class Error2UnexpectedChar extends SemanticAction{
 
 	public void execute() {
 		lexicalAnalyzer.returnLastCharacterRead();
-		System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: Mala definición.");
+		String error = "[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: Mala definición.";
+		String read = Character.toString((char)lexicalAnalyzer.getLastCharacter()).replace("\n", "\\n").replace("\t","\\t");
+		error += " Carácter que genero la interrupción: '" + read + "'.";
+		if (lexicalAnalyzer.getCurrentLexem() != "") {
+			error += " Lexema leído: " + lexicalAnalyzer.getCurrentLexem();
+		}
+		System.out.println(error);
 	}
 
 }
