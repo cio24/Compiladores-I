@@ -1,7 +1,0 @@
-/%
-- Comentarios bien y mal definidos.
-- Cadenas bien y mal definidas.
-%/
-'asdfasdfafasdf'
-'asdfasdfsadf
-''asdfasdf'

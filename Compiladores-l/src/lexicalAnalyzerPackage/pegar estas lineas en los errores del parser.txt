@@ -1,5 +1,0 @@
-		yyval = new ParserVal();
-		AtomicReference<ParserVal> ref = new AtomicReference<>();
-
-		yychar = la.yylex(ref);
-		yylval = ref.get(); // get next token
