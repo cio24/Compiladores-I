@@ -1,0 +1,8 @@
+DOUBLE int;
+ULONGINT asdf;
+int = 124.0;
+IF (int == 125_ul){
+ULONGINT asdf;
+OUT('This are some characters');
+} END_IF;
+pedro=56_ul/56_ul;

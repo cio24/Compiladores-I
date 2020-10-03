@@ -1,0 +1,9 @@
+/% - Palabras reservadas escritas en minúsculas y mayúsculas. %/
+IF
+if
+THEN
+then
+Elsee
+ELSEE
+LOOP
+looP

@@ -1,0 +1,4 @@
+/%
+- Comentarios bien y mal definidos.
+%/
+/%
