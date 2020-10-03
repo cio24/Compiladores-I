@@ -26,7 +26,7 @@ program :  /* EMPTY */		{showMessage( "[Line " + la.getCurrentLine() + "] WARNIN
 sentences  :  sentence ';' 				//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
 		   |  sentences sentence ';' 	//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
 		   |  sentence error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");} /*testeado*/
-		   |  error	';'					{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mala, maldita.");} /*testeado*/
+		   |  error	';'					{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mal construida.");} /*testeado*/
 ;
 
 
@@ -52,14 +52,13 @@ true_false : TRUE
            | FALSE
 ;
 
-sentences_proc : sentence ';',
-			   | sentence ';' sentences_proc 
-;
-
 procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}
-		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition  {showMessage("[Line " + la.getCurrentLine() + "] ERROR: sintactico: falta definir el cuerpo del procedimiento.");}	
-		   |  PROC  ID  '('   ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
-	       |  PROC  ID  '(' error  ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
+		   |  PROC  ID  '('   ')'                 na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition           {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
+		   |  PROC  ID  '('    ')'                na_shad_definition           {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
+		   |  PROC      '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
+		   |  PROC      '('   ')'                 na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
+	       |  PROC  ID  '(' error  ')'            na_shad_definition proc_body {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
 ;
 
 na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
@@ -70,7 +69,8 @@ na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false
 				   | NA  '='  CONSTANT  SHADOWING true_false {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del SHADOWING.");}
 ;
 
-proc_body : '{' sentences_proc  '}' 
+
+proc_body : '{' sentences  '}' 
 		  | '{' error  '}' {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: cuerpo del procedimiento mal definido.");}
 		  | '{' '}'
 ;
@@ -99,7 +99,7 @@ procedure_call :  ID  '('  id_list  ')'
 
 executable  :  ID  '='  expression		{showMessage("[Line " + la.getCurrentLine() + "] Asignacion.");}
 			|  ID  '='  error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
-			|  error  '='  expression	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
+			|  error '='  expression	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 			|  ID  EQUAL  expression 	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
 			|  if_clause  				{showMessage("[Line " + la.getCurrentLine() + "] Sentencia IF.");}
 			|  loop_clause	    		{showMessage("[Line " + la.getCurrentLine() + "] Sentencia LOOP.");}

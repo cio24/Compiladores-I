@@ -15,7 +15,7 @@ public class KeywordTable {
 		kws.add("IF");       kwstoken.add(Constants.IF);
 		kws.add("THEN");     kwstoken.add(Constants.THEN);
 		kws.add("ELSE");     kwstoken.add(Constants.ELSE);
-		kws.add("ENDIF");   kwstoken.add(Constants.END_IF);
+		kws.add("END_IF");   kwstoken.add(Constants.END_IF);
 		kws.add("OUT");      kwstoken.add(Constants.OUT);
 		kws.add("FUNC");     kwstoken.add(Constants.FUNC);
 		kws.add("RETURN");   kwstoken.add(Constants.RETURN);
