@@ -23,9 +23,8 @@ program :  /* EMPTY */		{showMessage( "[Line " + la.getCurrentLine() + "] WARNIN
 		|  error			{showMessage( "[Line " + la.getCurrentLine() + "] ERROR sintactico: no se encontraron sentencias validas.");}
 	;
 		
-sentences  :  sentence ';' 				//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
-		   |  sentences sentence ';' 	//{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
-		   |  sentence error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");} /*testeado*/
+sentences  :  sentence ';' 				{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
+		   |  sentences sentence ';' 	{showMessage( "[Line " + la.getCurrentLine() + "] Sentencia.");}
 		   |  error	';'					{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mala, maldita.");} /*testeado*/
 ;
 
@@ -98,7 +97,7 @@ procedure_call :  ID  '('  id_list  ')'
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Line " + la.getCurrentLine() + "] Asignacion.");}
-			|  ID  '='  error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
+			//|  ID  '='  error			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
 			|  error  '='  expression	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 			|  ID  EQUAL  expression 	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
 			|  if_clause  				{showMessage("[Line " + la.getCurrentLine() + "] Sentencia IF.");}
@@ -129,7 +128,7 @@ condition  :  expression  comparator  expression 	{showMessage("[Line " + la.get
 
 
 sentence_block  :  '{'  sentences  '}'
-			   |  sentence
+			   |  sentence  ';'
 			   | '{' '}'
 ;			   
 
@@ -186,7 +185,6 @@ term  :  term  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] Mult
   	  |  error '/' factor    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
 	  |  term  '*'  '*'  factor {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
       |  term  '/'  '/'  factor {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
-
 ;
 
 factor  :  ID 
@@ -194,22 +192,26 @@ factor  :  ID
 	    |  '-' CONSTANT {
 							// Manejo la entrada positiva de esta constante		    				
 		    				 Symbol positivo = la.symbolsTable.getSymbol($2.sval);
-		    				 if(positivo.removeRef() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
-		    				 	la.symbolsTable.removeSymbol(positivo.getLexeme());
-		    				 }
-		    				 
-		    				 // TODO: QUE HACER CON - 4_ul ??????
-		    				 
-		    				 // Creo nueva entrada o actualizo la existente con una referencia
-		    				 Symbol negativo = la.symbolsTable.getSymbol("-"+$2.sval);
-		    				 if (negativo != null){
-		    				 	negativo.addRef();  // Ya existe la entrada
-		    				 }else{
-		    				 	String lexema = "-"+positivo.getLexeme();
-		    				 	Symbol nuevoNegativo = new Symbol(lexema,la.getCurrentLine(),positivo.getType());
-		    				 	la.symbolsTable.addSymbol(lexema,nuevoNegativo);
-		    				 }
-	    				 	$2.sval = "-"+$2.sval;
+		    				 if (positivo.getType()==Symbol._ULONGINT)
+		    				 	showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
+		    				 else{
+			    				 if(positivo.removeRef() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
+			    				 	la.symbolsTable.removeSymbol(positivo.getLexeme());
+			    				 }
+			    				 
+			    				 // TODO: QUE HACER CON - 4_ul ??????
+			    				 
+			    				 // Creo nueva entrada o actualizo la existente con una referencia
+			    				 Symbol negativo = la.symbolsTable.getSymbol("-"+$2.sval);
+			    				 if (negativo != null){
+			    				 	negativo.addRef();  // Ya existe la entrada
+			    				 }else{
+			    				 	String lexema = "-"+positivo.getLexeme();
+			    				 	Symbol nuevoNegativo = new Symbol(lexema,la.getCurrentLine(),positivo.getType());
+			    				 	la.symbolsTable.addSymbol(lexema,nuevoNegativo);
+			    				 }
+		    				 	$2.sval = "-"+$2.sval;
+	    				 	}
 	    				 		
 	    				 }
 ;

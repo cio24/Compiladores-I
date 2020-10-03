@@ -255,7 +255,7 @@ public class TransitionMatrix {
 	    	else if (i==10 || i==11)
 	    		w.insertElementAt(semanticAction11, i);
 	    	else if (i==12)
-	    		w.insertElementAt(semanticAction10,i);
+	    		w.insertElementAt(semanticAction01,i);
 	    	else if (i==14)
 	    		w.insertElementAt(semanticAction19,i);
 	    }
