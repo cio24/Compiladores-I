@@ -24,7 +24,7 @@ public class SA03IdFound extends SemanticAction {
 		else
 		{
 			lexeme=lexeme.substring(0,20);
-			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Warning: the identifier is too long, it has been truncated to 20 characters.");
+			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] WARNING léxico: el identificador es demasiado largo, se trunco a 20 caracteres.");
 			
 			//Agregar a la tabla de simbolos si no esta
 			if(lexicalAnalyzer.symbolsTable.getSymbol(lexeme) == null) {
