@@ -30,7 +30,7 @@ public class SA06LongConstantFound extends SemanticAction {
 			lexicalAnalyzer.yylval.sval = lexeme;
 		}
 		else {
-			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: ULONGINT fuera de rango.");
+			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: constante ("+lexem+") de tipo ULONGINT fuera de rango.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

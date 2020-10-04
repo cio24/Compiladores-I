@@ -31,7 +31,7 @@ public class LexicalAnalyzer {
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
 		tokenId = -1;	
 	}
-//henlo
+
 	public int yylex(AtomicReference<ParserVal> reference,ParserVal yylval) {
 		this.reference = reference;
 		this.yylval = yylval;
@@ -78,7 +78,7 @@ public class LexicalAnalyzer {
 		if(tokenId == (int)'~')
 			return -1;
 		
-		System.out.println("-- LEX (Line " + this.getCurrentLine() + ") Token \""  +getTokenString(tokenId) + "\" found");
+		System.out.println("-- LEX (Linea " + this.getCurrentLine() + ") Token \""  +getTokenString(tokenId) + "\" encontrado");
 		
 		return tokenId;				
 

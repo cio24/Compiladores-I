@@ -596,7 +596,7 @@ public void parse(){
 
 public void yyerror(String s){
 	if(s.equals("syntax error")){
-		//System.out.println("[Line " + la.getCurrentLine()+ "] " + s + ".");
+		//System.out.println("[Linea " + la.getCurrentLine()+ "] " + s + ".");
 	}
 
 }
@@ -769,307 +769,343 @@ boolean doaction;
 //########## USER-SUPPLIED ACTIONS ##########
 case 1:
 //#line 21 "specification.y"
-{showMessage( "[Line " + la.getCurrentLine() + "] WARNING sintactico: Programa vacio!");}
+{showMessage( "[Linea " + la.getCurrentLine() + "] WARNING sintactico: Programa vacio!");}
 break;
 case 2:
 //#line 22 "specification.y"
-{showMessage( "[Line " + la.getCurrentLine() + "] Programa completo.");}
+{showMessage( "[Linea " + la.getCurrentLine() + "] Programa completo.");}
 break;
 case 3:
 //#line 23 "specification.y"
-{showMessage( "[Line " + la.getCurrentLine() + "] ERROR sintactico: no se encontraron sentencias validas.");}
+{showMessage( "[Linea " + la.getCurrentLine() + "] ERROR sintactico: no se encontraron sentencias validas.");}
 break;
 case 6:
 //#line 29 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");}
 break;
 case 7:
 //#line 30 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mal construida.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mal construida.");}
 break;
 case 10:
 //#line 38 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de variable.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");}
 break;
 case 11:
 //#line 39 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Declaracion PROC.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de procedimiento.");}
 break;
 case 12:
 //#line 40 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + val_peek(0).sval + "\".");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + val_peek(0).sval + "\".");}
 break;
 case 13:
 //#line 41 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
 break;
 case 20:
 //#line 56 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
 break;
 case 21:
 //#line 57 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Procedimiento declarado.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
 break;
 case 22:
 //#line 58 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}
 break;
 case 23:
 //#line 59 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}
 break;
 case 24:
 //#line 60 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}
 break;
 case 25:
 //#line 61 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}
 break;
 case 26:
 //#line 62 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}
 break;
 case 28:
 //#line 66 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra NA");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra NA");}
 break;
 case 29:
 //#line 67 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del NA.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del NA.");}
 break;
 case 30:
 //#line 68 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta definir el valor del NA.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el valor del NA.");}
 break;
 case 31:
 //#line 69 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra SHADOWING.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra SHADOWING.");}
 break;
 case 32:
 //#line 70 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del SHADOWING.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del SHADOWING.");}
 break;
 case 34:
 //#line 75 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: cuerpo del procedimiento mal definido.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: cuerpo del procedimiento mal definido.");}
+break;
+case 36:
+//#line 79 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+break;
+case 37:
+//#line 80 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+break;
+case 38:
+//#line 81 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 break;
 case 39:
 //#line 82 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un máximo de tres parametros.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 break;
 case 41:
 //#line 86 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta identificador en declaracion de parametro.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta identificador en declaracion de parametro.");}
 break;
 case 42:
 //#line 87 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
+break;
+case 43:
+//#line 90 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 break;
 case 44:
 //#line 91 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+break;
+case 45:
+//#line 92 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 break;
 case 46:
 //#line 93 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 break;
 case 47:
 //#line 94 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la lista de identificadores esta mal conformada.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la lista de identificadores esta mal conformada.");}
 break;
 case 50:
 //#line 101 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Asignacion.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");}
 break;
 case 51:
 //#line 102 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
 break;
 case 52:
 //#line 103 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 break;
 case 53:
 //#line 104 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
 break;
 case 54:
 //#line 105 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Sentencia IF.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia IF.");}
 break;
 case 55:
 //#line 106 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Sentencia LOOP.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia LOOP.");}
 break;
 case 56:
 //#line 107 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Invocacion PROC.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Invocacion PROC.");}
 break;
 case 57:
 //#line 108 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Sentencia OUT.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia OUT.");}
 break;
 case 64:
 //#line 117 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
 break;
 case 65:
 //#line 118 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: token '>' duplicado.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '>' duplicado.");}
 break;
 case 66:
 //#line 119 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '<='?.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '<='?.");}
 break;
 case 67:
 //#line 120 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '>='?.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '>='?.");}
 break;
 case 68:
 //#line 121 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
 break;
 case 69:
 //#line 122 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
 break;
 case 70:
 //#line 125 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Condicion.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");}
 break;
 case 71:
 //#line 126 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
+break;
+case 75:
+//#line 138 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia if");}
+break;
+case 76:
+//#line 139 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia if");}
 break;
 case 77:
 //#line 140 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
 break;
 case 78:
 //#line 141 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
 break;
 case 79:
 //#line 142 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
 break;
 case 80:
 //#line 143 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
 break;
 case 81:
 //#line 144 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
 break;
 case 82:
 //#line 145 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula ELSE_IF.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
 break;
 case 83:
 //#line 146 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
 break;
 case 84:
 //#line 147 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
 break;
 case 85:
 //#line 148 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+break;
+case 86:
+//#line 151 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia loop");}
 break;
 case 87:
 //#line 152 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
 break;
 case 88:
 //#line 153 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la cláusula UNTIL debe incluir una condicion entre parentesis");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
 break;
 case 89:
 //#line 154 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
 break;
 case 90:
 //#line 155 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
+break;
+case 91:
+//#line 162 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia out");}
 break;
 case 92:
 //#line 163 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT solo acepta cadenas de caracteres.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
 break;
 case 93:
 //#line 164 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 break;
 case 94:
 //#line 171 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Suma.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");}
 break;
 case 95:
 //#line 172 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Resta.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");}
 break;
 case 96:
 //#line 173 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Termino.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");}
 break;
 case 97:
 //#line 174 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
 break;
 case 98:
 //#line 175 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
 break;
 case 99:
 //#line 176 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
 break;
 case 100:
 //#line 177 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
 break;
 case 101:
 //#line 178 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
 break;
 case 102:
 //#line 181 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Multiplicacion.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");}
 break;
 case 103:
 //#line 182 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Division.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Division.");}
 break;
 case 104:
 //#line 183 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Factor.");}
+{showMessage("[Linea " + la.getCurrentLine() + "] Factor.");}
 break;
 case 105:
 //#line 184 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
 break;
 case 106:
 //#line 185 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
 break;
 case 107:
 //#line 186 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
 break;
 case 108:
 //#line 187 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
 break;
 case 109:
 //#line 188 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
 break;
 case 110:
 //#line 189 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
+{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
 break;
 case 113:
 //#line 194 "specification.y"
@@ -1077,7 +1113,7 @@ case 113:
 							/* Manejo la entrada positiva de esta constante		    				*/
 		    				 Symbol positivo = la.symbolsTable.getSymbol(val_peek(0).sval);
 		    				 if (positivo.getType()==Symbol._ULONGINT)
-		    				 	showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
+		    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
 		    				 else{
 			    				 if(positivo.removeRef() == 0){ /* Remove reference and if it reaches 0, remove SyboleTable entry*/
 			    				 	la.symbolsTable.removeSymbol(positivo.getLexeme());
@@ -1099,7 +1135,7 @@ case 113:
 	    				 		
 	    				 }
 break;
-//#line 1026 "Parser.java"
+//#line 1062 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

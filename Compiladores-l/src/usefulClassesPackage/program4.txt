@@ -4,15 +4,15 @@ PROC procedure (DOUBLE dedos, DOUBLE dedos,DOUBLE dedos ) NA = 0_ul SHADOWING = 
 		int = 5_ul - 4_ul + 6_ul * - 5.0;
 		OUT('Texto de salida');
 	} ELSE {
-		IF(5_ul < carlos){
+		IF(5_ul < /%esto es un comentario dentro de la c$ndicion de un if%/ carlos){
 			DOUBLE int;
 		}
 		ELSE {
 			carlos = int;
 		}END_IF;
 	}END_IF;
-	variable_1=6054_ul;
-	variable_2_salida_rango=979797_ul;
+	variable_1=6054_ul; 
+	variable_2_salida_rango=97979799494994994949_ul;
 	variable_3=3.9d-102;
 	variable_3_salida_rango=3.9d-5;
 	

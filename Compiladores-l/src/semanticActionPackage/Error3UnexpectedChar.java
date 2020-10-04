@@ -10,7 +10,7 @@ public class Error3UnexpectedChar extends SemanticAction{
 	}
 
 	public void execute() {
-		String error = "[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: Carácter inválido o inesperado: ";
+		String error = "[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: Caracter invalido o inesperado: ";
 		String read = Character.toString((char)lexicalAnalyzer.getLastCharacter()).replace("\n", "\\n").replace("\t","\\t");
 		error +=  "'" + read + "'.";
 		System.out.println(error);

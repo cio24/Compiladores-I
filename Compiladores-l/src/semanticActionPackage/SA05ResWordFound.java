@@ -20,7 +20,7 @@ public class SA05ResWordFound extends SemanticAction{
 		}
 		else
 		{
-			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: no hay palabra reservada \"" + lexeme + "\".");	
+			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: no hay palabra reservada \"" + lexeme + "\".");	
 			lexicalAnalyzer.setNextState(0);
 		}
 			

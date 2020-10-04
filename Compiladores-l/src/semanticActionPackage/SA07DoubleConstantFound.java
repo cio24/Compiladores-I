@@ -33,7 +33,7 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			}
 		else 
 		{
-			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] ERROR léxico: DOUBLE fuera de rango.");
+			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: constante ("+lexem+") de tipo DOUBLE fuera de rango.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

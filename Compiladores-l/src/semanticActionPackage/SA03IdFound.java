@@ -23,14 +23,14 @@ public class SA03IdFound extends SemanticAction {
 		}
 		else
 		{
-			lexeme=lexeme.substring(0,20);
-			System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] WARNING léxico: el identificador es demasiado largo, se trunco a 20 caracteres.");
+			String lexeme_truc=lexeme.substring(0,20);
+			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] WARNING lexico: el identificador ("+lexeme+") es demasiado largo, se trunco a 20 caracteres.");
 			
 			//Agregar a la tabla de simbolos si no esta
-			if(lexicalAnalyzer.symbolsTable.getSymbol(lexeme) == null) {
-				Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
-				lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-				lexicalAnalyzer.yylval.sval = lexeme;
+			if(lexicalAnalyzer.symbolsTable.getSymbol(lexeme_truc) == null) {
+				Symbol symbol = new Symbol(lexeme_truc,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
+				lexicalAnalyzer.symbolsTable.addSymbol(lexeme_truc,symbol);
+				lexicalAnalyzer.yylval.sval = lexeme_truc;
 			}
 
 		}
