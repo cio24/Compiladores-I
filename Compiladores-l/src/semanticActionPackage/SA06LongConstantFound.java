@@ -1,8 +1,8 @@
 package semanticActionPackage;
 
+import java.math.BigDecimal;
+
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import lexicalAnalyzerPackage.Parser;
-import lexicalAnalyzerPackage.ParserVal;
 import lexicalAnalyzerPackage.Symbol;
 import usefulClassesPackage.Constants;
 
@@ -16,8 +16,11 @@ public class SA06LongConstantFound extends SemanticAction {
 	@Override
 	public void execute() {
 		String lexem=lexicalAnalyzer.getCurrentLexem();
-		Integer value=Integer.parseInt(lexem);
-		if (value>=0 && value<=Math.pow(2, 32)-1) {
+		//Integer value=Integer.parseInt(lexem);
+		BigDecimal value=new BigDecimal(lexem);
+
+		if ((Constants.MIN_RANGE_ULONGINT.compareTo(value)<0 || Constants.MIN_RANGE_ULONGINT.compareTo(value)==0)  && value.compareTo(Constants.MAX_RANGE_ULONGINT)<0)
+				{
 			lexicalAnalyzer.setTokenId(Constants.CONSTANT);
 			
 			//agregar a la tabla de simbolos

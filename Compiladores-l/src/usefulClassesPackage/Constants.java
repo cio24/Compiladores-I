@@ -32,6 +32,9 @@ public class Constants {
 		
 	public static final BigDecimal MIN_RANGE_DOUBLE = new BigDecimal("2.2250738585072014e-308");
 	public static final BigDecimal MAX_RANGE_DOUBLE = new BigDecimal("1.7976931348623157e+308");
+	public static final BigDecimal MIN_RANGE_ULONGINT = new BigDecimal("0");
+	public static final BigDecimal MAX_RANGE_ULONGINT = new BigDecimal(Double.toString(Math.pow(2,32)));
+
 
 	public static final String getConstantName(int id) {
 		switch(id) {

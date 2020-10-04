@@ -1,4 +1,4 @@
-PROC proc ( ) NA = 0_ul SHADOWING = TRUE {	
+PROC  ( ) NA = 0_ul SHADOWING = TRUE {	
 	IF ( 5_ul - 4_ul < 5_ul ) {
 		DOUBLE int asd;
 		int = 5_ul - 4_ul + 6_ul * - 5.0;
