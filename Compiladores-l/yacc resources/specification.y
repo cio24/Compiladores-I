@@ -35,8 +35,8 @@ sentence  :  declaration
 		  |  executable		
 ;
 
-declaration  : type  variable_list	{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de variable.");}
-			 | procedure			{showMessage("[Line " + la.getCurrentLine() + "] Declaracion PROC.");}
+declaration  : type  variable_list	{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de variable/s.");}
+			 | procedure			{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de procedimiento.");}
 			 | variable_list 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
 			 | type 				{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
 ;
@@ -76,10 +76,10 @@ proc_body : '{' sentences  '}'
 		  | '{' '}'
 ;
 
-parameter_list  :  parameter
-				|  parameter  ','  parameter
-				|  parameter  ','  parameter  ','  parameter
-				|  parameter  ','  parameter  ','  parameter  ',' parameter_list	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un máximo de tres parametros.");}
+parameter_list  :  parameter  {showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+				|  parameter  ','  parameter  {showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+				|  parameter  ','  parameter  ','  parameter  {showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+				|  parameter  ','  parameter  ','  parameter  ',' parameter_list	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 ;
 
 parameter  :  type  ID
@@ -87,11 +87,11 @@ parameter  :  type  ID
 		   |  ID 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
 ;
 
-id_list  :  ID								
-		 |  ID  ','  ID						{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
-		 |  ID  ','  ID  ','  ID	
+id_list  :  ID								{showMessage("[Line " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+		 |  ID  ','  ID						{showMessage("[Line " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+		 |  ID  ','  ID  ','  ID	        {showMessage("[Line " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID  ',' id_list {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
-		 |  error 							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la lista de identificadores esta mal conformada.");}
+		 |  error 							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la lista de identificadores esta mal conformada.");}
 ;
 
 procedure_call :  ID  '('  id_list  ')'
@@ -135,22 +135,22 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block END_IF
- 		   |  IF  '('  condition  ')'  sentence_block  END_IF
+if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block END_IF  {showMessage("[Line " + la.getCurrentLine() + "] Sentencia if");}
+ 		   |  IF  '('  condition  ')'  sentence_block  END_IF                       {showMessage("[Line " + la.getCurrentLine() + "] Sentencia if");}
  		   |  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block error 	{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
  		   |  IF  '('  condition  ')'  sentence_block  error 						{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
- 		   |  IF  '('  error  ')'  sentence_block  ELSE  sentence_block END_IF 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
- 		   |  IF  '('  error  ')'  sentence_block  END_IF 							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
-		   |  IF  '('  condition  ')'  error  ELSE  sentence_block END_IF 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
-		   |  IF  '('  condition  ')'  sentence_block  ELSE  error END_IF 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula ELSE_IF.");}
- 		   |  IF  '('  condition  ')'  error  END_IF 								{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+ 		   |  IF  '('  error  ')'  sentence_block  ELSE  sentence_block END_IF 		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
+ 		   |  IF  '('  error  ')'  sentence_block  END_IF 							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
+		   |  IF  '('  condition  ')'  error  ELSE  sentence_block END_IF 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
+		   |  IF  '('  condition  ')'  sentence_block  ELSE  error END_IF 			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
+ 		   |  IF  '('  condition  ')'  error  END_IF 								{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
            |  IF  condition  sentence_block  ELSE  sentence_block END_IF			{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
  		   |  IF  condition  sentence_block  END_IF                                 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
 ;
 
-loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'
+loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'    {showMessage("[Line " + la.getCurrentLine() + "] Sentencia loop");}
 			 |  LOOP  sentence_block  error							{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
-			 |  LOOP  sentence_block  UNTIL  '('  error  ')'		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la cláusula UNTIL debe incluir una condicion entre parentesis");}
+			 |  LOOP  sentence_block  UNTIL  '('  error  ')'		{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
 			 |  LOOP  error  UNTIL  '('  condition  ')'				{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
              |  LOOP  sentence_block  UNTIL  condition		        {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
 ;
@@ -159,9 +159,9 @@ loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'
 
 /*-------> Gramatica de salida<-------*/
 
-out_clause  :  OUT  '('  CSTRING  ')'
-			|  OUT  '('  error  ')'  {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT solo acepta cadenas de caracteres.");}
-			|  OUT  CSTRING    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
+out_clause  :  OUT  '('  CSTRING  ')'  {showMessage("[Line " + la.getCurrentLine() + "] Sentencia out");}
+			|  OUT  '('  error  ')'  {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
+			|  OUT  CSTRING    {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 ;
 
 /*-------> Gramatica de salida<-------*/

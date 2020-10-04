@@ -17,7 +17,7 @@ public class Test {
 	
 	public Test() throws IOException {
 
-		test("program5.txt");
+		test("program4.txt");
 
 		/*
 		System.out.println("TEST CADENAS: ");

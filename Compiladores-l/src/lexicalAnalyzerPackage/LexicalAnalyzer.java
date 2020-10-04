@@ -31,7 +31,7 @@ public class LexicalAnalyzer {
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
 		tokenId = -1;	
 	}
-
+//henlo
 	public int yylex(AtomicReference<ParserVal> reference,ParserVal yylval) {
 		this.reference = reference;
 		this.yylval = yylval;

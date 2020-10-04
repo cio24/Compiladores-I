@@ -789,11 +789,11 @@ case 7:
 break;
 case 10:
 //#line 38 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de variable.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de variable/s.");}
 break;
 case 11:
 //#line 39 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Declaracion PROC.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Declaracion de procedimiento.");}
 break;
 case 12:
 //#line 40 "specification.y"
@@ -855,9 +855,21 @@ case 34:
 //#line 75 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: cuerpo del procedimiento mal definido.");}
 break;
+case 36:
+//#line 79 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+break;
+case 37:
+//#line 80 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+break;
+case 38:
+//#line 81 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+break;
 case 39:
 //#line 82 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un máximo de tres parametros.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 break;
 case 41:
 //#line 86 "specification.y"
@@ -867,9 +879,17 @@ case 42:
 //#line 87 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
 break;
+case 43:
+//#line 90 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+break;
 case 44:
 //#line 91 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+{showMessage("[Line " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+break;
+case 45:
+//#line 92 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 break;
 case 46:
 //#line 93 "specification.y"
@@ -877,7 +897,7 @@ case 46:
 break;
 case 47:
 //#line 94 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la lista de identificadores esta mal conformada.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la lista de identificadores esta mal conformada.");}
 break;
 case 50:
 //#line 101 "specification.y"
@@ -943,6 +963,14 @@ case 71:
 //#line 126 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
 break;
+case 75:
+//#line 138 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Sentencia if");}
+break;
+case 76:
+//#line 139 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Sentencia if");}
+break;
 case 77:
 //#line 140 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
@@ -953,23 +981,23 @@ case 78:
 break;
 case 79:
 //#line 142 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
 break;
 case 80:
 //#line 143 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condición entre parentesis.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
 break;
 case 81:
 //#line 144 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
 break;
 case 82:
 //#line 145 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula ELSE_IF.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
 break;
 case 83:
 //#line 146 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la cláusula IF.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
 break;
 case 84:
 //#line 147 "specification.y"
@@ -979,13 +1007,17 @@ case 85:
 //#line 148 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
 break;
+case 86:
+//#line 151 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Sentencia loop");}
+break;
 case 87:
 //#line 152 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
 break;
 case 88:
 //#line 153 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la cláusula UNTIL debe incluir una condicion entre parentesis");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
 break;
 case 89:
 //#line 154 "specification.y"
@@ -995,13 +1027,17 @@ case 90:
 //#line 155 "specification.y"
 {showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
 break;
+case 91:
+//#line 162 "specification.y"
+{showMessage("[Line " + la.getCurrentLine() + "] Sentencia out");}
+break;
 case 92:
 //#line 163 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT solo acepta cadenas de caracteres.");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
 break;
 case 93:
 //#line 164 "specification.y"
-{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintáctico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
+{showMessage("[Line " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 break;
 case 94:
 //#line 171 "specification.y"
@@ -1099,7 +1135,7 @@ case 113:
 	    				 		
 	    				 }
 break;
-//#line 1026 "Parser.java"
+//#line 1062 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
