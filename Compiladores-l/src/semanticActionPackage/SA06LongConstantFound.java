@@ -15,7 +15,7 @@ public class SA06LongConstantFound extends SemanticAction {
 
 	@Override
 	public void execute() {
-		String lexem=lexicalAnalyzer.getCurrentLexem();
+		String lexem=lexicalAnalyzer.getCurrentLexeme();
 		//Integer value=Integer.parseInt(lexem);
 		BigDecimal value=new BigDecimal(lexem);
 
@@ -24,8 +24,8 @@ public class SA06LongConstantFound extends SemanticAction {
 			lexicalAnalyzer.setTokenId(Constants.CONSTANT);
 			
 			//agregar a la tabla de simbolos
-			String lexeme = lexicalAnalyzer.getCurrentLexem();
-			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ULONGINT);
+			String lexeme = lexicalAnalyzer.getCurrentLexeme();
+			Symbol symbol = new Symbol(lexeme,Symbol._ULONGINT);
 			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 		}

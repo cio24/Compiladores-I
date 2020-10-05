@@ -1,7 +1,6 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import lexicalAnalyzerPackage.ParserVal;
 import lexicalAnalyzerPackage.Symbol;
 import usefulClassesPackage.Constants;
 
@@ -15,9 +14,9 @@ public class SA03IdFound extends SemanticAction {
 	@Override
 	public void execute() {
 		lexicalAnalyzer.returnLastCharacterRead();
-		String lexeme = lexicalAnalyzer.getCurrentLexem();
+		String lexeme = lexicalAnalyzer.getCurrentLexeme();
 		if (lexeme.length()<=20) {
-			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
+			Symbol symbol = new Symbol(lexeme,Symbol._ID);
 			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 		}
@@ -28,7 +27,7 @@ public class SA03IdFound extends SemanticAction {
 			
 			//Agregar a la tabla de simbolos si no esta
 			if(lexicalAnalyzer.getSymbolsTable().getSymbol(lexeme_truc) == null) {
-				Symbol symbol = new Symbol(lexeme_truc,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
+				Symbol symbol = new Symbol(lexeme_truc,Symbol._ID);
 				lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme_truc,symbol);
 				lexicalAnalyzer.getYylval().sval = lexeme_truc;
 			}

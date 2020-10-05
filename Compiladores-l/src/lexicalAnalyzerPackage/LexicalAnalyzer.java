@@ -9,38 +9,32 @@ import usefulClassesPackage.Constants;
 
 public class LexicalAnalyzer {
 
-	private TransitionMatrix transitionMatrix;
-	private ReturnableBufferedReader fileReader;
-	private final static char END_OF_FILE_CHAR = '~';
-	private final static int NO_TOKEN_FOUND_VALUE = -1;
-	private String lexeme;
-	private SymbolsTable symbolsTable;
-	private KeywordTable reservedKeywords;
-	private char lastCharacterRead;
+	public final static char END_OF_FILE_CHAR = '~';
+	public final static int NO_TOKEN_FOUND_VALUE = -1;
+
 	private int tokenId;
 	private int currentState;
+	private char lastCharacterRead;
+	private String lexeme;
+	private TransitionMatrix transitionMatrix;
+	private ReturnableBufferedReader fileReader;
+	private SymbolsTable symbolsTable;
+	private KeywordsTable reservedKeywords;
 	private ParserVal yylval;
 
-	public KeywordTable getReservedKeywords() {
-		return reservedKeywords;
-	}
-
-	public ParserVal getYylval() {
-		return yylval;
-	}
-
-	public SymbolsTable getSymbolsTable() {
-		return symbolsTable;
-	}
+    //CONSTRUCTOR
 
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException {
-		reservedKeywords = new KeywordTable();
+		reservedKeywords = new KeywordsTable();
 		transitionMatrix = new TransitionMatrix(this);
 		symbolsTable = new SymbolsTable();
 		fileReader = new ReturnableBufferedReader(
 				new InputStreamReader(new FileInputStream(codePath), Charset.forName("UTF-8")));
-		tokenId = -1;	
+		tokenId = -1;
 	}
+
+
+	//GET TOKEN METHOD
 
 	public int yylex(ParserVal yylval) {
 
@@ -49,9 +43,9 @@ public class LexicalAnalyzer {
 		currentState = 0;
 
 		tokenId = NO_TOKEN_FOUND_VALUE;
-		
+
 		while (tokenId == NO_TOKEN_FOUND_VALUE) {
-			
+
 			int characterCode = -1;
 			try {
 				// siempre se va a encontar un token, por lo menos el token de final de archivo
@@ -68,7 +62,7 @@ public class LexicalAnalyzer {
 				lastCharacterRead = END_OF_FILE_CHAR;
 			else // guardo el caracter leido por si lo usa una accion semantica
 				lastCharacterRead = (char) characterCode;
-		
+
 			int savedState=currentState;
 
 			// se obtiene el siguiente estado
@@ -91,46 +85,52 @@ public class LexicalAnalyzer {
 
 		if(tokenId == (int) END_OF_FILE_CHAR)
 			return -1;
-		
+
 		System.out.println("    [Linea " + this.getCurrentLine() + "] Token \""  +getTokenString(tokenId) + "\" encontrado");
-		
-		return tokenId;				
+
+		return tokenId;
 
 	}
-	
-	public String getTokenString(int token) {
-		String nombre = Constants.getConstantName(token);
-		if(nombre == null)
-			return Character.toString((char)token);
-		else
-			return nombre;
-		
+
+
+	//GETTERS
+
+	public KeywordsTable getReservedKeywords() {
+		return reservedKeywords;
 	}
 
-	public char getLastCharactedRead() {
+
+	public ParserVal getYylval() {
+		return yylval;
+	}
+
+	public SymbolsTable getSymbolsTable() {
+		return symbolsTable;
+	}
+
+	public char getLastCharacterRead() {
 		return lastCharacterRead;
 	}
 
-	public void initializeLexem() {
-		lexeme = "";
-	}
-
-	public void addNextCharacter() {
-		//despu�s vamos a ver si esto funciona bien xD
-		lexeme = lexeme + lastCharacterRead; /// Falta definir esto
-	}
-
-	public String getCurrentLexem() {
+	public String getCurrentLexeme() {
 		return lexeme;
 	}
 
-	public void setTokenId(int tokenId) {
-		this.tokenId = tokenId;
+	public int getLastCharacterReadAscii() {
+		return lastCharacterRead;
+	}
+
+	public String getTokenString(int tokenId) {
+		String name = Constants.getConstantName(tokenId);
+		if(name == null)
+			return Character.toString((char)tokenId);
+		else
+			return name;
+
 	}
 
 	public String getCurrentLine() {
 		int line = fileReader.getCurrentLine();
-		String s;
 		if(line <= 9)
 			switch(line){
 				case 0: return "00";
@@ -144,20 +144,34 @@ public class LexicalAnalyzer {
 				case 8: return "08";
 				default: return "09";
 			}
-		
+
 		return String.valueOf(fileReader.getCurrentLine());
+	}
+
+
+	//SETTERS
+
+	public void setNextState(int nextState) {
+		currentState = nextState;
+	}
+
+	public void setTokenId(int tokenId) {
+		this.tokenId = tokenId;
+	}
+
+
+	//OTHERS
+
+	public void initializeLexeme() {
+		lexeme = "";
+	}
+
+	public void addNextCharacter() {
+		lexeme = lexeme + lastCharacterRead;
 	}
 
 	public void returnLastCharacterRead() {
 		fileReader.returnLastCharacter();
-	}
-
-	public int getLastCharacter() {
-		return lastCharacterRead;
-	}
-	
-	public void setNextState(int ns) {
-		currentState=ns;
 	}
 	
 }

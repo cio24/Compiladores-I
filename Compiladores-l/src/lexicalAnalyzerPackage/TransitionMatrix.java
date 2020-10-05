@@ -3,24 +3,24 @@ import java.util.Vector;
 import semanticActionPackage.*;
 
 public class TransitionMatrix {
-	
+
+	public final static int STATES = 19;
+	public final static int CHAR_SETS = 22;
+	public final static int FINAL_STATE = -1;
+
 	private Vector<Vector<Integer>> transitionMatrix;
-	private Vector<Vector<SemanticAction>> semanticMatrix;
-	private final static int STATES = 19;
-	private final static int CHAR_SETS = 22;
-	private final static int FINAL_STATE = -1;
-	@SuppressWarnings("unused")
+	private Vector<Vector<SemanticAction>> semanticActionMatrix;
 	private LexicalAnalyzer lexicalAnalyzer;
 	
 	public TransitionMatrix(LexicalAnalyzer lexicalAnalyzer) {
 		
 		transitionMatrix = new Vector<Vector<Integer>>(STATES);
-		semanticMatrix = new Vector<Vector<SemanticAction>>(STATES);
+		semanticActionMatrix = new Vector<Vector<SemanticAction>>(STATES);
 		this.lexicalAnalyzer = lexicalAnalyzer;
 		
 	    for(int i=0;i<STATES;i++){
 	    	transitionMatrix.add(new Vector<Integer>(CHAR_SETS));
-	    	semanticMatrix.add(new Vector<SemanticAction>(CHAR_SETS));
+	    	semanticActionMatrix.add(new Vector<SemanticAction>(CHAR_SETS));
 	    }
 	    
 	    //a continuación se agrega la transición de los estados
@@ -237,15 +237,15 @@ public class TransitionMatrix {
 	    SemanticAction error1 = new Error1UnexpectedEOF(lexicalAnalyzer);
 	    SemanticAction error2 = new Error2UnexpectedChar(lexicalAnalyzer);
 	    SemanticAction error3 = new Error3UnexpectedChar(lexicalAnalyzer);
-	    SemanticAction warning1 = new Warning1(lexicalAnalyzer);
+	    SemanticAction warning1 = new Warning01UnexpectedCharInComment(lexicalAnalyzer);
 	    SemanticAction semanticActionNone = new SemanticActionNone(lexicalAnalyzer);
 	    
 	    for(int i = 0; i < STATES; i++)
 	    	for(int j = 0; j < CHAR_SETS; j++)
-	    		semanticMatrix.get(i).insertElementAt(semanticActionNone,j);
+	    		semanticActionMatrix.get(i).insertElementAt(semanticActionNone,j);
 	    
 	   //acciones semánticas para el estado 0
-	    Vector<SemanticAction> w=semanticMatrix.get(0);
+	    Vector<SemanticAction> w= semanticActionMatrix.get(0);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 3 || i==5 || i==20)
@@ -261,7 +261,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 1
-	    w=semanticMatrix.get(1);
+	    w= semanticActionMatrix.get(1);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 3)
@@ -270,7 +270,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 2
-	    w=semanticMatrix.get(2);
+	    w= semanticActionMatrix.get(2);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14)
@@ -280,7 +280,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 3
-	    w=semanticMatrix.get(3);
+	    w= semanticActionMatrix.get(3);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 14)
@@ -290,7 +290,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 4
-	    w=semanticMatrix.get(4);
+	    w= semanticActionMatrix.get(4);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 4 || i == 5 || i == 15 || i == 16 || i == 17 || i == 19)
@@ -300,7 +300,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 5
-	    w=semanticMatrix.get(5);
+	    w= semanticActionMatrix.get(5);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 			if(i == 5 || i == 18)
@@ -310,7 +310,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 6
-	    w=semanticMatrix.get(6);
+	    w= semanticActionMatrix.get(6);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 5)
@@ -324,7 +324,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 7
-	    w=semanticMatrix.get(7);
+	    w= semanticActionMatrix.get(7);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 1)
@@ -340,7 +340,7 @@ public class TransitionMatrix {
 	    }
 	    	
 	    //acciones semánticas para el estado 8
-	    w=semanticMatrix.get(8);
+	    w= semanticActionMatrix.get(8);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 4 || i == 19)
@@ -350,7 +350,7 @@ public class TransitionMatrix {
 	    }
 		    
 		    //acciones semánticas para el estado 9
-		    w=semanticMatrix.get(9);
+		    w= semanticActionMatrix.get(9);
 
 		    for(int i = 0; i < CHAR_SETS; i++) {
 		    	if(i == 10)
@@ -362,7 +362,7 @@ public class TransitionMatrix {
 	    }
 		    
 		    //acciones semánticas para el estado 10
-		    w=semanticMatrix.get(10);
+		    w= semanticActionMatrix.get(10);
 
 		    for(int i = 0; i < CHAR_SETS; i++) {
 		    	if(i == 14)
@@ -374,7 +374,7 @@ public class TransitionMatrix {
 	    }
 		    
 	    //acciones semánticas para el estado 11
-	    w=semanticMatrix.get(11);
+	    w= semanticActionMatrix.get(11);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
@@ -386,7 +386,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 12
-	    w=semanticMatrix.get(12);
+	    w= semanticActionMatrix.get(12);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 19)
@@ -396,7 +396,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 13
-	    w=semanticMatrix.get(13);
+	    w= semanticActionMatrix.get(13);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 9)
@@ -406,7 +406,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 14
-	    w=semanticMatrix.get(14);
+	    w= semanticActionMatrix.get(14);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 9)
@@ -416,7 +416,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 15
-	    w=semanticMatrix.get(15);
+	    w= semanticActionMatrix.get(15);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 9)
@@ -426,7 +426,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 16
-	    w=semanticMatrix.get(16);
+	    w= semanticActionMatrix.get(16);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 9)
@@ -438,7 +438,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 17
-	    w=semanticMatrix.get(17);
+	    w= semanticActionMatrix.get(17);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
@@ -450,7 +450,7 @@ public class TransitionMatrix {
 	    }
 	    
 	    //acciones semánticas para el estado 18
-	    w=semanticMatrix.get(18);
+	    w= semanticActionMatrix.get(18);
 
 	    for(int i = 0; i < CHAR_SETS; i++) {
 	    	if(i == 14)
@@ -462,8 +462,8 @@ public class TransitionMatrix {
 	    }
 	}
 	
-	private int getId(char c) {
-		switch(c){
+	private int getCharSetId(char character) {
+		switch(character){
 			case ' ':
 			case '\t':
 				return 0;
@@ -508,22 +508,22 @@ public class TransitionMatrix {
 				return 16;
 		}
 		
-		int charType = Character.getType(c);
+		int charType = Character.getType(character);
         if (charType == Character.LOWERCASE_LETTER)
         	return 17;
         if (charType == Character.UPPERCASE_LETTER)
         	return 18;
-		 if(Character.isDigit(c))
+		 if(Character.isDigit(character))
 			 return 19;
 			
 		return 20;
 	}
 	
-	public int getNextState(int currentState, char c) {
-		return transitionMatrix.get(currentState).get(this.getId(c));
+	public int getNextState(int currentState, char character) {
+		return transitionMatrix.get(currentState).get(this.getCharSetId(character));
 	}
-	
-	public SemanticAction getSemanticAction(int actualState, char c) {
-		return semanticMatrix.get(actualState).get(getId(c));
+
+	public SemanticAction getSemanticAction(int currentState, char character) {
+		return semanticActionMatrix.get(currentState).get(getCharSetId(character));
 	}
 }

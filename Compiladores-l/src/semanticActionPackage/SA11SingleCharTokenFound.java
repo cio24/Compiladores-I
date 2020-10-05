@@ -11,7 +11,7 @@ public class SA11SingleCharTokenFound extends SemanticAction{
 
 	@Override
 	public void execute() {
-		lexicalAnalyzer.setTokenId((int)lexicalAnalyzer.getLastCharactedRead());
+		lexicalAnalyzer.setTokenId((int)lexicalAnalyzer.getLastCharacterRead());
 	}
 	
 }

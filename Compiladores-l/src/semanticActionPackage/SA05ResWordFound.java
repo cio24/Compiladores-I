@@ -12,8 +12,8 @@ public class SA05ResWordFound extends SemanticAction{
 	@Override
 	public void execute() {
 		lexicalAnalyzer.returnLastCharacterRead();
-		String lexeme = lexicalAnalyzer.getCurrentLexem();
-		int keywordtoken = lexicalAnalyzer.getReservedKeywords().getKeywordToken(lexeme);
+		String lexeme = lexicalAnalyzer.getCurrentLexeme();
+		int keywordtoken = lexicalAnalyzer.getReservedKeywords().getTokenValue(lexeme);
 		if (keywordtoken!=-1) {
 			//System.out.println("[Line " + lexicalAnalyzer.getCurrentLine() + "] Reserved word \"" + lexeme + "\" found.");
 			lexicalAnalyzer.setTokenId(keywordtoken);

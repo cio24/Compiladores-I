@@ -10,7 +10,7 @@ public class SA01InitLexAndAddNextChar extends SemanticAction {
 	}
 
 	public void execute() {
-		lexicalAnalyzer.initializeLexem();
+		lexicalAnalyzer.initializeLexeme();
 		lexicalAnalyzer.addNextCharacter();
 	}
 }

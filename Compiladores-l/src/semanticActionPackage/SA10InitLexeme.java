@@ -11,7 +11,7 @@ public class SA10InitLexeme extends SemanticAction{
 
 	@Override
 	public void execute() {
-		lexicalAnalyzer.initializeLexem();
+		lexicalAnalyzer.initializeLexeme();
 	}
 
 }

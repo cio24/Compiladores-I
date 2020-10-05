@@ -7,18 +7,15 @@ public class Symbol {
 	public final static String _ULONGINT = "Long int unsigned";
 	public final static String _STRING = "String";
 
-	private String type = _DEFAULT_TYPE;
+	private String type;
 	private String lexeme = "";
-	private String codeLine = "00";
-	private int ref = 0;
+	private int referenceCount = 0;
 	
-	public Symbol(String lexemme, String codeLine, String type) {
-		this.lexeme = lexemme;
-		this.codeLine = codeLine;
+	public Symbol(String lexeme, String type) {
+		this.lexeme = lexeme;
 		this.type = type;
-		this.ref = 1;
+		this.referenceCount = 1;
 	}
-		
 
 	public void setType(String type) {
 		this.type = type;
@@ -32,30 +29,26 @@ public class Symbol {
 		this.lexeme = lexeme;
 	}
 
-	public String getCodeLine() {
-		return this.codeLine;
-	}
-
 	public String getType() {
 		return this.type;
 	}
 
-	public int getRef() {
-		return this.ref;
+	public int getReferenceCount() {
+		return this.referenceCount;
 	}
 	
-	public int addRef() {
-		this.ref ++;
-		return this.ref;
+	public int addReference() {
+		this.referenceCount++;
+		return this.referenceCount;
 	}
 
-	public int removeRef() {
-		this.ref--;
-		return this.ref;
+	public int subtractReference() {
+		this.referenceCount--;
+		return this.referenceCount;
 	}
 	
 	@Override
 	public String toString() {
-		return "\n\tTipo: \"" + this.type + "\" | Referencias: " + this.ref; 
+		return "\n\tTipo: \"" + this.type + "\" | Referencias: " + this.referenceCount;
 	}
 }

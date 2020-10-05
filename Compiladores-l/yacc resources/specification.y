@@ -197,7 +197,7 @@ factor  :  ID
 		    				 if (positivo.getType()==Symbol._ULONGINT)
 		    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
 		    				 else{
-			    				 if(positivo.removeRef() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
+			    				 if(positivo.subtractReference() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
 			    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
 			    				 }
 			    				 
@@ -206,10 +206,10 @@ factor  :  ID
 			    				 // Creo nueva entrada o actualizo la existente con una referencia
 			    				 Symbol negativo = la.getSymbolsTable().getSymbol("-"+$2.sval);
 			    				 if (negativo != null){
-			    				 	negativo.addRef();  // Ya existe la entrada
+			    				 	negativo.addReference();  // Ya existe la entrada
 			    				 }else{
 			    				 	String lexema = "-"+positivo.getLexeme();
-			    				 	Symbol nuevoNegativo = new Symbol(lexema,la.getCurrentLine(),positivo.getType());
+			    				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getType());
 			    				 	la.getSymbolsTable().addSymbol(lexema,nuevoNegativo);
 			    				 }
 		    				 	$2.sval = "-"+$2.sval;
@@ -233,8 +233,8 @@ public void parse(){
 	yyparse();
 }
 
-public void yyerror(String s){
-	if(s.equals("syntax error")){
+public void yyerror(String errorMessage){
+	if(errorMessage.equals("syntax error")){
 		//System.out.println("[Linea " + la.getCurrentLine()+ "] " + s + ".");
 	}
 
@@ -246,6 +246,6 @@ int yylex(){
 	return yychar;
 }
 
-public void showMessage(String mg) {
-	System.out.println(mg);
+public void showMessage(String message) {
+	System.out.println(message);
 }
