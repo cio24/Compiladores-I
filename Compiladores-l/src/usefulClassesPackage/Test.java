@@ -45,7 +45,7 @@ public class Test {
 		Parser p = new Parser(BASE_PATH + fileName);
 		//p.yydebug = true;
 		p.parse();
-		p.la.symbolsTable.print();
+		p.la.getSymbolsTable().print();
 		/*
 
 		String nombre;

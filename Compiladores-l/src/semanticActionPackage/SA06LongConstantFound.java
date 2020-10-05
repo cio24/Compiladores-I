@@ -26,8 +26,8 @@ public class SA06LongConstantFound extends SemanticAction {
 			//agregar a la tabla de simbolos
 			String lexeme = lexicalAnalyzer.getCurrentLexem();
 			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ULONGINT);
-			lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-			lexicalAnalyzer.yylval.sval = lexeme;
+			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+			lexicalAnalyzer.getYylval().sval = lexeme;
 		}
 		else {
 			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: constante ("+lexem+") de tipo ULONGINT fuera de rango.");

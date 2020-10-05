@@ -18,8 +18,8 @@ public class SA08StringFound extends SemanticAction {
 		lexicalAnalyzer.addNextCharacter();
 		String lexeme = lexicalAnalyzer.getCurrentLexem();
 		Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._STRING);
-		lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-		lexicalAnalyzer.yylval.sval = lexeme;
+		lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+		lexicalAnalyzer.getYylval().sval = lexeme;
 		lexicalAnalyzer.setTokenId(Constants.CSTRING);
 	}
 

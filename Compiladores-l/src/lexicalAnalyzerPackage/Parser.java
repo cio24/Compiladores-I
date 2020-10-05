@@ -603,17 +603,14 @@ public void yyerror(String s){
 
 int yylex(){
 	yylval = new ParserVal();
-	AtomicReference<ParserVal> ref = new AtomicReference<>();
-	yychar = la.yylex(ref,yylval);
-	//yylval = ref.get(); // get next token
-	//yylval = la.yylval;
+	yychar = la.yylex(yylval);
 	return yychar;
 }
 
 public void showMessage(String mg) {
 	System.out.println(mg);
 }
-//#line 545 "Parser.java"
+//#line 542 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1095,31 +1092,31 @@ case 113:
 //#line 194 "specification.y"
 {
 							/* Manejo la entrada positiva de esta constante		    				*/
-		    				 Symbol positivo = la.symbolsTable.getSymbol(val_peek(0).sval);
+		    				 Symbol positivo = la.getSymbolsTable().getSymbol(val_peek(0).sval);
 		    				 if (positivo.getType()==Symbol._ULONGINT)
 		    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
 		    				 else{
 			    				 if(positivo.removeRef() == 0){ /* Remove reference and if it reaches 0, remove SyboleTable entry*/
-			    				 	la.symbolsTable.removeSymbol(positivo.getLexeme());
+			    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
 			    				 }
 			    				 
 			    				 /* TODO: QUE HACER CON - 4_ul ??????*/
 			    				 
 			    				 /* Creo nueva entrada o actualizo la existente con una referencia*/
-			    				 Symbol negativo = la.symbolsTable.getSymbol("-"+val_peek(0).sval);
+			    				 Symbol negativo = la.getSymbolsTable().getSymbol("-"+val_peek(0).sval);
 			    				 if (negativo != null){
 			    				 	negativo.addRef();  /* Ya existe la entrada*/
 			    				 }else{
 			    				 	String lexema = "-"+positivo.getLexeme();
 			    				 	Symbol nuevoNegativo = new Symbol(lexema,la.getCurrentLine(),positivo.getType());
-			    				 	la.symbolsTable.addSymbol(lexema,nuevoNegativo);
+			    				 	la.getSymbolsTable().addSymbol(lexema,nuevoNegativo);
 			    				 }
 		    				 	val_peek(0).sval = "-"+val_peek(0).sval;
 	    				 	}
 	    				 		
 	    				 }
 break;
-//#line 1046 "Parser.java"
+//#line 1043 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

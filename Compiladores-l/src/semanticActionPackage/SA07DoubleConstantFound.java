@@ -28,8 +28,8 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			String lexeme = new String(number.toString());
 			//Ingresar en la tabla de simbolos
 			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._DOUBLE);
-			lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-			lexicalAnalyzer.yylval.sval = lexeme;
+			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+			lexicalAnalyzer.getYylval().sval = lexeme;
 			}
 		else 
 		{

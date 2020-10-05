@@ -5,23 +5,33 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.concurrent.atomic.AtomicReference;
-
-import semanticActionPackage.SemanticAction;
 import usefulClassesPackage.Constants;
 
 public class LexicalAnalyzer {
 
 	private TransitionMatrix transitionMatrix;
 	private ReturnableBufferedReader fileReader;
-	private String lexem;
-	public SymbolsTable symbolsTable;
-	public KeywordTable reservedKeywords;
+	private final static char END_OF_FILE_CHAR = '~';
+	private final static int NO_TOKEN_FOUND_VALUE = -1;
+	private String lexeme;
+	private SymbolsTable symbolsTable;
+	private KeywordTable reservedKeywords;
 	private char lastCharacterRead;
 	private int tokenId;
 	private int currentState;
-	public ParserVal yylval;
-	AtomicReference<ParserVal> reference;
+	private ParserVal yylval;
+
+	public KeywordTable getReservedKeywords() {
+		return reservedKeywords;
+	}
+
+	public ParserVal getYylval() {
+		return yylval;
+	}
+
+	public SymbolsTable getSymbolsTable() {
+		return symbolsTable;
+	}
 
 	public LexicalAnalyzer(String codePath) throws FileNotFoundException {
 		reservedKeywords = new KeywordTable();
@@ -32,16 +42,15 @@ public class LexicalAnalyzer {
 		tokenId = -1;	
 	}
 
-	public int yylex(AtomicReference<ParserVal> reference,ParserVal yylval) {
-		this.reference = reference;
-		this.yylval = yylval;
-		lexem = "";
+	public int yylex(ParserVal yylval) {
+
+		this.yylval = yylval; //como es un atributo publico puede ser modificado por una accion semantica
+		lexeme = ""; //
 		currentState = 0;
+
+		tokenId = NO_TOKEN_FOUND_VALUE;
 		
-		// seteamos tokenId en -1 para cuando se le pida un nuevo token alanalizador l�xico
-		tokenId = -1;
-		
-		while (tokenId < 0) {
+		while (tokenId == NO_TOKEN_FOUND_VALUE) {
 			
 			int characterCode = -1;
 			try {
@@ -50,35 +59,40 @@ public class LexicalAnalyzer {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
+			//si encontramos el caracter /r lo salteamos
 			if(characterCode == 13)
 				continue;
-			
+
 			if(characterCode == -1)
-				lastCharacterRead = '~';
-			else
-				lastCharacterRead = (char) characterCode; // guardo el caracter le�do por si lo usa una acci�n sem�ntica
+				lastCharacterRead = END_OF_FILE_CHAR;
+			else // guardo el caracter leido por si lo usa una accion semantica
+				lastCharacterRead = (char) characterCode;
 		
 			int savedState=currentState;
-			// paso al siguiente estado
+
+			// se obtiene el siguiente estado
 			currentState = transitionMatrix.getNextState(currentState, lastCharacterRead);
 
-			// ejecuto la acci�n sem�ntica correspondiente al estado actual y el caracter le�do
-			// notese que si la acci�n sem�ntica encontro un token, tiene que usar el m�todo de setTokenId();
-			
+			/*
+			ejecuto la accion semantica correspondiente al estado actual y el caracter leido
+			 notese que si la accion semantica encontro un token, tiene que usar el metodo de setTokenId();
+			 esta accion semantica podria detectar un error, por lo que cambiaria el currentState al estado 0
+			 para poder seguir buscando un token valido
+			 */
 			transitionMatrix.getSemanticAction(savedState, lastCharacterRead).execute();
 
-				
-			//cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se encontr� un token
-			//entonces se tuvo que actualizad el tokenId y no tendr�a que volver a entrar en el while, xq sino se romperia
-			//ya que estar�a tratando de entrar en una posici�n invalida de la matriz
+			/*
+			cuando se actualiza el currentState, si se pasa al estado final (-1) se supone que se enconto un token
+			entonces una accion semantica tuvo que actualizar el tokenId y no tendria que volver a entrar en el while, xq sino se romperia
+			ya que estaria tratando de entrar en una posicion invalida de la matriz
+			 */
 		}
-		//if (lexem.length()>0) System.out.println(lexem);
-		//reference.set(yylval);
-		if(tokenId == (int)'~')
+
+		if(tokenId == (int) END_OF_FILE_CHAR)
 			return -1;
 		
-		System.out.println("-- LEX (Linea " + this.getCurrentLine() + ") Token \""  +getTokenString(tokenId) + "\" encontrado");
+		System.out.println("    [Linea " + this.getCurrentLine() + "] Token \""  +getTokenString(tokenId) + "\" encontrado");
 		
 		return tokenId;				
 
@@ -98,16 +112,16 @@ public class LexicalAnalyzer {
 	}
 
 	public void initializeLexem() {
-		lexem = "";
+		lexeme = "";
 	}
 
 	public void addNextCharacter() {
 		//despu�s vamos a ver si esto funciona bien xD
-		lexem = lexem + lastCharacterRead; /// Falta definir esto
+		lexeme = lexeme + lastCharacterRead; /// Falta definir esto
 	}
 
 	public String getCurrentLexem() {
-		return lexem;
+		return lexeme;
 	}
 
 	public void setTokenId(int tokenId) {

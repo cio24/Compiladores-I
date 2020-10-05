@@ -18,8 +18,8 @@ public class SA03IdFound extends SemanticAction {
 		String lexeme = lexicalAnalyzer.getCurrentLexem();
 		if (lexeme.length()<=20) {
 			Symbol symbol = new Symbol(lexeme,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
-			lexicalAnalyzer.symbolsTable.addSymbol(lexeme,symbol);
-			lexicalAnalyzer.yylval.sval = lexeme;
+			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+			lexicalAnalyzer.getYylval().sval = lexeme;
 		}
 		else
 		{
@@ -27,10 +27,10 @@ public class SA03IdFound extends SemanticAction {
 			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] WARNING lexico: el identificador ("+lexeme+") es demasiado largo, se trunco a 20 caracteres.");
 			
 			//Agregar a la tabla de simbolos si no esta
-			if(lexicalAnalyzer.symbolsTable.getSymbol(lexeme_truc) == null) {
+			if(lexicalAnalyzer.getSymbolsTable().getSymbol(lexeme_truc) == null) {
 				Symbol symbol = new Symbol(lexeme_truc,lexicalAnalyzer.getCurrentLine(),Symbol._ID);
-				lexicalAnalyzer.symbolsTable.addSymbol(lexeme_truc,symbol);
-				lexicalAnalyzer.yylval.sval = lexeme_truc;
+				lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme_truc,symbol);
+				lexicalAnalyzer.getYylval().sval = lexeme_truc;
 			}
 
 		}
