@@ -1,0 +1,7 @@
+/%- Identificadores de menos y más de 20 caracteres.
+- Identificadores con letras, dígitos y _.
+- Identificadores que empiecen _.%/
+identificador_corto
+indentificador_demasiado_largo_para_este_parser
+identificador_1234_numer
+_identificador

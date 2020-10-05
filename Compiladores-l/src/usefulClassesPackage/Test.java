@@ -16,8 +16,7 @@ public class Test {
 	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	
 	public static void main(String[] args) throws IOException {
-		Test test = new Test();
-		
+		Test test = new Test();	
 	}
 	
 	public Test() throws IOException {
