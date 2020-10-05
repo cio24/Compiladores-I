@@ -1,14 +1,13 @@
 import java.io.IOException;
 
-import usefulClassesPackage.Test;
+import lexicalAnalyzerPackage.Parser;
 
 public class Main {
 		
-		public static void main(String[] args) throws IOException {
-		
-			Test test = new Test();
-			
-			System.out.println("Presione cualquier tecla para finalizar");
-			System.in.read();
+	public static void main(String[] args) throws IOException {
+		String path = args[0];
+		Parser p = new Parser(path);
+		p.parse();
+		p.la.symbolsTable.print();
 	}
 }
