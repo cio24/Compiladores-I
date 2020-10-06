@@ -91,7 +91,6 @@ id_list  :  ID								{showMessage("[Linea " + la.getCurrentLine() + "] Lista de
 		 |  ID  ','  ID						{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID	        {showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID  ',' id_list {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
-		 |  error 							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la lista de identificadores esta mal conformada.");}
 ;
 
 procedure_call :  ID  '('  id_list  ')'
