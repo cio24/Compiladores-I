@@ -168,10 +168,22 @@ out_clause  :  OUT  '('  CSTRING  ')'
        
 /*-------> Gramatica de expresiones <-------*/
 
-expression  :  expression  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");}
-			|  expression  '-'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");}
+expression  :  expression  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
+										Operand op1 = (Operand) $1.obj; 
+      									Operand op2 = (Operand) $3.obj; 
+      									Operator opt = new Operator("+");
+      									Triplet t = new Triplet(opt,op1,op2);
+      									ic.addTriplet(t);
+      									$$.obj = new Operand(Operand.TRIPLET,t.getId());}
+			|  expression  '-'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
+										Operand op1 = (Operand) $1.obj; 
+      									Operand op2 = (Operand) $3.obj; 
+      									Operator opt = new Operator("-");
+      									Triplet t = new Triplet(opt,op1,op2);
+      									ic.addTriplet(t);
+      									$$.obj = new Operand(Operand.TRIPLET,t.getId());}
 			|  term 				 	{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
-										$$.sval = $1.sval;}
+										 $$.obj = $1.obj;}
 			|  expression  '+'  error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
 			|  expression  '-'  error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
 			|  error  '+'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
@@ -179,7 +191,13 @@ expression  :  expression  '+'  term 	{showMessage("[Linea " + la.getCurrentLine
             |  expression  '+'  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
 ;
 
-term  :  term  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");}
+term  :  term  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
+							Operand op1 = (Operand) $1.obj; 
+      						Operand op2 = (Operand) $3.obj; 
+      						Operator opt = new Operator("*");
+      						Triplet t = new Triplet(opt,op1,op2);
+      						ic.addTriplet(t);
+      						$$.obj = new Operand(Operand.TRIPLET,t.getId());}
       |  term  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Division.");
       						Operand op1 = (Operand) $1.obj; 
       						Operand op2 = (Operand) $3.obj; 
@@ -241,6 +259,7 @@ public Parser(String path) throws FileNotFoundException {
 
 public void parse(){
 	yyparse();
+	System.out.print(ic);
 }
 
 public void yyerror(String errorMessage){
