@@ -86,7 +86,7 @@ public class LexicalAnalyzer {
 		if(tokenId == (int) END_OF_FILE_CHAR)
 			return -1;
 
-		System.out.println("    [Linea " + this.getCurrentLine() + "] Token \""  +getTokenString(tokenId) + "\" encontrado");
+		//System.out.println("    [Linea " + this.getCurrentLine() + "] Token \""  +getTokenString(tokenId) + "\" encontrado"); ***YA NO NECESITAMOS IMPRIMIR ESTO***
 
 		return tokenId;
 

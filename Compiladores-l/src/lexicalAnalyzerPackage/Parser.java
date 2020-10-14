@@ -610,7 +610,7 @@ int yylex(){
 }
 
 public void showMessage(String message) {
-	System.out.println(message);
+	//System.out.println(message);
 }
 //#line 544 "Parser.java"
 //###############################################################
