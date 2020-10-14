@@ -9,5 +9,6 @@ public class Main {
 		Parser p = new Parser(path);
 		p.parse();
 		p.la.getSymbolsTable().print();
+		System.out.println(p.ic);
 	}
 }

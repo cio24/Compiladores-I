@@ -1,6 +1,7 @@
 %{
 package lexicalAnalyzerPackage;
 
+import codeGenerationPackage.*;
 import usefulClassesPackage.Constants;
 import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -169,7 +170,8 @@ out_clause  :  OUT  '('  CSTRING  ')'
 
 expression  :  expression  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");}
 			|  expression  '-'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");}
-			|  term 				 	{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");}
+			|  term 				 	{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
+										$$.sval = $1.sval;}
 			|  expression  '+'  error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
 			|  expression  '-'  error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
 			|  error  '+'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
@@ -178,8 +180,15 @@ expression  :  expression  '+'  term 	{showMessage("[Linea " + la.getCurrentLine
 ;
 
 term  :  term  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");}
-      |  term  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Division.");}
-	  |  factor            {showMessage("[Linea " + la.getCurrentLine() + "] Factor.");}
+      |  term  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Division.");
+      						Operand op1 = (Operand) $1.obj; 
+      						Operand op2 = (Operand) $3.obj; 
+      						Operator opt = new Operator("/");
+      						Triplet t = new Triplet(opt,op1,op2);
+      						ic.addTriplet(t);
+      						$$.obj = new Operand(Operand.TRIPLET,t.getId());}
+	  |  factor            {showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
+	  						 $$.obj = $1.obj;}
 	  |  term '*' error    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
   	  |  term '/' error    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
 	  |  error '*' factor    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
@@ -188,10 +197,10 @@ term  :  term  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Mul
       |  term  '/'  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
 ;
 
-factor  :  ID 
-	    |  CONSTANT
+factor  :  ID           {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
+	    |  CONSTANT     {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
 	    |  '-' CONSTANT {
-							// Manejo la entrada positiva de esta constante		    				
+							 // Manejo la entrada positiva de esta constante		    				
 		    				 Symbol positivo = la.getSymbolsTable().getSymbol($2.sval);
 		    				 if (positivo.getType()==Symbol._ULONGINT)
 		    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
@@ -200,8 +209,7 @@ factor  :  ID
 			    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
 			    				 }
 			    				 
-			    				 // TODO: QUE HACER CON - 4_ul ??????
-			    				 
+		    				 
 			    				 // Creo nueva entrada o actualizo la existente con una referencia
 			    				 Symbol negativo = la.getSymbolsTable().getSymbol("-"+$2.sval);
 			    				 if (negativo != null){
@@ -211,10 +219,11 @@ factor  :  ID
 			    				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getType());
 			    				 	la.getSymbolsTable().addSymbol(lexema,nuevoNegativo);
 			    				 }
-		    				 	$2.sval = "-"+$2.sval;
-	    				 	}
-	    				 		
-	    				 }
+			    				 $2.sval = "-"+$2.sval;
+			    				 
+			    				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
+		    				 }		    				 		
+		    			 }
 ;
 
 
@@ -223,9 +232,11 @@ factor  :  ID
 %%
 
 public LexicalAnalyzer la;
+public IntermediateCode ic;
 
 public Parser(String path) throws FileNotFoundException {
 	la = new LexicalAnalyzer(path);
+	ic = new IntermediateCode();
 }
 
 public void parse(){

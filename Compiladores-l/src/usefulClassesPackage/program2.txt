@@ -29,3 +29,5 @@ UNTIL (5_ul - 5_ul >= 0_ul);
 OUT('Hola');
 aux = - 4_ul;
 %/
+
+aux = 4_ul / 5_ul;
