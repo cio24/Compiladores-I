@@ -141,7 +141,7 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block END_IF  
+if_clause  :  IF  if_condition  cpo_then  ELSE  cpo_else  END_IF  
  		   |  IF  '('  condition  ')'  sentence_block  END_IF                       
  		   |  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
  		   |  IF  '('  condition  ')'  sentence_block  error 						{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
@@ -153,6 +153,14 @@ if_clause  :  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block END_
            |  IF  condition  sentence_block  ELSE  sentence_block END_IF			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
  		   |  IF  condition  sentence_block  END_IF                                 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
 ;
+
+if_condition  :   '('  condition  ')'  {
+										
+									   }
+
+cpo_then  :  sentence_block  {}
+
+cpo_else  :  sentence_block  {}
 
 loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'    
 			 |  LOOP  sentence_block  error							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
@@ -265,7 +273,6 @@ public Parser(String path) throws FileNotFoundException {
 
 public void parse(){
 	yyparse();
-	System.out.print(ic);
 }
 
 public void yyerror(String errorMessage){

@@ -46,6 +46,7 @@ public class Test {
 		//p.yydebug = true;
 		p.parse();
 		p.la.getSymbolsTable().print();
+		System.out.println(p.ic);
 		/*
 
 		String nombre;
