@@ -98,7 +98,13 @@ procedure_call :  ID  '('  id_list  ')'
 		       |  ID  '('  ')' 			
 ;
 
-executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");}
+executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
+										Operand op1 = new Operand(Operand.ST_POINTER,$1.sval); 
+      									Operand op2 = (Operand) $3.obj; 
+      									Operator opt = new Operator("=");
+      									Triplet t = new Triplet(opt,op1,op2);
+      									ic.addTriplet(t);
+      									$$.obj = new Operand(Operand.TRIPLET,t.getId());}
 			|  ID  '='  error			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
 			|  error '='  expression	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 			|  ID  EQUAL  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}

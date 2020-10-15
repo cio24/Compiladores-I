@@ -1,17 +1,17 @@
 import java.io.IOException;
 
+import lexicalAnalyzerPackage.Parser;
 import usefulClassesPackage.Test;
 
 public class Main {
 		
 	public static void main(String[] args) throws IOException {
 		
-		Test test=new Test();
+		//Test test=new Test();
 		
-		/*String path = args[0];
+		String path = args[0];
 		Parser p = new Parser(path);
 		p.parse();
 		p.la.getSymbolsTable().print();
-		System.out.println(p.ic);*/
 	}
 }
