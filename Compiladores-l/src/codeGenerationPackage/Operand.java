@@ -3,6 +3,7 @@ package codeGenerationPackage;
 public  class Operand {	
 	public static final String ST_POINTER = "ST_POINTER";
 	public static final String TRIPLET = "TRIPLET";
+	public static final String TOBEDEFINED = "TOBEDEFINED";
 	
 	public String type;
 	public String ref;

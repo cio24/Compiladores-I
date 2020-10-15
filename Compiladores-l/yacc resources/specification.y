@@ -141,8 +141,20 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  if_condition  cpo_then  ELSE  cpo_else  END_IF  
- 		   |  IF  '('  condition  ')'  sentence_block  END_IF                       
+if_clause  :  IF  if_condition  cpo_then  ELSE  cpo_else  END_IF  {
+                                                                  int unstacked = ic.topOfStack();
+																  ic.popFromStack();
+							 	                                  Triplet trip = ic.getTriplet(unstacked);
+								                                  trip.modifyFirstOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+1)));
+                                                                  }
+ 		   
+ 		   |  IF  if_condition  cpo_then END_IF                   {
+                                                                  int unstacked = ic.topOfStack();
+																  ic.popFromStack();
+							 	                                  Triplet trip = ic.getTriplet(unstacked);
+								                                  trip.modifyFirstOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+1)));
+ 		                                                          }     
+ 		   /*
  		   |  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
  		   |  IF  '('  condition  ')'  sentence_block  error 						{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
  		   |  IF  '('  error  ')'  sentence_block  ELSE  sentence_block END_IF 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
@@ -151,16 +163,37 @@ if_clause  :  IF  if_condition  cpo_then  ELSE  cpo_else  END_IF
 		   |  IF  '('  condition  ')'  sentence_block  ELSE  error END_IF 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
  		   |  IF  '('  condition  ')'  error  END_IF 								{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
            |  IF  condition  sentence_block  ELSE  sentence_block END_IF			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
- 		   |  IF  condition  sentence_block  END_IF                                 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+ 		   |  IF  condition  sentence_block  END_IF                                {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+ */
 ;
 
 if_condition  :   '('  condition  ')'  {
-										
-									   }
+										Operand op1 = (Operand) $2.obj; 
+      									Operand op2 = new Operand(Operand.TOBEDEFINED,"-1");
+      									Operator opt = new Operator("BF");
+      									Triplet t = new Triplet(opt,op1,op2);
+      									ic.addTriplet(t);
+      									ic.pushToStack(t.getNumId());
+      									$$.obj = new Operand(Operand.TRIPLET,t.getId());
+										}
+;
 
-cpo_then  :  sentence_block  {}
+cpo_then  :  sentence_block  {
+								int unstacked = ic.topOfStack();
+								ic.popFromStack();
+								Triplet trip = ic.getTriplet(unstacked);
+								trip.modifySecondOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+2)));
+								Operand op1 = new Operand(Operand.TOBEDEFINED,"-1");
+								Operand op2 = null;
+								Operator opt = new Operator("BI");
+								Triplet t = new Triplet (opt,op1,op2);
+								ic.addTriplet(t);
+								ic.pushToStack(t.getNumId());
+								}
+;
 
-cpo_else  :  sentence_block  {}
+cpo_else  :  sentence_block
+;
 
 loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'    
 			 |  LOOP  sentence_block  error							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
@@ -289,5 +322,5 @@ int yylex(){
 }
 
 public void showMessage(String message) {
-	//System.out.println(message);
+	System.out.println(message);
 }

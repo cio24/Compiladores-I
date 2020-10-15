@@ -1,7 +1,7 @@
 package codeGenerationPackage;
 
 public class Operator {
-
+	
 	public String type;
 	
 	public Operator(String type) {

@@ -4,7 +4,7 @@ public class Triplet {
 	public static int TRIPLET_COUNTER = 0;
 	
 	private String id;
-	
+
 	private Operator operator;
 	private Operand operand1;
 	private Operand operand2;
@@ -30,8 +30,20 @@ public class Triplet {
 		return id;
 	}
 	
+	public Integer getNumId() {
+		return Integer.parseInt(id);
+	}
+	
 	@Override
 	public String toString() {
 		return id + ": (" + operator + ", " + operand1 + ", " + operand2 + ")";
+	}
+	
+	public void modifyFirstOperand(Operand op) {
+		operand1=op;
+	}
+	
+	public void modifySecondOperand(Operand op) {
+		operand2=op;
 	}
 }

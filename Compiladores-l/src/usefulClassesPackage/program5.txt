@@ -1,1 +1,6 @@
-aux = 3.0 + 4.0;
+IF(5_ul < carlos){
+	DOUBLE int;
+}
+ELSE {
+	carlos = int;
+}END_IF;
