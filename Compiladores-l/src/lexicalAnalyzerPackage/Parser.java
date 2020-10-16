@@ -544,7 +544,7 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 295 "specification.y"
+//#line 303 "specification.y"
 
 public LexicalAnalyzer la;
 public IntermediateCode ic;
@@ -936,11 +936,16 @@ case 74:
                                                                   }
 break;
 case 75:
-//#line 153 "specification.y"
-{}
+//#line 151 "specification.y"
+{
+                                                                  int unstacked = ic.topOfStack();
+																  ic.popFromStack();
+							 	                                  Triplet trip = ic.getTriplet(unstacked);
+								                                  trip.modifyFirstOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+1)));
+ 		                                                          }
 break;
 case 76:
-//#line 167 "specification.y"
+//#line 170 "specification.y"
 {
 										Operand op1 = (Operand) val_peek(1).obj; 
       									Operand op2 = new Operand(Operand.TOBEDEFINED,"-1");
@@ -952,7 +957,7 @@ case 76:
 										}
 break;
 case 77:
-//#line 178 "specification.y"
+//#line 181 "specification.y"
 {
 								int unstacked = ic.topOfStack();
 								ic.popFromStack();
@@ -967,31 +972,40 @@ case 77:
 								}
 break;
 case 80:
-//#line 196 "specification.y"
+//#line 199 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
 break;
 case 81:
-//#line 197 "specification.y"
+//#line 200 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
 break;
 case 82:
-//#line 198 "specification.y"
+//#line 201 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
 break;
 case 83:
-//#line 199 "specification.y"
+//#line 202 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
 break;
+case 84:
+//#line 209 "specification.y"
+{ Operand op = new Operand(Operand.TOBEDEFINED,val_peek(1).sval);
+						   Operator opt = new Operator("OUT");
+						   Triplet t = new Triplet(opt,op);
+						   ic.addTriplet(t);
+
+ 						 }
+break;
 case 85:
-//#line 207 "specification.y"
+//#line 215 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
 break;
 case 86:
-//#line 208 "specification.y"
+//#line 216 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 break;
 case 87:
-//#line 215 "specification.y"
+//#line 223 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
 										Operand op1 = (Operand) val_peek(2).obj; 
       									Operand op2 = (Operand) val_peek(0).obj; 
@@ -1001,7 +1015,7 @@ case 87:
       									yyval.obj = new Operand(Operand.TRIPLET,t.getId());}
 break;
 case 88:
-//#line 222 "specification.y"
+//#line 230 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
 										Operand op1 = (Operand) val_peek(2).obj; 
       									Operand op2 = (Operand) val_peek(0).obj; 
@@ -1011,32 +1025,32 @@ case 88:
       									yyval.obj = new Operand(Operand.TRIPLET,t.getId());}
 break;
 case 89:
-//#line 229 "specification.y"
+//#line 237 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
 										 yyval.obj = val_peek(0).obj;}
 break;
 case 90:
-//#line 231 "specification.y"
+//#line 239 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
 break;
 case 91:
-//#line 232 "specification.y"
+//#line 240 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
 break;
 case 92:
-//#line 233 "specification.y"
+//#line 241 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
 break;
 case 93:
-//#line 234 "specification.y"
+//#line 242 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
 break;
 case 94:
-//#line 235 "specification.y"
+//#line 243 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
 break;
 case 95:
-//#line 238 "specification.y"
+//#line 246 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
 							Operand op1 = (Operand) val_peek(2).obj; 
       						Operand op2 = (Operand) val_peek(0).obj; 
@@ -1046,7 +1060,7 @@ case 95:
       						yyval.obj = new Operand(Operand.TRIPLET,t.getId());}
 break;
 case 96:
-//#line 245 "specification.y"
+//#line 253 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Division.");
       						Operand op1 = (Operand) val_peek(2).obj; 
       						Operand op2 = (Operand) val_peek(0).obj; 
@@ -1056,44 +1070,44 @@ case 96:
       						yyval.obj = new Operand(Operand.TRIPLET,t.getId());}
 break;
 case 97:
-//#line 252 "specification.y"
+//#line 260 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
 	  						 yyval.obj = val_peek(0).obj;}
 break;
 case 98:
-//#line 254 "specification.y"
+//#line 262 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
 break;
 case 99:
-//#line 255 "specification.y"
+//#line 263 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
 break;
 case 100:
-//#line 256 "specification.y"
+//#line 264 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
 break;
 case 101:
-//#line 257 "specification.y"
+//#line 265 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
 break;
 case 102:
-//#line 258 "specification.y"
+//#line 266 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
 break;
 case 103:
-//#line 259 "specification.y"
+//#line 267 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
 break;
 case 104:
-//#line 262 "specification.y"
+//#line 270 "specification.y"
 {  yyval.obj = new Operand(Operand.ST_POINTER,val_peek(0).sval); }
 break;
 case 105:
-//#line 263 "specification.y"
+//#line 271 "specification.y"
 {  yyval.obj = new Operand(Operand.ST_POINTER,val_peek(0).sval); }
 break;
 case 106:
-//#line 264 "specification.y"
+//#line 272 "specification.y"
 {
 							 /* Manejo la entrada positiva de esta constante		    				*/
 		    				 Symbol positivo = la.getSymbolsTable().getSymbol(val_peek(0).sval);
@@ -1120,7 +1134,7 @@ case 106:
 		    				 }		    				 		
 		    			 }
 break;
-//#line 1047 "Parser.java"
+//#line 1061 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

@@ -206,9 +206,14 @@ loop_clause  :  LOOP  sentence_block  UNTIL  '('  condition  ')'
 
 /*-------> Gramatica de salida<-------*/
 
-out_clause  :  OUT  '('  CSTRING  ')' 
+out_clause  :  OUT  '('  CSTRING  ')'        	 { Operand op = new Operand(Operand.TOBEDEFINED,$3.sval);
+						   Operator opt = new Operator("OUT");
+						   Triplet t = new Triplet(opt,op);
+						   ic.addTriplet(t);
+
+ 						 }
 			|  OUT  '('  error  ')'  {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
-			|  OUT  CSTRING    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
+			|  OUT  CSTRING    	 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 ;
 
 /*-------> Gramatica de salida<-------*/
