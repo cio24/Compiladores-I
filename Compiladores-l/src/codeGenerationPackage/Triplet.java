@@ -25,6 +25,13 @@ public class Triplet {
 		this.id = String.valueOf(++TRIPLET_COUNTER);
 	}
 
+	public Triplet(Operator opt) {
+		operator = opt;
+		operand1 = new Operand(Operand.NULL_OPERATOR);
+		operand2 = new Operand(Operand.NULL_OPERATOR);
+		this.id = String.valueOf(++TRIPLET_COUNTER);
+	}
+
 	public Triplet(Operator opt, Operand op1, Operand op2, String type) {
 		this.operator = opt;
 		this.operand1 = op1;
