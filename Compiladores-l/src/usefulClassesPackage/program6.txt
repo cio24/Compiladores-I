@@ -1,7 +1,6 @@
-IF( 3.0 < 5.0 ){
-    aux = 3.0;
-}
-ELSE{
-    carlos = 5.0;
-}
+IF (3.0 = 5.0) {
+	aux = 5.0;
+}ELSE{
+	aux = 6.0;
+}	
 END_IF;

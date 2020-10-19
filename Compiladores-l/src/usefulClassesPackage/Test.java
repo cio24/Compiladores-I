@@ -11,9 +11,9 @@ import lexicalAnalyzerPackage.LexicalAnalyzer;
 public class Test {
 
 
-	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
+	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	
 	public static void main(String[] args) throws IOException {
 		Test test = new Test();	

@@ -77,9 +77,9 @@ proc_body : '{' sentences  '}'
 		  | '{' '}'
 ;
 
-parameter_list  :  parameter  {showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
-				|  parameter  ','  parameter  {showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
-				|  parameter  ','  parameter  ','  parameter  {showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+parameter_list  :  parameter  														{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+				|  parameter  ','  parameter  										{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+				|  parameter  ','  parameter  ','  parameter  						{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 				|  parameter  ','  parameter  ','  parameter  ',' parameter_list	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 ;
 
@@ -88,10 +88,10 @@ parameter  :  type  ID
 		   |  ID 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
 ;
 
-id_list  :  ID								{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
-		 |  ID  ','  ID						{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
-		 |  ID  ','  ID  ','  ID	        {showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
-		 |  ID  ','  ID  ','  ID  ',' id_list {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
+id_list  :  ID									{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+		 |  ID  ','  ID							{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+		 |  ID  ','  ID  ','  ID	        	{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+		 |  ID  ','  ID  ','  ID  ',' id_list 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 ;
 
 procedure_call :  ID  '('  id_list  ')'
@@ -99,12 +99,8 @@ procedure_call :  ID  '('  id_list  ')'
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
-										Operand op1 = new Operand(Operand.ST_POINTER,$1.sval); 
-      									Operand op2 = (Operand) $3.obj; 
-      									Operator opt = new Operator("=");
-      									Triplet t = new Triplet(opt,op1,op2);
-      									ic.addTriplet(t);
-      									$$.obj = new Operand(Operand.TRIPLET,t.getId());}
+      									Triplet t = createTriplet("=",new Operand(Operand.ST_POINTER,$1.sval),$3.obj);
+										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
 			|  ID  '='  error			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
 			|  error '='  expression	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 			|  ID  EQUAL  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
@@ -120,7 +116,7 @@ comparator  :  EQUAL
             |  GREATEQUAL
             |  '<'	{$$.obj = new Operator("<");}
             |  '>'
- 	    |  '<'  '<'					{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
+ 	    	|  '<'  '<'					{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
             |  '>'  '>'			        {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '>' duplicado.");}
             |  LESSEQUAL  '='           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '<='?.");}
             |  GREATEQUAL  '='          {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '>='?.");}
@@ -128,15 +124,11 @@ comparator  :  EQUAL
             |  '<'  '>'                 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
 ;
 
-condition  :  expression  comparator  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
-							Operand op1 = (Operand) $1.obj;
-							Operand op2 = (Operand) $3.obj;
-							Operator opt = (Operator) $2.obj;
-							Triplet t = new Triplet(opt,op1,op2);
-							ic.addTriplet(t);
-							//ic.pushToStack(t.getNumId());
-							$$.obj = new Operand(Operand.TRIPLET,t.getId());
-							}
+condition  :  expression  comparator  expression 	{
+													showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
+													Triplet t = createTriplet((Operator)$2.obj, $1.obj,$3.obj);
+													$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+													}
 		   |  expression '=' expression 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
 ;
 
@@ -149,54 +141,40 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  if_condition  then_body  ELSE  else_body  END_IF  {
-                                                                  int unstacked = ic.topOfStack();
-																  ic.popFromStack();
-							 	                                  Triplet trip = ic.getTriplet(unstacked);
-								                                  trip.modifyFirstOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+1)));
-                                                                  }
- 		   
- 		   |  IF  if_condition  then_body END_IF                   {
-                                                                  int unstacked = ic.topOfStack();
-																  ic.popFromStack();
-							 	                                  Triplet trip = ic.getTriplet(unstacked);
-								                                  trip.modifyFirstOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+1)));
- 		                                                          }     
- 		   /*
- 		   |  IF  '('  condition  ')'  sentence_block  ELSE  sentence_block error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
- 		   |  IF  '('  condition  ')'  sentence_block  error 						{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
- 		   |  IF  '('  error  ')'  sentence_block  ELSE  sentence_block END_IF 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
- 		   |  IF  '('  error  ')'  sentence_block  END_IF 							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
-		   |  IF  '('  condition  ')'  error  ELSE  sentence_block END_IF 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
-		   |  IF  '('  condition  ')'  sentence_block  ELSE  error END_IF 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
- 		   |  IF  '('  condition  ')'  error  END_IF 								{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
-           |  IF  condition  sentence_block  ELSE  sentence_block END_IF			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
- 		   |  IF  condition  sentence_block  END_IF                                {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
- */
+if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFirstOperandFromStack(1); }
+ 		   |  IF  if_condition   then_body END_IF                   	{ updateFirstOperandFromStack(1); }     
+ 		   |  IF  if_condition   then_body  ELSE  else_body error 		{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
+ 		   |  IF  if_condition   then_body  error 						{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
+ 		   |  IF  if_condition   error  ELSE  else_body END_IF 			{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
+		   |  IF  if_condition   then_body  ELSE  error END_IF 			{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
+ 		   |  IF  if_condition   error  END_IF 							{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
+ 
 ;
 
-if_condition  :   '('  condition  ')'  {
-									Operand op1 = (Operand) $2.obj;
-      									Operand op2 = new Operand(Operand.TOBEDEFINED,"-1");
-      									Operator opt = new Operator("BF");
-      									Triplet t = new Triplet(opt,op1,op2);
-      									ic.addTriplet(t);
+if_condition  :   '('  condition  ')'  {Triplet t = createTriplet("BF",$2.obj,new Operand(Operand.TO_BE_DEFINED,"-1"));
       									ic.pushToStack(t.getNumId());
-      									$$.obj = new Operand(Operand.TRIPLET,t.getId());
-										}
-;
+      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+			 |    '('  error  ')'		{
+			 							Triplet t = createEmptyTriplet();
+										ic.pushToStack(t.getNumId());
+      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+      									showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
+		     |    condition             {
+			 							Triplet t = createEmptyTriplet();
+										ic.pushToStack(t.getNumId());
+      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+      									showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+	    	 |    condition  ')'        {	    	 
+			 							Triplet t = createEmptyTriplet();
+										ic.pushToStack(t.getNumId());
+      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+	    	 							showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+   ;
 
-then_body  :  sentence_block  {
-								int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
-								ic.popFromStack(); //we remove the id triplet from the top of the stack
-								Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-								trip.modifySecondOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+2))); //the adress of the jump
-								Operand op1 = new Operand(Operand.TOBEDEFINED,"-1");
-								Operator opt = new Operator("BI");
-								Triplet t = new Triplet (opt,op1);
-								ic.addTriplet(t);
-								ic.pushToStack(t.getNumId());
-								}
+then_body  :  sentence_block  	{ 
+								Triplet t = createBITriplet(new Operand(Operand.TO_BE_DEFINED,"-1"));
+							    ic.pushToStack(t.getNumId());			
+							    }
 ;
 
 else_body  :  sentence_block
@@ -207,84 +185,63 @@ loop_clause  :  loop_begin  sentence_block  UNTIL loop_condition
 			 |  loop_begin  error  UNTIL  '('  condition  ')'				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
 ;
 
-loop_condition : '('  condition  ')' {       int unstacked = ic.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump
-					       ic.popFromStack(); //we remove the id triplet from the top of the stack
-					       Operand op1 = (Operand) $2.obj; //we get the triplet asociate to the condition
-					       Operand op2 = new Operand(Operand.TRIPLET,String.valueOf(unstacked)); //this will contain the jump adress
-					       Operator opt = new Operator("BF"); //the operation of the tiplet is the branch not equal
-					       Triplet t = new Triplet(opt,op1,op2);
-					       ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
-					       $$.obj = new Operand(Operand.TRIPLET,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition
-					       }
-		| '('  error  ')'			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
-		| condition 				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
+loop_condition : '('  condition  ')'{       
+							   		Triplet t = createBFTriplet($2.obj);
+						       		$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition
+							        }
+				| '('  error  ')'	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
+				| condition 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
+;
 
-loop_begin : LOOP 	     {
-			       ic.pushToStack(ic.currentTripletIndex() + 1); //we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition
-			     }
+loop_begin : LOOP 	     {ic.pushToStack(ic.currentTripletIndex() + 1); //we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition}
+;
 
 
 /*-------> Gramatica de control<-------*/
 
 /*-------> Gramatica de salida<-------*/
 
-out_clause  :  OUT  '('  CSTRING  ')'        	 { Operand op = new Operand(Operand.TOBEDEFINED,$3.sval);
-						   Operator opt = new Operator("OUT");
-						   Triplet t = new Triplet(opt,op);
-						   ic.addTriplet(t);
-
- 						 }
-			|  OUT  '('  error  ')'  {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
-			|  OUT  CSTRING    	 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
+out_clause  :  OUT  '('  CSTRING  ')'	{ 
+										Operand op = new Operand(Operand.TO_BE_DEFINED,$3.sval);
+									   	Operator opt = new Operator("OUT");
+									   	Triplet t = new Triplet(opt,op);
+									   	ic.addTriplet(t);
+			 						 	}
+			|  OUT  '('  error  ')' 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
+			|  OUT  CSTRING    	 	   	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
 ;
 
 /*-------> Gramatica de salida<-------*/
        
 /*-------> Gramatica de expresiones <-------*/
 
-expression  :  expression  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
-										Operand op1 = (Operand) $1.obj; 
-      									Operand op2 = (Operand) $3.obj; 
-      									Operator opt = new Operator("+");
-      									Triplet t = new Triplet(opt,op1,op2);
-      									ic.addTriplet(t);
-      									$$.obj = new Operand(Operand.TRIPLET,t.getId());}
-			|  expression  '-'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
-										Operand op1 = (Operand) $1.obj; 
-      									Operand op2 = (Operand) $3.obj; 
-      									Operator opt = new Operator("-");
-      									Triplet t = new Triplet(opt,op1,op2);
-      									ic.addTriplet(t);
-      									$$.obj = new Operand(Operand.TRIPLET,t.getId());}
-			|  term 				 	{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
-										 $$.obj = $1.obj;}
-			|  expression  '+'  error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
-			|  expression  '-'  error 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
-			|  error  '+'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
-			|  error  '-'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
+expression  :  expression  '+'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
+      										Triplet t = createTriplet("+",$1.obj,$3.obj);
+      										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+			|  expression  '-'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
+	      									Triplet t = createTriplet("-",$1.obj,$3.obj);
+	      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+			|  term 				 		{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
+											 $$.obj = $1.obj;}
+			|  expression  '+'  error 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
+			|  expression  '-'  error 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
+			|  error  '+'  term 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
+			|  error  '-'  term 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
             |  expression  '+'  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
 ;
 
-term  :  term  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
-							Operand op1 = (Operand) $1.obj; 
-      						Operand op2 = (Operand) $3.obj; 
-      						Operator opt = new Operator("*");
-      						Triplet t = new Triplet(opt,op1,op2);
-      						ic.addTriplet(t);
-      						$$.obj = new Operand(Operand.TRIPLET,t.getId());}
-      |  term  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Division.");
-      						Operand op1 = (Operand) $1.obj; 
-      						Operand op2 = (Operand) $3.obj; 
-      						Operator opt = new Operator("/");
-      						Triplet t = new Triplet(opt,op1,op2);
-      						ic.addTriplet(t);
-      						$$.obj = new Operand(Operand.TRIPLET,t.getId());}
-	  |  factor            {showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
-	  						 $$.obj = $1.obj;}
-	  |  term '*' error    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
-  	  |  term '/' error    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
-	  |  error '*' factor    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
-  	  |  error '/' factor    {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
+term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
+      							Triplet t = createTriplet("*",$1.obj,$3.obj);
+      							$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      |  term  '/'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Division.");
+      							Triplet t = createTriplet("/",$1.obj, $3.obj);
+      							$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+	  |  factor            		{showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
+	  						 	$$.obj = $1.obj;}
+	  |  term '*' error    		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
+  	  |  term '/' error    		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
+	  |  error '*' factor   	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
+  	  |  error '/' factor   	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
 	  |  term  '*'  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
       |  term  '/'  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
 ;
@@ -292,30 +249,29 @@ term  :  term  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] Mul
 factor  :  ID           {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
 	    |  CONSTANT     {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
 	    |  '-' CONSTANT {
-							 // Manejo la entrada positiva de esta constante		    				
-		    				 Symbol positivo = la.getSymbolsTable().getSymbol($2.sval);
-		    				 if (positivo.getType()==Symbol._ULONGINT)
-		    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
-		    				 else{
-			    				 if(positivo.subtractReference() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
-			    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
-			    				 }
-			    				 
+						 // Manejo la entrada positiva de esta constante		    				
+	    				 Symbol positivo = la.getSymbolsTable().getSymbol($2.sval);
+	    				 if (positivo.getType()==Symbol._ULONGINT)
+	    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
+	    				 else{
+		    				 if(positivo.subtractReference() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
+		    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
+		    				 }
+		    				 	    				 
+		    				 // Creo nueva entrada o actualizo la existente con una referencia
+		    				 Symbol negativo = la.getSymbolsTable().getSymbol("-"+$2.sval);
+		    				 if (negativo != null){
+		    				 	negativo.addReference();  // Ya existe la entrada
+		    				 }else{
+		    				 	String lexema = "-"+positivo.getLexeme();
+		    				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getType());
+		    				 	la.getSymbolsTable().addSymbol(lexema,nuevoNegativo);
+		    				 }
+		    				 $2.sval = "-"+$2.sval;
 		    				 
-			    				 // Creo nueva entrada o actualizo la existente con una referencia
-			    				 Symbol negativo = la.getSymbolsTable().getSymbol("-"+$2.sval);
-			    				 if (negativo != null){
-			    				 	negativo.addReference();  // Ya existe la entrada
-			    				 }else{
-			    				 	String lexema = "-"+positivo.getLexeme();
-			    				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getType());
-			    				 	la.getSymbolsTable().addSymbol(lexema,nuevoNegativo);
-			    				 }
-			    				 $2.sval = "-"+$2.sval;
-			    				 
-			    				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
-		    				 }		    				 		
-		    			 }
+		    				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
+	    				 }		    				 		
+	    			 	}
 ;
 
 
@@ -350,4 +306,58 @@ int yylex(){
 
 public void showMessage(String message) {
 	System.out.println(message);
+}
+
+public Triplet createTriplet(String optString,Object obj1, Object obj2){
+	Operator opt = new Operator(optString);
+	return createTriplet(opt,obj1,obj2);
+}
+
+public Triplet createTriplet(Operator optObj,Object obj1, Object obj2){
+	Operator opt = (Operator) optObj;
+	Operand op1 = (Operand) obj1;
+	Operand op2 = (Operand) obj2;
+	Triplet t = new Triplet(opt,op1,op2);
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createBFTriplet(Object obj1){
+	int unstacked = ic.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump
+    ic.popFromStack(); //we remove the id triplet from the top of the stack
+    Operand op1 = (Operand) obj1; //we get the triplet asociate to the condition
+    Operand op2 = new Operand(Operand.TRIPLET_POINTER,String.valueOf(unstacked)); //this will contain the jump adress
+    Operator opt = new Operator("BF"); //the operation of the tiplet is the branch not equal
+    Triplet t = new Triplet(opt,op1,op2);
+    ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
+    return t;
+}
+
+public Triplet createBITriplet(Object obj1){
+	updateSecondOperandFromStack(2);
+	Operand op1 = (Operand) obj1;
+	Operator opt = new Operator("BI");
+	Triplet t = new Triplet (opt,op1);
+	ic.addTriplet(t);
+	return t;
+}
+
+public void updateSecondOperandFromStack(int amount){
+	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
+	ic.popFromStack(); //we remove the id triplet from the top of the stack
+	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
+	trip.modifySecondOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(ic.currentTripletIndex()+amount))); //the adress of the jump
+}
+
+public void updateFirstOperandFromStack(int amount){
+	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
+	ic.popFromStack(); //we remove the id triplet from the top of the stack
+	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
+	trip.modifyFirstOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(ic.currentTripletIndex()+amount))); //the adress of the jump
+}
+
+public Triplet createEmptyTriplet(){
+	Triplet t = new Triplet(new Operator("ERROR"));
+	ic.addTriplet(t);
+	return t;
 }

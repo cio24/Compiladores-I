@@ -2,8 +2,8 @@ package codeGenerationPackage;
 
 public  class Operand {	
 	public static final String ST_POINTER = "ST_POINTER";
-	public static final String TRIPLET = "TRIPLET";
-	public static final String TOBEDEFINED = "TOBEDEFINED";
+	public static final String TRIPLET_POINTER = "TRIPLET";
+	public static final String TO_BE_DEFINED = "TOBEDEFINED";
 	public static final String NULL_OPERATOR = "NULL_OPERATOR";
 	
 	public String type;
@@ -15,7 +15,7 @@ public  class Operand {
 	}
 
 	public Operand(String type) {
-		this.ref = " - ";
+		this.ref = "-";
 	}
 	
 	public String getType() {
@@ -28,7 +28,7 @@ public  class Operand {
 
 	@Override
 	public String toString() {
-		if (type == Operand.TRIPLET)
+		if (type == Operand.TRIPLET_POINTER)
 			return "["+ref+"]";
 		return ref;
 	}

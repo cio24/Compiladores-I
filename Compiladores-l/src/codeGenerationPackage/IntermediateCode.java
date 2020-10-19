@@ -38,12 +38,24 @@ public class IntermediateCode {
 	}
 	
 	public void popFromStack() {
-		stk.pop();
+		try {
+		  stk.pop();
+		}
+		catch(Exception e) {
+			System.out.println("La pila ya está vacía."); 
+		}
 		System.out.println("Estado de la pila: "+stk); 
 	}
 	
-	public Integer topOfStack() {
-		return stk.peek();
+	public Integer topOfStack() { 
+		Integer i;
+		try {
+			  i =  stk.peek();
+		}
+		catch(Exception e) {
+		  i = new Integer(-1);
+		}
+		return i;
 	}
 	
 	public int currentTripletIndex() {

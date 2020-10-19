@@ -11,19 +11,6 @@ public class Triplet {
 	
 	private String type;
 	
-	public Triplet(Operator opt, Operand op1, Operand op2) {
-		operator = opt;
-		operand1 = op1;
-		operand2 = op2;
-		this.id = String.valueOf(++TRIPLET_COUNTER);
-	}
-
-	public Triplet(Operator opt, Operand op1) {
-		operator = opt;
-		operand1 = op1;
-		operand2 = new Operand(Operand.NULL_OPERATOR);
-		this.id = String.valueOf(++TRIPLET_COUNTER);
-	}
 
 	public Triplet(Operator opt) {
 		operator = opt;
@@ -32,12 +19,19 @@ public class Triplet {
 		this.id = String.valueOf(++TRIPLET_COUNTER);
 	}
 
-	public Triplet(Operator opt, Operand op1, Operand op2, String type) {
-		this.operator = opt;
+	public Triplet(Operator opt, Operand op1) {
+		this(opt);
 		this.operand1 = op1;
-		this.operand2 = op2;
+	}
+
+	public Triplet(Operator opt, Operand op1, Operand op2) {
+		this(opt,op1);
+		operand2 = op2;
+	}
+
+	public Triplet(Operator opt, Operand op1, Operand op2, String type) {
+		this(opt,op1,op2);
 		this.type = type;
-		this.id = String.valueOf(++TRIPLET_COUNTER);
 	}
 	
 	public String getId() {
