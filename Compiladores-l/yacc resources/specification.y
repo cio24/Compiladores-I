@@ -118,9 +118,9 @@ comparator  :  EQUAL
             |  NEQUAL
             |  LESSEQUAL 
             |  GREATEQUAL
-            |  '<'
+            |  '<'	{$$.obj = new Operator("<");}
             |  '>'
- 			|  '<'  '<'					{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
+ 	    |  '<'  '<'					{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
             |  '>'  '>'			        {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '>' duplicado.");}
             |  LESSEQUAL  '='           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '<='?.");}
             |  GREATEQUAL  '='          {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '>='?.");}
@@ -128,7 +128,15 @@ comparator  :  EQUAL
             |  '<'  '>'                 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
 ;
 
-condition  :  expression  comparator  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");}
+condition  :  expression  comparator  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
+							Operand op1 = (Operand) $1.obj;
+							Operand op2 = (Operand) $3.obj;
+							Operator opt = (Operator) $2.obj;
+							Triplet t = new Triplet(opt,op1,op2);
+							ic.addTriplet(t);
+							//ic.pushToStack(t.getNumId());
+							$$.obj = new Operand(Operand.TRIPLET,t.getId());
+							}
 		   |  expression '=' expression 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
 ;
 
@@ -141,14 +149,14 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  if_condition  cpo_then  ELSE  cpo_else  END_IF  {
+if_clause  :  IF  if_condition  then_body  ELSE  else_body  END_IF  {
                                                                   int unstacked = ic.topOfStack();
 																  ic.popFromStack();
 							 	                                  Triplet trip = ic.getTriplet(unstacked);
 								                                  trip.modifyFirstOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+1)));
                                                                   }
  		   
- 		   |  IF  if_condition  cpo_then END_IF                   {
+ 		   |  IF  if_condition  then_body END_IF                   {
                                                                   int unstacked = ic.topOfStack();
 																  ic.popFromStack();
 							 	                                  Triplet trip = ic.getTriplet(unstacked);
@@ -178,45 +186,42 @@ if_condition  :   '('  condition  ')'  {
 										}
 ;
 
-cpo_then  :  sentence_block  {
+then_body  :  sentence_block  {
 								int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
 								ic.popFromStack(); //we remove the id triplet from the top of the stack
 								Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
 								trip.modifySecondOperand(new Operand(Operand.TRIPLET,String.valueOf(ic.currentTripletIndex()+2))); //the adress of the jump
 								Operand op1 = new Operand(Operand.TOBEDEFINED,"-1");
-								Operand op2 = null;
 								Operator opt = new Operator("BI");
-								Triplet t = new Triplet (opt,op1,op2);
+								Triplet t = new Triplet (opt,op1);
 								ic.addTriplet(t);
 								ic.pushToStack(t.getNumId());
 								}
 ;
 
-cpo_else  :  sentence_block
+else_body  :  sentence_block
 ;
 
-loop_clause  :  loop_begin  sentence_block  UNTIL '('  condition  ')'  {       int unstacked = ic.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump
-                                                                          ic.popFromStack(); //we remove the id triplet from the top of the stack
-                                                                          Operand op1 = (Operand) $2.obj; //we get the triplet asociate to the condition
-                                                                          Operand op2 = new Operand(Operand.TRIPLET,ic.getTriplet(unstacked).getId()); //this will contain the jump adress
-                                                                          Operator opt = new Operator("BF"); //the operation of the tiplet is the branch not equal
-                                                                          Triplet t = new Triplet(opt,op1,op2);
-                                                                          ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
-                                                                          $$.obj = new Operand(Operand.TRIPLET,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition
-                                                                          }
-			 |  LOOP  sentence_block  error							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
-			 |  LOOP  sentence_block  UNTIL  '('  error  ')'		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
-			 |  LOOP  error  UNTIL  '('  condition  ')'				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
-             |  LOOP  sentence_block  UNTIL  condition		        {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
+loop_clause  :  loop_begin  sentence_block  UNTIL loop_condition
+			 |  loop_begin  sentence_block  error							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
+			 |  loop_begin  error  UNTIL  '('  condition  ')'				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
 ;
+
+loop_condition : '('  condition  ')' {       int unstacked = ic.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump
+					       ic.popFromStack(); //we remove the id triplet from the top of the stack
+					       Operand op1 = (Operand) $2.obj; //we get the triplet asociate to the condition
+					       Operand op2 = new Operand(Operand.TRIPLET,String.valueOf(unstacked)); //this will contain the jump adress
+					       Operator opt = new Operator("BF"); //the operation of the tiplet is the branch not equal
+					       Triplet t = new Triplet(opt,op1,op2);
+					       ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
+					       $$.obj = new Operand(Operand.TRIPLET,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition
+					       }
+		| '('  error  ')'			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
+		| condition 				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
 
 loop_begin : LOOP 	     {
-                        				       Operator opt = new Operator("TAG TO JUMP");
-                        				       Triplet t = new Triplet(opt); //this triplet is used as a tag to jump
-                        				       ic.pushToStack(t.getNumId()); //we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition
-                        				       ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
-                        				       $$.obj = new Operand(Operand.TRIPLET,t.getId()); //finally we associate an operand created with the tiplet to the loop_begin
-                        				     }
+			       ic.pushToStack(ic.currentTripletIndex() + 1); //we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition
+			     }
 
 
 /*-------> Gramatica de control<-------*/
