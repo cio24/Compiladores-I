@@ -94,8 +94,10 @@ id_list  :  ID									{showMessage("[Linea " + la.getCurrentLine() + "] Lista d
 		 |  ID  ','  ID  ','  ID  ',' id_list 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
 ;
 
-procedure_call :  ID  '('  id_list  ')'
-		       |  ID  '('  ')' 			
+procedure_call :  ID  '('  id_list  ')' {showMessage("[Linea " + la.getCurrentLine() + "] Llamada a procedimiento.");
+      									Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,$1.sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
+		       |  ID  '('  ')' 			{showMessage("[Linea " + la.getCurrentLine() + "] Llamada a procedimiento.");
+      									Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,$1.sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
@@ -193,7 +195,7 @@ loop_condition : '('  condition  ')'{
 				| condition 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
 ;
 
-loop_begin : LOOP 	     {ic.pushToStack(ic.currentTripletIndex() + 1); //we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition}
+loop_begin : LOOP 	     {ic.pushToStack(ic.currentTripletIndex() + 1); /*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/}
 ;
 
 

@@ -21,12 +21,14 @@ public class Triplet {
 
 	public Triplet(Operator opt, Operand op1) {
 		this(opt);
-		this.operand1 = op1;
+		if (op1 != null)
+			this.operand1 = op1;
 	}
 
 	public Triplet(Operator opt, Operand op1, Operand op2) {
 		this(opt,op1);
-		operand2 = op2;
+		if (op2 != null)
+			this.operand2 = op2;
 	}
 
 	public Triplet(Operator opt, Operand op1, Operand op2, String type) {
