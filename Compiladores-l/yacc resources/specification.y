@@ -9,6 +9,7 @@ import java.lang.Math;
 import java.math.BigDecimal;
 import java.io.*;
 import java.util.StringTokenizer;
+import java.util.Vector;
 %}
 
 
@@ -36,23 +37,39 @@ sentence  :  declaration
 		  |  executable		
 ;
 
-declaration  : type  variable_list	{showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");}
+declaration  : type  variable_list	{
+									showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
+									for (String v : variableDeclarationIdentifiers)
+										la.getSymbolsTable().getSymbol(v).setType((String) $1.obj);
+									//Resetear la lista de identificadores siendo identificados.
+									variableDeclarationIdentifiers.clear();
+									} 
 			 | procedure			{showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de procedimiento.");}
 			 | variable_list 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
 			 | type 				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
 ;
 
-variable_list  :  ID  
-			   |  ID  ','  variable_list
+variable_list  :  ID  {
+  				        //Resetear la lista de identificadores siendo identificados
+  				        variableDeclarationIdentifiers.clear();
+	 			        //añadir a la lista de identificadores actualmente siendo identificados el identificador
+	 			        variableDeclarationIdentifiers.add($1.sval);
+	 			      }
+			   |  ID  ','  variable_list 
+			          {
+	 			        //añadir a la lista de identificadores actualmente siendo identificados el identificador identificado
+	 			        variableDeclarationIdentifiers.add($1.sval);
+	 			      }
 ;
 
-type  :  ULONGINT	
-	  |  DOUBLE
+type  :  ULONGINT  { $$.obj="ULONGINT"; }
+	  |  DOUBLE	   { $$.obj="DOUBLE"; }
 ;
 
 true_false : TRUE
            | FALSE
 ;
+
 
 procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
 		   |  PROC  ID  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
@@ -62,6 +79,21 @@ procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {
 		   |  PROC      '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
 	       |  PROC  ID  '(' error  ')'            na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
 ;
+/*
+procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
+		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
+		   |  procedure_header  '('    ')'                na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
+		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
+		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
+	       |  procedure_header  '(' error  ')'            na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
+;
+*/
+/*
+procedure_header  :  PROC  ID  {
+                               //setear en el atabla de simbolos el tipo del identificador en procedure
+                               }
+;*/
 
 na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
 				   | '='  CONSTANT  SHADOWING  '='  true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra NA");}
@@ -284,9 +316,15 @@ factor  :  ID           {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
 public LexicalAnalyzer la;
 public IntermediateCode ic;
 
+public Vector<String> variableDeclarationIdentifiers; //Para completar el tipo de variables declaradas
+
 public Parser(String path) throws FileNotFoundException {
 	la = new LexicalAnalyzer(path);
 	ic = new IntermediateCode();
+	
+	variableDeclarationIdentifiers=new Vector<String>();
+	variableDeclarationIdentifiers.clear();
+	
 }
 
 public void parse(){
