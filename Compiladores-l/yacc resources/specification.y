@@ -38,13 +38,22 @@ sentence  :  declaration
 ;
 
 declaration  : type  variable_list	{
-									showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
-									for (String v : variableDeclarationIdentifiers)
-										la.getSymbolsTable().getSymbol(v).setType((String) $1.obj);
-									//Resetear la lista de identificadores siendo identificados.
-									variableDeclarationIdentifiers.clear();
+										showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
+										Symbol symbol;
+										boolean wasDeclared;
+										for (String v : variableDeclarationIdentifiers){		
+											symbol = la.getSymbolsTable().getSymbol(v);
+											symbol.setType($1.sval);
+											wasDeclared = symbol.declare();
+											if(wasDeclared)
+												showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: doble declaración de la variable \"" + symbol.getLexeme() + "\".");
+											la.getSymbolsTable().setScope(v,scope);					
+											
+										}
+										//Resetear la lista de identificadores siendo identificados.
+										variableDeclarationIdentifiers.clear();
 									} 
-			 | procedure			{showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de procedimiento.");}
+			 | procedure			
 			 | variable_list 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
 			 | type 				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
 ;
@@ -62,15 +71,15 @@ variable_list  :  ID  {
 	 			      }
 ;
 
-type  :  ULONGINT  { $$.obj="ULONGINT"; }
-	  |  DOUBLE	   { $$.obj="DOUBLE"; }
+type  :  ULONGINT  { $$.sval=Symbol._ULONGINT; }
+	  |  DOUBLE	   { $$.sval=Symbol._DOUBLE; }
 ;
 
 true_false : TRUE
            | FALSE
 ;
 
-
+/*
 procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
 		   |  PROC  ID  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
 		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
@@ -79,21 +88,20 @@ procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {
 		   |  PROC      '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
 	       |  PROC  ID  '(' error  ')'            na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
 ;
-/*
+*/
 procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
 		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
 		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
-		   |  procedure_header  '('    ')'                na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
-		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
-		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
+		   |  procedure_header  '('    ')'                na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}		
 	       |  procedure_header  '(' error  ')'            na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
 ;
-*/
-/*
+
 procedure_header  :  PROC  ID  {
-                               //setear en el atabla de simbolos el tipo del identificador en procedure
+                               	//setear en el atabla de simbolos el tipo del identificador en procedure
+                               	scope += ":"+$2.sval;
                                }
-;*/
+             	|  PROC 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");};
+;
 
 na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
 				   | '='  CONSTANT  SHADOWING  '='  true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra NA");}
@@ -133,8 +141,17 @@ procedure_call :  ID  '('  id_list  ')' {showMessage("[Linea " + la.getCurrentLi
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
-      									Triplet t = createTriplet("=",new Operand(Operand.ST_POINTER,$1.sval),$3.obj);
-										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+  									  	boolean correctlyDeclared = linkToDeclaration($1.sval);	
+  									  	String name = $1.sval + scope;
+  									  	Triplet t;
+										if(!correctlyDeclared){
+											showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: se utiliza una variable antes de declararla.");
+      										t = createEmptyTriplet();
+      									} else {
+      										t = createTriplet("=",new Operand(Operand.ST_POINTER,name),$3.obj);      									
+										}
+										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										}
 			|  ID  '='  error			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
 			|  error '='  expression	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
 			|  ID  EQUAL  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
@@ -280,7 +297,14 @@ term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] M
       |  term  '/'  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
 ;
 
-factor  :  ID           {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
+factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sval);	
+							if(!correctlyDeclared){
+								showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: se utiliza una variable antes de declararla.");
+								$$.obj = new Operand(Operand.ST_POINTER);	
+							} else {
+								$$.obj = new Operand(Operand.ST_POINTER, $1.sval+scope);										
+							}				
+						}
 	    |  CONSTANT     {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
 	    |  '-' CONSTANT {
 						 // Manejo la entrada positiva de esta constante		    				
@@ -315,6 +339,7 @@ factor  :  ID           {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
 
 public LexicalAnalyzer la;
 public IntermediateCode ic;
+private String scope;
 
 public Vector<String> variableDeclarationIdentifiers; //Para completar el tipo de variables declaradas
 
@@ -324,6 +349,8 @@ public Parser(String path) throws FileNotFoundException {
 	
 	variableDeclarationIdentifiers=new Vector<String>();
 	variableDeclarationIdentifiers.clear();
+	
+	scope = ":main";
 	
 }
 
@@ -400,4 +427,16 @@ public Triplet createEmptyTriplet(){
 	Triplet t = new Triplet(new Operator("ERROR"));
 	ic.addTriplet(t);
 	return t;
+}
+
+public boolean linkToDeclaration(String idName){
+	SymbolsTable st = la.getSymbolsTable();
+	String name = idName + scope; // Nombre entero
+	name = st.findSTReference(name);
+	
+	Symbol s = la.getSymbolsTable().getSymbol(idName);
+	if(s.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
+		la.getSymbolsTable().removeSymbol(idName);
+	
+	return name != null && name.contains(":");
 }

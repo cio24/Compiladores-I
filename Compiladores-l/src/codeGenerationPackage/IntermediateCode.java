@@ -6,7 +6,6 @@ import java.util.Stack;
 public class IntermediateCode {
 	
 	private ArrayList<Triplet> triplets;
-	
 	private Stack<Integer> stk;
 	
 	public IntermediateCode() {
