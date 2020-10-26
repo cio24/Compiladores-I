@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.Symbol;
 import usefulClassesPackage.Constants;
+import usefulClassesPackage.ErrorReceiver;
 
 public class SA06LongConstantFound extends SemanticAction {
 
@@ -30,7 +31,7 @@ public class SA06LongConstantFound extends SemanticAction {
 			lexicalAnalyzer.getYylval().sval = lexeme;
 		}
 		else {
-			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: constante ("+lexem+") de tipo ULONGINT fuera de rango.");
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"constante ("+lexem+") de tipo ULONGINT fuera de rango.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

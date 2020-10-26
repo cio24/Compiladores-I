@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.Symbol;
 import usefulClassesPackage.Constants;
+import usefulClassesPackage.ErrorReceiver;
 
 public class SA07DoubleConstantFound extends SemanticAction {
 
@@ -32,7 +33,7 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			}
 		else 
 		{
-			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: constante ("+lexem+") de tipo DOUBLE fuera de rango.");
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"constante ("+lexem+") de tipo DOUBLE fuera de rango.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

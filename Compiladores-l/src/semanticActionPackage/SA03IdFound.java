@@ -3,6 +3,7 @@ package semanticActionPackage;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.Symbol;
 import usefulClassesPackage.Constants;
+import usefulClassesPackage.ErrorReceiver;
 
 public class SA03IdFound extends SemanticAction {
 
@@ -23,8 +24,7 @@ public class SA03IdFound extends SemanticAction {
 		else
 		{
 			String lexeme_truc=lexeme.substring(0,20);
-			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] WARNING lexico: el identificador ("+lexeme+") es demasiado largo, se trunco a 20 caracteres.");
-			
+			ErrorReceiver.displayError(ErrorReceiver.WARNING,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"el identificador ("+lexeme+") es demasiado largo, se trunco a 20 caracteres.");
 			//Agregar a la tabla de simbolos si no esta
 			if(lexicalAnalyzer.getSymbolsTable().getSymbol(lexeme_truc) == null) {
 				Symbol symbol = new Symbol(lexeme_truc,Symbol._ID);

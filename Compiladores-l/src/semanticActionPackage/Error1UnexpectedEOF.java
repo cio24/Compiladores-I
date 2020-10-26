@@ -1,6 +1,6 @@
 package semanticActionPackage;
-
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.ErrorReceiver;
 
 public class Error1UnexpectedEOF extends SemanticAction {
 
@@ -10,8 +10,8 @@ public class Error1UnexpectedEOF extends SemanticAction {
 	}
 
 	public void execute() {
-		lexicalAnalyzer.setTokenId('~'); 
-		System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: Fin de archivo inesperado.");
+		lexicalAnalyzer.setTokenId('~');
+		ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"fin de archivo inesperado");
 	}
 
 }

@@ -1,6 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.ErrorReceiver;
 
 public class Warning01UnexpectedCharInComment extends SemanticAction{
 	
@@ -12,7 +13,7 @@ public class Warning01UnexpectedCharInComment extends SemanticAction{
 
 	@Override
 	public void execute() {
-		System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] WARNING lexico: Caracter inesperado ("+(char)lexicalAnalyzer.getLastCharacterReadAscii()+") dentro de un comentario.");
+		ErrorReceiver.displayError(ErrorReceiver.WARNING,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"Caracter inesperado ("+(char)lexicalAnalyzer.getLastCharacterReadAscii()+") dentro de un comentario.");
 	}
 
 }

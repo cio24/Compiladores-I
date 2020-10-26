@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import usefulClassesPackage.ErrorReceiver;
 %}
 
 
@@ -20,15 +21,15 @@ PROC NA SHADOWING TRUE FALSE UP DOWN
 %start program
 %%
 
-program :  /* EMPTY */		{showMessage( "[Linea " + la.getCurrentLine() + "] WARNING sintactico: Programa vacio!");}
+program :  /* EMPTY */		{ErrorReceiver.displayError(ErrorReceiver.WARNING,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"Programa vacio");}
 		|  sentences  		{showMessage( "[Linea " + la.getCurrentLine() + "] Programa completo.");}
-		|  error			{showMessage( "[Linea " + la.getCurrentLine() + "] ERROR sintactico: no se encontraron sentencias validas.");}
+		|  error			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"No se encontraron sentencias validas");}
 	;
 		
 
 sentences  :  sentence ';' 				//{showMessage( "[Linea " + la.getCurrentLine() + "] Sentencia.");}
 		   |  sentences sentence ';' 	//{showMessage( "[Linea " + la.getCurrentLine() + "] Sentencia.");}
-		   |  sentence error			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: ';' ausente al final de la sentencia.");} /*testeado*/
+		   |  sentence error			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"';' ausente al final de la sentencia.");} /*testeado*/
 		   |  error	';'					{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mal construida.");} /*testeado*/
 ;
 
@@ -43,7 +44,7 @@ declaration  : type  variable_list	{
 										for (String v : variableDeclarationIdentifiers){
 											symbol = la.getSymbolsTable().getSymbol(v+scope);
 											if(symbol != null)	
-												showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: doble declaración de la variable \"" + symbol.getLexeme() + "\".");
+												ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," doble declaración de la variable \"" + symbol.getLexeme() + "\".");
 											else{
 												symbol = la.getSymbolsTable().getSymbol(v);
 												symbol.setType($1.sval);
@@ -54,8 +55,8 @@ declaration  : type  variable_list	{
 										variableDeclarationIdentifiers.clear();
 									} 
 			 | procedure			
-			 | variable_list 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
-			 | type 				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un identificador y no se encontro.");}
+			 | variable_list 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
+			 | type 				{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un identificador y no se encontro");}
 ;
 
 variable_list  :  ID  {
@@ -82,56 +83,59 @@ true_false : TRUE
 /*
 procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
 		   |  PROC  ID  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
-		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
-		   |  PROC  ID  '('    ')'                na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
-		   |  PROC      '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
-		   |  PROC      '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");}		
-	       |  PROC  ID  '(' error  ')'            na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
+		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
+		   |  PROC  ID  '('    ')'                na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
+		   |  PROC      '('  parameter_list  ')'  na_shad_definition proc_body {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}		
+		   |  PROC      '('   ')'                 na_shad_definition proc_body {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}		
+	       |  PROC  ID  '(' error  ')'            na_shad_definition proc_body {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se definio mal la lista de parametros");}	
 ;
 */
-procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
+procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {
+							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+							scope = la.getSymbolsTable().removeScope(scope);
+ 							}
 		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
-		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}	
-		   |  procedure_header  '('    ')'                na_shad_definition           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el cuerpo del procedimiento.");}		
-	       |  procedure_header  '(' error  ')'            na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se definio mal la lista de parametros.");}	
+		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
+		   |  procedure_header  '('    ')'                na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}		
+	       |  procedure_header  '(' error  ')'            na_shad_definition proc_body {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se definio mal la lista de parametros");}	
 ;
 
 procedure_header  :  PROC  ID  {
                                	//setear en el atabla de simbolos el tipo del identificador en procedure
                                	scope += ":"+$2.sval;
                                }
-             	|  PROC 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el identificador del procedimiento.");};
+             	|  PROC 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");};
 ;
 
 na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
-				   | '='  CONSTANT  SHADOWING  '='  true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra NA");}
-				   | NA CONSTANT  SHADOWING  '='  true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del NA.");}
-				   | NA '=' SHADOWING  '='  true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta definir el valor del NA.");}
-				   | NA  '='  CONSTANT '='  true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la palabra SHADOWING.");}
-				   | NA  '='  CONSTANT  SHADOWING true_false {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta el '=' del SHADOWING.");}
+				   | '='  CONSTANT  SHADOWING  '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra NA");}
+				   | NA CONSTANT  SHADOWING  '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del NA");}
+				   | NA '=' SHADOWING  '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el valor de NA");}
+				   | NA  '='  CONSTANT '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra SHADOWING");}
+				   | NA  '='  CONSTANT  SHADOWING true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del SHADOWING");}
 ;
 
 
 proc_body : '{' sentences  '}' 
-		  | '{' error  '}' {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: cuerpo del procedimiento mal definido.");}
+		  | '{' error  '}' {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"cuerpo del procedimiento mal definido");}
 		  | '{' '}'
 ;
 
 parameter_list  :  parameter  														{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 				|  parameter  ','  parameter  										{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 				|  parameter  ','  parameter  ','  parameter  						{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
-				|  parameter  ','  parameter  ','  parameter  ',' parameter_list	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
+				|  parameter  ','  parameter  ','  parameter  ',' parameter_list	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir un maximo de 3 parametros");}
 ;
 
 parameter  :  type  ID
-		   |  type 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta identificador en declaracion de parametro.");}
-		   |  ID 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta tipo en declaracion de parametro.");}
+		   |  type 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta identificador en declaracion de parametro");}
+		   |  ID 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el tipo en declaracion de parametro");}
 ;
 
 id_list  :  ID									{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID							{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID	        	{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
-		 |  ID  ','  ID  ','  ID  ',' id_list 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: un procedimiento puede recibir un maximo de tres parametros.");}
+		 |  ID  ','  ID  ','  ID  ',' id_list 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir una maximo de 3 parametros");}
 ;
 
 procedure_call :  ID  '('  id_list  ')' {showMessage("[Linea " + la.getCurrentLine() + "] Llamada a procedimiento.");
@@ -145,16 +149,16 @@ executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine()
   									  	String name = $1.sval + scope;
   									  	Triplet t;
 										if(!correctlyDeclared){
-											showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: se utiliza una variable antes de declararla.");
+											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
       										t = createEmptyTriplet();
       									} else {
       										t = createTriplet("=",new Operand(Operand.ST_POINTER,name),$3.obj);      									
 										}
 										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
 										}
-			|  ID  '='  error			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera una expresion del lado derecho.");}
-			|  error '='  expression	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. Se espera un identificador del lado izquierdo.");}
-			|  ID  EQUAL  expression 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: asignacion erronea. ¿Quisiste decir '='?.");}
+			|  ID  '='  error			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una expresion del lado derecho");}
+			|  error '='  expression	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una identificador del lado izquierdo");}
+			|  ID  EQUAL  expression 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, ¿quisiste decir '=' ?");}
 			|  if_clause  				{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia IF.");}
 			|  loop_clause	    		{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia LOOP.");}
 			|  procedure_call			{showMessage("[Linea " + la.getCurrentLine() + "] Invocacion PROC.");}
@@ -167,12 +171,12 @@ comparator  :  EQUAL
             |  GREATEQUAL
             |  '<'	{$$.obj = new Operator("<");}
             |  '>'
- 	    	|  '<'  '<'					{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '<' duplicado.");}
-            |  '>'  '>'			        {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: token '>' duplicado.");}
-            |  LESSEQUAL  '='           {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '<='?.");}
-            |  GREATEQUAL  '='          {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '>='?.");}
-            |  NEQUAL  '='              {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
-            |  '<'  '>'                 {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: comparador erroneo. ¿Quisiste decir '!='?.");}
+ 	    	|  '<'  '<'					{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token < duplicado");}
+            |  '>'  '>'			        {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token > duplicado");}
+            |  LESSEQUAL  '='           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '<='?");}
+            |  GREATEQUAL  '='          {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '>='?");}
+            |  NEQUAL  '='              {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");}
+            |  '<'  '>'                 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");}
 ;
 
 condition  :  expression  comparator  expression 	{
@@ -180,7 +184,7 @@ condition  :  expression  comparator  expression 	{
 													Triplet t = createTriplet((Operator)$2.obj, $1.obj,$3.obj);
 													$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
 													}
-		   |  expression '=' expression 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: Comparacion invalida. ¿Quisiste decir '=='?.");}
+		   |  expression '=' expression 			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparacion invalida. ¿Quisiste decir '=='?");}
 ;
 
 /*-------> Gramatica de control<-------*/
@@ -194,11 +198,11 @@ sentence_block  :  '{'  sentences  '}'
 
 if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFirstOperandFromStack(1); }
  		   |  IF  if_condition   then_body END_IF                   	{ updateFirstOperandFromStack(1); }     
- 		   |  IF  if_condition   then_body  ELSE  else_body error 		{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
- 		   |  IF  if_condition   then_body  error 						{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta palabra reservada END_INF al final de la sentencia IF");}
- 		   |  IF  if_condition   error  ELSE  else_body END_IF 			{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
-		   |  IF  if_condition   then_body  ELSE  error END_IF 			{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula ELSE_IF.");}
- 		   |  IF  if_condition   error  END_IF 							{ showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: se esperaba un bloque de sentencias dentro de la clausula IF.");}
+ 		   |  IF  if_condition   then_body  ELSE  else_body error 		{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
+ 		   |  IF  if_condition   then_body  error 						{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
+ 		   |  IF  if_condition   error  ELSE  else_body END_IF 			{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF"); }
+		   |  IF  if_condition   then_body  ELSE  error END_IF 			{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula ELSE_IF"); }
+ 		   |  IF  if_condition   error  END_IF 							{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF"); }
  
 ;
 
@@ -209,18 +213,18 @@ if_condition  :   '('  condition  ')'  {Triplet t = createTriplet("BF",$2.obj,ne
 			 							Triplet t = createEmptyTriplet();
 										ic.pushToStack(t.getNumId());
       									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
-      									showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: luego de la palabra reservada IF se espera una condicion entre parentesis.");}
+      									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"luego de la palabra reservada IF se espera una condicion entre parentesis");}
 		     |    condition             {
 			 							Triplet t = createEmptyTriplet();
 										ic.pushToStack(t.getNumId());
       									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
-      									showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
+      									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); }
 	    	 |    condition  ')'        {	    	 
 			 							Triplet t = createEmptyTriplet();
 										ic.pushToStack(t.getNumId());
       									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
-	    	 							showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: La clausula IF requiere una condicion encerrada en '(' ')'.");}
-   ;
+      									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); } 
+;
 
 then_body  :  sentence_block  	{ 
 								Triplet t = createBITriplet(new Operand(Operand.TO_BE_DEFINED,"-1"));
@@ -232,16 +236,16 @@ else_body  :  sentence_block
 ;
 
 loop_clause  :  loop_begin  sentence_block  UNTIL loop_condition
-			 |  loop_begin  sentence_block  error							{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: falta la clausula UNTIL en la sentencia LOOP");}
-			 |  loop_begin  error  UNTIL  '('  condition  ')'				{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir un bloque de sentencias");}
+			 |  loop_begin  sentence_block  error							{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la clausula UNTIL en la sentencia LOOP");}
+			 |  loop_begin  error  UNTIL  '('  condition  ')'				{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir un bloque de sentencias");}
 ;
 
 loop_condition : '('  condition  ')'{       
 							   		Triplet t = createBFTriplet($2.obj);
 						       		$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition
 							        }
-				| '('  error  ')'	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la clausula UNTIL debe incluir una condicion entre parentesis");}
-				| condition 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");}
+				| '('  error  ')'	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la clausula UNTIL debe incluir una condicion entre parentesis"); }
+				| condition 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir una condicion encerrada por '(' ')'"); }
 ;
 
 loop_begin : LOOP 	     {ic.pushToStack(ic.currentTripletIndex() + 1); /*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/}
@@ -258,8 +262,8 @@ out_clause  :  OUT  '('  CSTRING  ')'	{
 									   	Triplet t = new Triplet(opt,op);
 									   	ic.addTriplet(t);
 			 						 	}
-			|  OUT  '('  error  ')' 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT solo acepta cadenas de caracteres.");}
-			|  OUT  CSTRING    	 	   	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");}
+			|  OUT  '('  error  ')' 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT solo acepta cadenas de caracteres"); }
+			|  OUT  CSTRING    	 	   	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'"); }
 ;
 
 /*-------> Gramatica de salida<-------*/
@@ -274,11 +278,11 @@ expression  :  expression  '+'  term 		{showMessage("[Linea " + la.getCurrentLin
 	      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
 			|  term 				 		{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
 											 $$.obj = $1.obj;}
-			|  expression  '+'  error 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la suma debe contener un termino valido.");}
-			|  expression  '-'  error 		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la resta debe contener un termino valido.");}
-			|  error  '+'  term 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la suma debe contener una expresion valida.");}
-			|  error  '-'  term 			{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la resta debe contener una expresion valida.");}
-            |  expression  '+'  '+'  term 	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '+' sobrante.");}
+			|  expression  '+'  error 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la suma debe contener un termino valido");}
+			|  expression  '-'  error 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la resta debe contener un termino valido");}
+			|  error  '+'  term 			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la suma debe contener una expresion valida");}
+			|  error  '-'  term 			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la resta debe contener una expresion valida");}
+            |  expression  '+'  '+'  term 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '+' sobrante");}
 ;
 
 term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
@@ -289,17 +293,17 @@ term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] M
       							$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
 	  |  factor            		{showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
 	  						 	$$.obj = $1.obj;}
-	  |  term '*' error    		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
-  	  |  term '/' error    		{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado derecho de la division debe llevar una constante o un identificador");}
-	  |  error '*' factor   	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
-  	  |  error '/' factor   	{showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: el lado izquierdo de la division debe llevar un termino o un factor");}
-	  |  term  '*'  '*'  factor {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '*' sobrante");}
-      |  term  '/'  '/'  factor {showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: operador '/' sobrante");}
+	  |  term '*' error    		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
+  	  |  term '/' error    		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la division debe llevar una constante o un identificador");}
+	  |  error '*' factor   	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la multiplicacion debe llevar una termino o un factor");}
+  	  |  error '/' factor   	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la division debe llevar un termino o un factor");}
+	  |  term  '*'  '*'  factor {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '*' sobrante");}
+      |  term  '/'  '/'  factor {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '/' sobrante");}
 ;
 
 factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sval);	
 							if(!correctlyDeclared){
-								showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: se utiliza una variable antes de declararla.");
+							    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"se utiliza una variable antes de declararla");
 								$$.obj = new Operand(Operand.ST_POINTER);	
 							} else {
 								$$.obj = new Operand(Operand.ST_POINTER, $1.sval+scope);										
@@ -310,7 +314,7 @@ factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sva
 						 // Manejo la entrada positiva de esta constante		    				
 	    				 Symbol positivo = la.getSymbolsTable().getSymbol($2.sval);
 	    				 if (positivo.getType()==Symbol._ULONGINT)
-	    				 	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: una constante del tipo entero largo sin signo no puede ser negativa");
+	    				 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"una constante del tipo entero largo sin signo no puede ser negativa");
 	    				 else{
 		    				 if(positivo.subtractReference() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
 		    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
@@ -440,3 +444,11 @@ public boolean linkToDeclaration(String idName){
 	
 	return name != null && name.contains(":");
 }
+
+public void showErrorMessage(String message) {
+	System.out.println(message);
+}
+
+
+
+

@@ -1,6 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
+import usefulClassesPackage.ErrorReceiver;
 
 public class SA05ResWordFound extends SemanticAction{
 
@@ -20,7 +21,7 @@ public class SA05ResWordFound extends SemanticAction{
 		}
 		else
 		{
-			System.out.println("[Linea " + lexicalAnalyzer.getCurrentLine() + "] ERROR lexico: no hay palabra reservada \"" + lexeme + "\".");	
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"no hay palabra reservada \"" + lexeme + "\".");
 			lexicalAnalyzer.setNextState(0);
 		}
 			
