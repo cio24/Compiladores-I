@@ -10,7 +10,6 @@ public class Symbol {
 	private String type;
 	private String lexeme = "";
 	private int referenceCount = 0;
-	private boolean declared = false;
 	
 	
 	public Symbol(String lexeme, String type) {
@@ -47,14 +46,6 @@ public class Symbol {
 	public int subtractReference() {
 		this.referenceCount--;
 		return this.referenceCount;
-	}
-	
-	public boolean declare() {
-		if(this.declared)
-			return true;
-		
-		this.declared = true;
-		return false;
 	}
 	
 	@Override

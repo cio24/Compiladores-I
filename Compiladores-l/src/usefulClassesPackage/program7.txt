@@ -8,8 +8,8 @@ PROC procedure () NA = 0_ul SHADOWING = TRUE {
 	DOUBLE var;
 	var = 3.0;
 };
-
-DOUBLE var;%/
+%/
+DOUBLE var;
 var = 5.0 + var;
 DOUBLE var;
 var = var + 5.0;

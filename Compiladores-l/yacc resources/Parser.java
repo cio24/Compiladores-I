@@ -868,15 +868,15 @@ case 10:
 {
 										showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
 										Symbol symbol;
-										boolean wasDeclared;
-										for (String v : variableDeclarationIdentifiers){		
-											symbol = la.getSymbolsTable().getSymbol(v);
-											symbol.setType(val_peek(1).sval);
-											wasDeclared = symbol.declare();
-											if(wasDeclared)
+										for (String v : variableDeclarationIdentifiers){
+											symbol = la.getSymbolsTable().getSymbol(v+scope);
+											if(symbol != null)	
 												showMessage("[Linea " + la.getCurrentLine() + "] ERROR semantico: doble declaración de la variable \"" + symbol.getLexeme() + "\".");
-											la.getSymbolsTable().setScope(v,scope);					
-											
+											else{
+												symbol = la.getSymbolsTable().getSymbol(v);
+												symbol.setType(val_peek(1).sval);
+												la.getSymbolsTable().setScope(v,scope);					
+											}
 										}
 										/*Resetear la lista de identificadores siendo identificados.*/
 										variableDeclarationIdentifiers.clear();
