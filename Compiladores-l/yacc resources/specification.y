@@ -94,7 +94,9 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 							scope = la.getSymbolsTable().removeScope(scope);
  							}
-		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
+		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+		   										scope = la.getSymbolsTable().removeScope(scope);
+		   										}
 		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
 		   |  procedure_header  '('    ')'                na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}		
 	       |  procedure_header  '(' error  ')'            na_shad_definition proc_body {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se definio mal la lista de parametros");}	
@@ -104,7 +106,7 @@ procedure_header  :  PROC  ID  {
                                	//setear en el atabla de simbolos el tipo del identificador en procedure
                                	scope += ":"+$2.sval;
                                }
-             	|  PROC 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");};
+             	|  PROC 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}
 ;
 
 na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
@@ -145,14 +147,18 @@ procedure_call :  ID  '('  id_list  ')' {showMessage("[Linea " + la.getCurrentLi
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
-  									  	boolean correctlyDeclared = linkToDeclaration($1.sval);	
+  									  	boolean correctlyDeclared = linkToDeclaration($1.sval);
+  									  	showMessage("El escope en la declaracion es: " + scope);
   									  	String name = $1.sval + scope;
   									  	Triplet t;
 										if(!correctlyDeclared){
 											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
-      										t = createEmptyTriplet();
-      									} else {
-      										t = createTriplet("=",new Operand(Operand.ST_POINTER,name),$3.obj);      									
+      											t = createEmptyTriplet();
+      										} else {
+      											//el nombre que se muestra en la tabla de símbolos es el correspondiente con el scope donde
+      											//esta realmente definida la variable, no con el scope en donde se encontró.
+      											name = la.getSymbolsTable().findSTReference(name);
+      											t = createTriplet("=",new Operand(Operand.ST_POINTER,name),$3.obj);
 										}
 										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
 										}
@@ -433,12 +439,20 @@ public Triplet createEmptyTriplet(){
 	return t;
 }
 
+//true si esta declarada en el scope actual o en uno que lo contiene
 public boolean linkToDeclaration(String idName){
+
 	SymbolsTable st = la.getSymbolsTable();
 	String name = idName + scope; // Nombre entero
+
+	//te devuelve el nombre que tiene una referencia en la tabla de simbolos, puede ser exactamente el mismo
+	//si se definio en el scope actual o un nombre más corto si se definio en un scope que contiene al actual
+	//no te puede dar nunca null, ya que si o si esta en la tabla de símbolos
 	name = st.findSTReference(name);
-	
+
 	Symbol s = la.getSymbolsTable().getSymbol(idName);
+	//si llega a cero, significa que la única referencia que tiene el id en la tabla de simbolos era de esta
+	//sentencia ejecutable, por lo tanto no estaba declarada
 	if(s.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
 		la.getSymbolsTable().removeSymbol(idName);
 	

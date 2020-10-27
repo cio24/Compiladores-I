@@ -1,10 +1,6 @@
 import java.io.IOException;
 
-import java.util.*;
 
-
-
-import lexicalAnalyzerPackage.Parser;
 import usefulClassesPackage.Test;
 
 public class Main {

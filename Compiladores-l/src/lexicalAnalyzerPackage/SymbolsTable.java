@@ -37,9 +37,11 @@ public class SymbolsTable {
 	}
 	
 	public String findSTReference(String name) {
-		while(this.getSymbol(name) == null) {
-			name = removeScope(name);
-			if(name == null)
+		System.out.println("SE EMPIEZA A AVERIGUAR SI EL NOMBRE :" + name + " SE ENCUENTRA EN LA TABLA DE SIMBOLOS!");
+		while(this.getSymbol(name) == null) { //mientras no encuentre el simbolo para este id
+			System.out.println("SE LE SACA LA ÚLTIMA PARTE");
+			name = removeScope(name); //le saco la última parte del scope
+			if(name == null) //si no existe retorno un null aparentemente xD
 				break;
 		}
 		return name;
@@ -56,8 +58,8 @@ public class SymbolsTable {
 		}
 	}
 	
-	public String removeScope(String name) {
-		if(!name.contains(":"))
+	public String removeScope(String name) { //le va quitando la última parte del scope al nombre
+		if(!name.contains(":")) //si llega a un nombre sin ":" significa que se llego al string vacio?
 			return null;
 		return name.substring(0,name.lastIndexOf(":"));
 	}
