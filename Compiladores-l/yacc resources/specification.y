@@ -1,6 +1,5 @@
 %{
 package lexicalAnalyzerPackage;
-
 import codeGenerationPackage.*;
 import usefulClassesPackage.Constants;
 import java.io.FileNotFoundException;
@@ -43,11 +42,13 @@ declaration  : type  variable_list	{
 										Symbol symbol;
 										for (String v : variableDeclarationIdentifiers){
 											symbol = la.getSymbolsTable().getSymbol(v+scope);
-											if(symbol != null)	
+											if(symbol != null){
 												ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," doble declaración de la variable \"" + symbol.getLexeme() + "\".");
+												la.getSymbolsTable().removeSymbol(v);
+											}
 											else{
 												symbol = la.getSymbolsTable().getSymbol(v);
-												symbol.setType($1.sval);
+												symbol.setUse(Symbol._VARIABLE);
 												la.getSymbolsTable().setScope(v,scope);					
 											}
 										}
@@ -72,8 +73,8 @@ variable_list  :  ID  {
 	 			      }
 ;
 
-type  :  ULONGINT  { $$.sval=Symbol._ULONGINT; }
-	  |  DOUBLE	   { $$.sval=Symbol._DOUBLE; }
+type  :  ULONGINT  { $$.sval=Symbol._ULONGINT_TYPE; }
+	  |  DOUBLE	   { $$.sval=Symbol._DOUBLE_TYPE; }
 ;
 
 true_false : TRUE
@@ -81,7 +82,9 @@ true_false : TRUE
 ;
 
 /*
-procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}
+procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+										la.getSymbolsTable().getSymbol($2.sval).
+										}
 		   |  PROC  ID  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");}	
 		   |  PROC  ID  '('  parameter_list  ')'  na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
 		   |  PROC  ID  '('    ')'                na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
@@ -93,6 +96,8 @@ procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {
 procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {
 							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 							scope = la.getSymbolsTable().removeScope(scope);
+							st.setScope(lastIdentifierFound,scope);
+
  							}
 		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 		   										scope = la.getSymbolsTable().removeScope(scope);
@@ -104,6 +109,8 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 
 procedure_header  :  PROC  ID  {
                                	//setear en el atabla de simbolos el tipo del identificador en procedure
+                               	la.getSymbolsTable().getSymbol($2.sval).setUse(Symbol._PROCEDURE);
+                               	lastIdentifierFound = $2.sval;
                                	scope += ":"+$2.sval;
                                }
              	|  PROC 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}
@@ -134,29 +141,50 @@ parameter  :  type  ID
 		   |  ID 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el tipo en declaracion de parametro");}
 ;
 
-id_list  :  ID									{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+id_list  :  ID									{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+
+										Symbol variable = la.getSymbolsTable().getSymbol($1.sval);
+										boolean correctlyDeclared = linkToDeclaration($1.sval);
+										if(correctlyDeclared){
+											Symbol parameter = new Symbol($1.sval,Symbol._ID_LEXEME,variable.getDataType(),Symbol._PARAMETER);
+											//la.getSymbolsTable().addSymbol($1.sval + scope, parameter);
+										}
+										else
+											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"El parametro " + $1.sval + " hace referencia a una variable que no existe");
+										}
 		 |  ID  ','  ID							{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID	        	{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID  ',' id_list 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir una maximo de 3 parametros");}
 ;
 
-procedure_call :  ID  '('  id_list  ')' {showMessage("[Linea " + la.getCurrentLine() + "] Llamada a procedimiento.");
-      									Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,$1.sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
-		       |  ID  '('  ')' 			{showMessage("[Linea " + la.getCurrentLine() + "] Llamada a procedimiento.");
-      									Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,$1.sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
+procedure_call :  ID  '('  id_list  ')' {
+									if(linkToDeclaration($1.sval)){ //hay un identificador declarado al alcance con el mismo nombre
+										Symbol s = st.getSymbol(st.findSTReference($1.sval + scope)); //obtengo el simbolo correspondiente al identificador
+										if(s.getUse().equals(Symbol._PROCEDURE)){ //si el uso es un procedimiento
+											lastIdentifierFound = $1.sval; //guardo el nombre para que cuando lea los parametros saber si es correcta la invocación
+											Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,st.findSTReference($1.sval + scope)),new Operand(Operand.TO_BE_DEFINED,"-1"));
+
+										}
+										else //hay una variable al alcance con el mismo nombre pero no es un procedimiento
+											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,$1.sval + "no es un procedimiento");
+
+									}
+									else  //no hay nada declarado con ese identificador al alcance
+										ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no existe un procedimiento " + $1.sval + " declarado al alcance");}
+		       |  ID  '('  ')' 			{
+      							Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,$1.sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
   									  	boolean correctlyDeclared = linkToDeclaration($1.sval);
-  									  	showMessage("El escope en la declaracion es: " + scope);
   									  	String name = $1.sval + scope;
   									  	Triplet t;
 										if(!correctlyDeclared){
 											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
       											t = createEmptyTriplet();
       										} else {
-      											//el nombre que se muestra en la tabla de símbolos es el correspondiente con el scope donde
-      											//esta realmente definida la variable, no con el scope en donde se encontró.
+      											//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
+      											//para hacerlo mas legible
       											name = la.getSymbolsTable().findSTReference(name);
       											t = createTriplet("=",new Operand(Operand.ST_POINTER,name),$3.obj);
 										}
@@ -319,7 +347,7 @@ factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sva
 	    |  '-' CONSTANT {
 						 // Manejo la entrada positiva de esta constante		    				
 	    				 Symbol positivo = la.getSymbolsTable().getSymbol($2.sval);
-	    				 if (positivo.getType()==Symbol._ULONGINT)
+	    				 if (positivo.getDataType()==Symbol._ULONGINT_TYPE)
 	    				 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"una constante del tipo entero largo sin signo no puede ser negativa");
 	    				 else{
 		    				 if(positivo.subtractReference() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
@@ -332,7 +360,7 @@ factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sva
 		    				 	negativo.addReference();  // Ya existe la entrada
 		    				 }else{
 		    				 	String lexema = "-"+positivo.getLexeme();
-		    				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getType());
+		    				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getLexemeType(),positivo.getDataType());
 		    				 	la.getSymbolsTable().addSymbol(lexema,nuevoNegativo);
 		    				 }
 		    				 $2.sval = "-"+$2.sval;
@@ -349,13 +377,16 @@ factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sva
 
 public LexicalAnalyzer la;
 public IntermediateCode ic;
+private String lastIdentifierFound;
 private String scope;
+private SymbolsTable st;
 
 public Vector<String> variableDeclarationIdentifiers; //Para completar el tipo de variables declaradas
 
 public Parser(String path) throws FileNotFoundException {
 	la = new LexicalAnalyzer(path);
 	ic = new IntermediateCode();
+	st = la.getSymbolsTable();
 	
 	variableDeclarationIdentifiers=new Vector<String>();
 	variableDeclarationIdentifiers.clear();
@@ -441,8 +472,6 @@ public Triplet createEmptyTriplet(){
 
 //true si esta declarada en el scope actual o en uno que lo contiene
 public boolean linkToDeclaration(String idName){
-
-	SymbolsTable st = la.getSymbolsTable();
 	String name = idName + scope; // Nombre entero
 
 	//te devuelve el nombre que tiene una referencia en la tabla de simbolos, puede ser exactamente el mismo
@@ -450,7 +479,7 @@ public boolean linkToDeclaration(String idName){
 	//no te puede dar nunca null, ya que si o si esta en la tabla de símbolos
 	name = st.findSTReference(name);
 
-	Symbol s = la.getSymbolsTable().getSymbol(idName);
+	Symbol s = st.getSymbol(idName);
 	//si llega a cero, significa que la única referencia que tiene el id en la tabla de simbolos era de esta
 	//sentencia ejecutable, por lo tanto no estaba declarada
 	if(s.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry

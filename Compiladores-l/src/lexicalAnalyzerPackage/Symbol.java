@@ -1,25 +1,77 @@
 package lexicalAnalyzerPackage;
 
 public class Symbol {
-	public final static String _DEFAULT_TYPE = "Default type";
-	public final static String _ID = "ID";
-	public final static String _DOUBLE = "Double";
-	public final static String _ULONGINT = "Long int unsigned";
-	public final static String _STRING = "String";
 
-	private String type;
+	//Lexeme types
+	public final static String _DEFAULT_TYPE = "Default type";
+	public final static String _ID_LEXEME = "Identifier";
+	public final static String _DOUBLE_CONSTANT = "DOUBLE Constant";
+	public final static String _ULONGINT_CONSTANT = "ULONGINT Constant";
+	public final static String _STRING_CONSTANT = "STRING Constant";
+
+	//data types
+	public final static String _DOUBLE_TYPE = "Double";
+	public final static String _ULONGINT_TYPE = "Unsigned Long Int";
+	public final static String _STRING_TYPE = "String";
+
+	//uses
+	public final static String _VARIABLE = "Variable";
+	public final static String _PROCEDURE = "Procedure";
+	public final static String _PARAMETER = "Parameter";
+
+	//pass by types
+	public final static String _COPY_VALUE = "Copy Value";
+
+	private String lexemeType;
+	private String dataType;
 	private String lexeme = "";
 	private int referenceCount = 0;
-	
-	
-	public Symbol(String lexeme, String type) {
+	private String use;
+	private String passByType = _COPY_VALUE;
+
+	public Symbol(String lexeme, String lexemeType) {
 		this.lexeme = lexeme;
-		this.type = type;
+		this.lexemeType = lexemeType;
+
+		switch(lexemeType){
+			case _DOUBLE_CONSTANT:
+				this.dataType = _DOUBLE_TYPE;
+				break;
+			case _ULONGINT_CONSTANT:
+				this.dataType = _ULONGINT_TYPE;
+				break;
+			case _STRING_CONSTANT:
+				this.dataType = _STRING_TYPE;
+				break;
+			default:
+				this.dataType = "Undefined";
+		}
+		this.referenceCount = 1;
+		this.use = "Undefined";
+	}
+
+	public Symbol(String lexeme, String lexemeType, String dataType) {
+		this.lexeme = lexeme;
+		this.lexemeType = lexemeType;
+		this.dataType = dataType;
+		this.referenceCount = 1;
+		this.use = "Undefined";
+	}
+
+	public Symbol(String lexeme, String lexemeType, String dataType, String use) {
+		this.lexeme = lexeme;
+		this.lexemeType = lexemeType;
+		this.dataType = dataType;
+		this.use = use;
 		this.referenceCount = 1;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setLexemeType(String type) {
+		this.lexemeType = type;
+	}
+
+	public void setDataType(String dataType){
+		this.dataType = dataType;
 	}
 
 	public String getLexeme() {
@@ -30,8 +82,12 @@ public class Symbol {
 		this.lexeme = lexeme;
 	}
 
-	public String getType() {
-		return this.type;
+	public String getLexemeType() {
+		return this.lexemeType;
+	}
+
+	public String getDataType() {
+		return this.dataType;
 	}
 
 	public int getReferenceCount() {
@@ -47,9 +103,25 @@ public class Symbol {
 		this.referenceCount--;
 		return this.referenceCount;
 	}
+
+	public void setUse(String use){
+		this.use = use;
+	}
+
+	public String getUse(){
+		return this.use;
+	}
 	
 	@Override
 	public String toString() {
-		return "\n\tTipo: \"" + this.type + "\" | Referencias: " + this.referenceCount;
+		String use;
+		if(this.use.equals("Undefined"))
+			use = "";
+		else
+			use = " | Use: " + this.use;
+		String passByType = "";
+		if(this.use.equals(_PARAMETER))
+			passByType = " | Pass by: " + _COPY_VALUE;
+		return "\n\tLexeme: \"" + this.lexemeType + "\"" + use + passByType + " | Type: " + this.dataType + " | References: " + this.referenceCount;
 	}
 }

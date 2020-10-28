@@ -26,7 +26,7 @@ public class SA06LongConstantFound extends SemanticAction {
 			
 			//agregar a la tabla de simbolos
 			String lexeme = lexicalAnalyzer.getCurrentLexeme();
-			Symbol symbol = new Symbol(lexeme,Symbol._ULONGINT);
+			Symbol symbol = new Symbol(lexeme,Symbol._ULONGINT_CONSTANT);
 			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 		}

@@ -6,11 +6,14 @@ import java.util.Set;
 public class SymbolsTable {
 
 	HashMap<String, Symbol> symbolsTable;
+	private String scope;
 
 	// Takes in a string returns a symbol
 	public SymbolsTable() {
 		this.symbolsTable = new HashMap<>();
+		this.scope = ":main";
 	}
+
 
 	public void addSymbol(String name, Symbol symbol) {
 		if (!this.symbolsTable.containsKey(name))
@@ -37,16 +40,14 @@ public class SymbolsTable {
 	}
 	
 	public String findSTReference(String name) {
-		System.out.println("SE EMPIEZA A AVERIGUAR SI EL NOMBRE :" + name + " SE ENCUENTRA EN LA TABLA DE SIMBOLOS!");
 		while(this.getSymbol(name) == null) { //mientras no encuentre el simbolo para este id
-			System.out.println("SE LE SACA LA ÚLTIMA PARTE");
 			name = removeScope(name); //le saco la última parte del scope
 			if(name == null) //si no existe retorno un null aparentemente xD
 				break;
 		}
 		return name;
 	}
-	
+
 	public Set<String> getAll() {
 		return this.symbolsTable.keySet();
 	}

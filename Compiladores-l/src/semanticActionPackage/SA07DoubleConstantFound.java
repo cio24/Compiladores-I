@@ -27,7 +27,7 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			// Utilizamos como lexema de los double el valor pasado a string del BigDecimal, para unificar los 2.0515 con los 0.20515d+1
 			String lexeme = new String(number.toString());
 			//Ingresar en la tabla de simbolos
-			Symbol symbol = new Symbol(lexeme,Symbol._DOUBLE);
+			Symbol symbol = new Symbol(lexeme,Symbol._DOUBLE_CONSTANT);
 			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 			}

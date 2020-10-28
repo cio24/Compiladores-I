@@ -1,9 +1,4 @@
-
-
-PROC procedure () NA = 0_ul SHADOWING = TRUE {
-    DOUBLE aux;
+PROC carlosproc (DOUBLE carlos) NA = 0_ul SHADOWING = TRUE {
 };
 
-aux = 3.0;
-
-
+carlosproc(aux);
