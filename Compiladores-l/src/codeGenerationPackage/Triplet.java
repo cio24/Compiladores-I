@@ -8,8 +8,6 @@ public class Triplet {
 	private String firstOperand;
 	private String secondOperand;
 	
-	private String type;
-	
 
 	public Triplet(String operator) {
 		this.getId = String.valueOf(++TRIPLET_COUNTER);
@@ -19,16 +17,12 @@ public class Triplet {
 	}
 
 	public Triplet(String operator, String firstOperand) {
-		this.getId = String.valueOf(++TRIPLET_COUNTER);
-		this.operator = operator;
+		this(operator);
 		this.firstOperand = firstOperand;
-		this.secondOperand = "-";
 	}
 
 	public Triplet(String operator, String firstOperand, String secondOperand) {
-		this.getId = String.valueOf(++TRIPLET_COUNTER);
-		this.operator = operator;
-		this.firstOperand = firstOperand;
+		this(operator,firstOperand);
 		this.secondOperand = secondOperand;
 	}
 	

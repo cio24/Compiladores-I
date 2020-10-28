@@ -52,11 +52,16 @@ public class IntermediateCode {
 			  i =  stk.peek();
 		}
 		catch(Exception e) {
-		  i = new Integer(-1);
+		  i = -1;
 		}
 		return i;
 	}
-	
+
+	public void removeLastTriplet(){
+		if(!triplets.isEmpty())
+			triplets.remove(triplets.size() -1);
+	}
+
 	public int currentTripletIndex() {
 		return Triplet.TRIPLET_COUNTER;
 	}

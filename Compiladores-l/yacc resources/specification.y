@@ -231,8 +231,17 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFirstOperandFromStack(1); }
- 		   |  IF  if_condition   then_body END_IF                   	{ updateFirstOperandFromStack(1); }     
+if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFirstOperandFromStack(1);
+ 									  ic.popFromStack();
+ 									}
+ 		   |  IF  if_condition   then_body END_IF                   	{
+										  ic.popFromStack(); //desapilo el último terceto xq era el del BI
+ 		    								  ic.removeLastTriplet(); //lo saco de la lista de tercetos
+ 		    								  //actualizo el terceto del BF xq se realiza suponiendo que va a haber un BI
+										updateSecondOperandFromStack(0);
+										ic.popFromStack();
+
+ 		    								}
  		   |  IF  if_condition   then_body  ELSE  else_body error 		{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
  		   |  IF  if_condition   then_body  error 						{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
  		   |  IF  if_condition   error  ELSE  else_body END_IF 			{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF"); }
@@ -263,8 +272,9 @@ if_condition  :   '('  condition  ')'  {Triplet t = createTriplet("BF",(String) 
 
 then_body  :  sentence_block  	{ 
 								Triplet t = createTriplet("BI");
+								//va 1, xq el terceto que correponde con el 0 es el de BI y queremos saltar a uno después con el BF
 								updateSecondOperandFromStack(1);
-							    ic.pushToStack(Integer.valueOf(t.getId()));
+							    	ic.pushToStack(Integer.valueOf(t.getId()));
 							    }
 ;
 
@@ -418,14 +428,14 @@ public void showMessage(String message) {
 
 public void updateSecondOperandFromStack(int amount){
 	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
-	ic.popFromStack(); //we remove the id triplet from the top of the stack
+	//ic.popFromStack(); //we remove the id triplet from the top of the stack
 	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
 	trip.setSecondOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
 }
 
 public void updateFirstOperandFromStack(int amount){
 	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
-	ic.popFromStack(); //we remove the id triplet from the top of the stack
+	//ic.popFromStack(); //we remove the id triplet from the top of the stack
 	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
 	trip.setFirstOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
 }
