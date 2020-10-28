@@ -97,6 +97,7 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 							scope = la.getSymbolsTable().removeScope(scope);
 							st.setScope(lastIdentifierFound,scope);
+							lastIdentifierFound = null;
 
  							}
 		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
@@ -162,7 +163,7 @@ procedure_call :  ID  '('  id_list  ')' {
 										Symbol s = st.getSymbol(st.findSTReference($1.sval + scope)); //obtengo el simbolo correspondiente al identificador
 										if(s.getUse().equals(Symbol._PROCEDURE)){ //si el uso es un procedimiento
 											lastIdentifierFound = $1.sval; //guardo el nombre para que cuando lea los parametros saber si es correcta la invocación
-											Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,st.findSTReference($1.sval + scope)),new Operand(Operand.TO_BE_DEFINED,"-1"));
+											Triplet t = createTriplet("PC","[" + st.findSTReference($1.sval + scope) + "]");
 
 										}
 										else //hay una variable al alcance con el mismo nombre pero no es un procedimiento
@@ -172,7 +173,7 @@ procedure_call :  ID  '('  id_list  ')' {
 									else  //no hay nada declarado con ese identificador al alcance
 										ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no existe un procedimiento " + $1.sval + " declarado al alcance");}
 		       |  ID  '('  ')' 			{
-      							Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,$1.sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
+      							Triplet t = createTriplet("PC","[" + st.findSTReference($1.sval + scope) + "]");}
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
@@ -181,14 +182,14 @@ executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine()
   									  	Triplet t;
 										if(!correctlyDeclared){
 											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
-      											t = createEmptyTriplet();
+      											t = createTriplet("=", $1.sval + ":undefined",(String) $3.obj);
       										} else {
       											//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
       											//para hacerlo mas legible
       											name = la.getSymbolsTable().findSTReference(name);
-      											t = createTriplet("=",new Operand(Operand.ST_POINTER,name),$3.obj);
+      											t = createTriplet("=", name,(String) $3.obj);
 										}
-										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										$$.obj = t.getId();
 										}
 			|  ID  '='  error			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una expresion del lado derecho");}
 			|  error '='  expression	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una identificador del lado izquierdo");}
@@ -199,12 +200,12 @@ executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine()
 			|  out_clause				{showMessage("[Linea " + la.getCurrentLine() + "] Sentencia OUT.");}
 ;
 
-comparator  :  EQUAL
-            |  NEQUAL
-            |  LESSEQUAL 
-            |  GREATEQUAL
-            |  '<'	{$$.obj = new Operator("<");}
-            |  '>'
+comparator  :  EQUAL		{$$.obj = $1.sval;}
+            |  NEQUAL		{$$.obj = $1.sval;}
+            |  LESSEQUAL 	{$$.obj = $1.sval;}
+            |  GREATEQUAL 	{$$.obj = $1.sval;}
+            |  '<'		{$$.obj = "<";}
+            |  '>' 		{$$.obj = ">";}
  	    	|  '<'  '<'					{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token < duplicado");}
             |  '>'  '>'			        {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token > duplicado");}
             |  LESSEQUAL  '='           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '<='?");}
@@ -215,8 +216,8 @@ comparator  :  EQUAL
 
 condition  :  expression  comparator  expression 	{
 													showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
-													Triplet t = createTriplet((Operator)$2.obj, $1.obj,$3.obj);
-													$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+													Triplet t = createTriplet((String) $2.obj, (String) $1.obj, (String) $3.obj);
+													$$.obj = t.getId();
 													}
 		   |  expression '=' expression 			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparacion invalida. ¿Quisiste decir '=='?");}
 ;
@@ -240,29 +241,30 @@ if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFir
  
 ;
 
-if_condition  :   '('  condition  ')'  {Triplet t = createTriplet("BF",$2.obj,new Operand(Operand.TO_BE_DEFINED,"-1"));
-      									ic.pushToStack(t.getNumId());
-      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+if_condition  :   '('  condition  ')'  {Triplet t = createTriplet("BF",(String) $2.obj);
+      									ic.pushToStack(Integer.valueOf(t.getId()));
+      									$$.obj = t.getId();}
 			 |    '('  error  ')'		{
 			 							Triplet t = createEmptyTriplet();
-										ic.pushToStack(t.getNumId());
-      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										ic.pushToStack(Integer.valueOf(t.getId()));
+      									$$.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"luego de la palabra reservada IF se espera una condicion entre parentesis");}
 		     |    condition             {
 			 							Triplet t = createEmptyTriplet();
-										ic.pushToStack(t.getNumId());
-      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										ic.pushToStack(Integer.valueOf(t.getId()));
+      									$$.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); }
 	    	 |    condition  ')'        {	    	 
 			 							Triplet t = createEmptyTriplet();
-										ic.pushToStack(t.getNumId());
-      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										ic.pushToStack(Integer.valueOf(t.getId()));
+      									$$.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); } 
 ;
 
 then_body  :  sentence_block  	{ 
-								Triplet t = createBITriplet(new Operand(Operand.TO_BE_DEFINED,"-1"));
-							    ic.pushToStack(t.getNumId());			
+								Triplet t = createTriplet("BI");
+								updateSecondOperandFromStack(1);
+							    ic.pushToStack(Integer.valueOf(t.getId()));
 							    }
 ;
 
@@ -275,8 +277,8 @@ loop_clause  :  loop_begin  sentence_block  UNTIL loop_condition
 ;
 
 loop_condition : '('  condition  ')'{       
-							   		Triplet t = createBFTriplet($2.obj);
-						       		$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition
+							   		Triplet t = createTriplet("BF",(String) $2.obj);
+						       		$$.obj = t.getId(); //finally we associate an operand created with the tiplet to the loop_condition
 							        }
 				| '('  error  ')'	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la clausula UNTIL debe incluir una condicion entre parentesis"); }
 				| condition 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir una condicion encerrada por '(' ')'"); }
@@ -290,10 +292,8 @@ loop_begin : LOOP 	     {ic.pushToStack(ic.currentTripletIndex() + 1); /*we have
 
 /*-------> Gramatica de salida<-------*/
 
-out_clause  :  OUT  '('  CSTRING  ')'	{ 
-										Operand op = new Operand(Operand.TO_BE_DEFINED,$3.sval);
-									   	Operator opt = new Operator("OUT");
-									   	Triplet t = new Triplet(opt,op);
+out_clause  :  OUT  '('  CSTRING  ')'	{
+									   	Triplet t = new Triplet("OUT",(String) $3.sval);
 									   	ic.addTriplet(t);
 			 						 	}
 			|  OUT  '('  error  ')' 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT solo acepta cadenas de caracteres"); }
@@ -305,11 +305,11 @@ out_clause  :  OUT  '('  CSTRING  ')'	{
 /*-------> Gramatica de expresiones <-------*/
 
 expression  :  expression  '+'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
-      										Triplet t = createTriplet("+",$1.obj,$3.obj);
-      										$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      										Triplet t = createTriplet("+",(String) $1.obj, (String) $3.obj);
+      										$$.obj = t.getId();}
 			|  expression  '-'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
-	      									Triplet t = createTriplet("-",$1.obj,$3.obj);
-	      									$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+	      									Triplet t = createTriplet("-",(String) $1.obj, (String) $3.obj);
+	      									$$.obj = t.getId();}
 			|  term 				 		{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
 											 $$.obj = $1.obj;}
 			|  expression  '+'  error 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la suma debe contener un termino valido");}
@@ -320,11 +320,11 @@ expression  :  expression  '+'  term 		{showMessage("[Linea " + la.getCurrentLin
 ;
 
 term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
-      							Triplet t = createTriplet("*",$1.obj,$3.obj);
-      							$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      							Triplet t = createTriplet("*",(String) $1.obj, (String) $3.obj);
+      							$$.obj = t.getId();}
       |  term  '/'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Division.");
-      							Triplet t = createTriplet("/",$1.obj, $3.obj);
-      							$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      							Triplet t = createTriplet("/",(String) $1.obj, (String) $3.obj);
+      							$$.obj = t.getId();}
 	  |  factor            		{showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
 	  						 	$$.obj = $1.obj;}
 	  |  term '*' error    		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
@@ -338,12 +338,12 @@ term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] M
 factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sval);	
 							if(!correctlyDeclared){
 							    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"se utiliza una variable antes de declararla");
-								$$.obj = new Operand(Operand.ST_POINTER);	
+								$$.obj = $1.sval + ":undefined";
 							} else {
-								$$.obj = new Operand(Operand.ST_POINTER, $1.sval+scope);										
+								$$.obj = $1.sval+scope;
 							}				
 						}
-	    |  CONSTANT     {  $$.obj = new Operand(Operand.ST_POINTER,$1.sval); }
+	    |  CONSTANT     {  $$.obj = $1.sval; }
 	    |  '-' CONSTANT {
 						 // Manejo la entrada positiva de esta constante		    				
 	    				 Symbol positivo = la.getSymbolsTable().getSymbol($2.sval);
@@ -365,7 +365,7 @@ factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sva
 		    				 }
 		    				 $2.sval = "-"+$2.sval;
 		    				 
-		    				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
+		    				 $$.obj = $2.sval;
 	    				 }		    				 		
 	    			 	}
 ;
@@ -416,56 +416,41 @@ public void showMessage(String message) {
 	System.out.println(message);
 }
 
-public Triplet createTriplet(String optString,Object obj1, Object obj2){
-	Operator opt = new Operator(optString);
-	return createTriplet(opt,obj1,obj2);
-}
-
-public Triplet createTriplet(Operator optObj,Object obj1, Object obj2){
-	Operator opt = (Operator) optObj;
-	Operand op1 = (Operand) obj1;
-	Operand op2 = (Operand) obj2;
-	Triplet t = new Triplet(opt,op1,op2);
-	ic.addTriplet(t);
-	return t;
-}
-
-public Triplet createBFTriplet(Object obj1){
-	int unstacked = ic.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump
-    ic.popFromStack(); //we remove the id triplet from the top of the stack
-    Operand op1 = (Operand) obj1; //we get the triplet asociate to the condition
-    Operand op2 = new Operand(Operand.TRIPLET_POINTER,String.valueOf(unstacked)); //this will contain the jump adress
-    Operator opt = new Operator("BF"); //the operation of the tiplet is the branch not equal
-    Triplet t = new Triplet(opt,op1,op2);
-    ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
-    return t;
-}
-
-public Triplet createBITriplet(Object obj1){
-	updateSecondOperandFromStack(2);
-	Operand op1 = (Operand) obj1;
-	Operator opt = new Operator("BI");
-	Triplet t = new Triplet (opt,op1);
-	ic.addTriplet(t);
-	return t;
-}
-
 public void updateSecondOperandFromStack(int amount){
 	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
 	ic.popFromStack(); //we remove the id triplet from the top of the stack
 	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-	trip.modifySecondOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(ic.currentTripletIndex()+amount))); //the adress of the jump
+	trip.setSecondOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
 }
 
 public void updateFirstOperandFromStack(int amount){
 	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
 	ic.popFromStack(); //we remove the id triplet from the top of the stack
 	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-	trip.modifyFirstOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(ic.currentTripletIndex()+amount))); //the adress of the jump
+	trip.setFirstOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
 }
 
 public Triplet createEmptyTriplet(){
-	Triplet t = new Triplet(new Operator("ERROR"));
+	Triplet t = new Triplet("ERROR");
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createTriplet(String operator, String firstOperand, String secondOperand){
+	Triplet t = new Triplet(operator, firstOperand, secondOperand);
+	showMessage("NUEVO TRIPLET CREADO CON EL OPERANDO: " + operator + " --> " + t.toString());
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createTriplet(String Operator, String firstOperand){
+	Triplet t = new Triplet(Operator, firstOperand);
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createTriplet(String Operator){
+	Triplet t = new Triplet(Operator);
 	ic.addTriplet(t);
 	return t;
 }

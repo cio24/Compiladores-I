@@ -1,4 +1,4 @@
-PROC carlosproc (DOUBLE carlos) NA = 0_ul SHADOWING = TRUE {
-};
-
-carlosproc(aux);
+IF(5_ul < carlos){
+	DOUBLE int;
+}
+END_IF;

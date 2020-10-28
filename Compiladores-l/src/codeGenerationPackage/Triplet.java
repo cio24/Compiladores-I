@@ -3,57 +3,49 @@ package codeGenerationPackage;
 public class Triplet {
 	public static int TRIPLET_COUNTER = 0;
 	
-	private String id;
-
-	private Operator operator;
-	private Operand operand1;
-	private Operand operand2;
+	private String getId;
+	private String operator;
+	private String firstOperand;
+	private String secondOperand;
 	
 	private String type;
 	
 
-	public Triplet(Operator opt) {
-		operator = opt;
-		operand1 = new Operand(Operand.NULL_OPERATOR);
-		operand2 = new Operand(Operand.NULL_OPERATOR);
-		this.id = String.valueOf(++TRIPLET_COUNTER);
+	public Triplet(String operator) {
+		this.getId = String.valueOf(++TRIPLET_COUNTER);
+		this.operator = operator;
+		this.firstOperand = "-";
+		this.secondOperand = "-";
 	}
 
-	public Triplet(Operator opt, Operand op1) {
-		this(opt);
-		if (op1 != null)
-			this.operand1 = op1;
+	public Triplet(String operator, String firstOperand) {
+		this.getId = String.valueOf(++TRIPLET_COUNTER);
+		this.operator = operator;
+		this.firstOperand = firstOperand;
+		this.secondOperand = "-";
 	}
 
-	public Triplet(Operator opt, Operand op1, Operand op2) {
-		this(opt,op1);
-		if (op2 != null)
-			this.operand2 = op2;
-	}
-
-	public Triplet(Operator opt, Operand op1, Operand op2, String type) {
-		this(opt,op1,op2);
-		this.type = type;
+	public Triplet(String operator, String firstOperand, String secondOperand) {
+		this.getId = String.valueOf(++TRIPLET_COUNTER);
+		this.operator = operator;
+		this.firstOperand = firstOperand;
+		this.secondOperand = secondOperand;
 	}
 	
 	public String getId() {
-		return id;
-	}
-	
-	public Integer getNumId() {
-		return Integer.parseInt(id);
+		return this.getId;
 	}
 	
 	@Override
 	public String toString() {
-		return id + ": (" + operator + ", " + operand1 + ", " + operand2 + ")";
+		return this.getId + ": (" + this.operator + ", " + this.firstOperand + ", " + this.secondOperand + ")";
 	}
 	
-	public void modifyFirstOperand(Operand op) {
-		operand1=op;
+	public void setFirstOperand(String firstOperand) {
+		this.firstOperand=firstOperand;
 	}
 	
-	public void modifySecondOperand(Operand op) {
-		operand2=op;
+	public void setSecondOperand(String secondOperand) {
+		this.secondOperand=secondOperand;
 	}
 }

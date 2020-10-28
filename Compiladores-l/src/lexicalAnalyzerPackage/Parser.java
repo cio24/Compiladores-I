@@ -627,56 +627,41 @@ public void showMessage(String message) {
 	System.out.println(message);
 }
 
-public Triplet createTriplet(String optString,Object obj1, Object obj2){
-	Operator opt = new Operator(optString);
-	return createTriplet(opt,obj1,obj2);
-}
-
-public Triplet createTriplet(Operator optObj,Object obj1, Object obj2){
-	Operator opt = (Operator) optObj;
-	Operand op1 = (Operand) obj1;
-	Operand op2 = (Operand) obj2;
-	Triplet t = new Triplet(opt,op1,op2);
-	ic.addTriplet(t);
-	return t;
-}
-
-public Triplet createBFTriplet(Object obj1){
-	int unstacked = ic.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump
-    ic.popFromStack(); //we remove the id triplet from the top of the stack
-    Operand op1 = (Operand) obj1; //we get the triplet asociate to the condition
-    Operand op2 = new Operand(Operand.TRIPLET_POINTER,String.valueOf(unstacked)); //this will contain the jump adress
-    Operator opt = new Operator("BF"); //the operation of the tiplet is the branch not equal
-    Triplet t = new Triplet(opt,op1,op2);
-    ic.addTriplet(t); //then we save the triplet in order to retrieve it later for the generation of the code
-    return t;
-}
-
-public Triplet createBITriplet(Object obj1){
-	updateSecondOperandFromStack(2);
-	Operand op1 = (Operand) obj1;
-	Operator opt = new Operator("BI");
-	Triplet t = new Triplet (opt,op1);
-	ic.addTriplet(t);
-	return t;
-}
-
 public void updateSecondOperandFromStack(int amount){
 	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
 	ic.popFromStack(); //we remove the id triplet from the top of the stack
 	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-	trip.modifySecondOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(ic.currentTripletIndex()+amount))); //the adress of the jump
+	trip.setSecondOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
 }
 
 public void updateFirstOperandFromStack(int amount){
 	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
 	ic.popFromStack(); //we remove the id triplet from the top of the stack
 	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-	trip.modifyFirstOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(ic.currentTripletIndex()+amount))); //the adress of the jump
+	trip.setFirstOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
 }
 
 public Triplet createEmptyTriplet(){
-	Triplet t = new Triplet(new Operator("ERROR"));
+	Triplet t = new Triplet("ERROR");
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createTriplet(String operator, String firstOperand, String secondOperand){
+	Triplet t = new Triplet(operator, firstOperand, secondOperand);
+	showMessage("NUEVO TRIPLET CREADO CON EL OPERANDO: " + operator + " --> " + t.toString());
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createTriplet(String Operator, String firstOperand){
+	Triplet t = new Triplet(Operator, firstOperand);
+	ic.addTriplet(t);
+	return t;
+}
+
+public Triplet createTriplet(String Operator){
+	Triplet t = new Triplet(Operator);
 	ic.addTriplet(t);
 	return t;
 }
@@ -706,7 +691,7 @@ public void showErrorMessage(String message) {
 
 
 
-//#line 638 "Parser.java"
+//#line 623 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -939,29 +924,30 @@ case 20:
 							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 							scope = la.getSymbolsTable().removeScope(scope);
 							st.setScope(lastIdentifierFound,scope);
+							lastIdentifierFound = null;
 
  							}
 break;
 case 21:
-//#line 102 "specification.y"
+//#line 103 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 		   										scope = la.getSymbolsTable().removeScope(scope);
 		   										}
 break;
 case 22:
-//#line 105 "specification.y"
-{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}
-break;
-case 23:
 //#line 106 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}
 break;
-case 24:
+case 23:
 //#line 107 "specification.y"
+{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}
+break;
+case 24:
+//#line 108 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se definio mal la lista de parametros");}
 break;
 case 25:
-//#line 110 "specification.y"
+//#line 111 "specification.y"
 {
                                	/*setear en el atabla de simbolos el tipo del identificador en procedure*/
                                	la.getSymbolsTable().getSymbol(val_peek(0).sval).setUse(Symbol._PROCEDURE);
@@ -970,59 +956,59 @@ case 25:
                                }
 break;
 case 26:
-//#line 116 "specification.y"
+//#line 117 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}
 break;
 case 28:
-//#line 120 "specification.y"
+//#line 121 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra NA");}
 break;
 case 29:
-//#line 121 "specification.y"
+//#line 122 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del NA");}
 break;
 case 30:
-//#line 122 "specification.y"
+//#line 123 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el valor de NA");}
 break;
 case 31:
-//#line 123 "specification.y"
+//#line 124 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra SHADOWING");}
 break;
 case 32:
-//#line 124 "specification.y"
+//#line 125 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del SHADOWING");}
 break;
 case 34:
-//#line 129 "specification.y"
+//#line 130 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"cuerpo del procedimiento mal definido");}
 break;
 case 36:
-//#line 133 "specification.y"
-{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
-break;
-case 37:
 //#line 134 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 break;
-case 38:
+case 37:
 //#line 135 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
 break;
-case 39:
+case 38:
 //#line 136 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");}
+break;
+case 39:
+//#line 137 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir un maximo de 3 parametros");}
 break;
 case 41:
-//#line 140 "specification.y"
+//#line 141 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta identificador en declaracion de parametro");}
 break;
 case 42:
-//#line 141 "specification.y"
+//#line 142 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el tipo en declaracion de parametro");}
 break;
 case 43:
-//#line 144 "specification.y"
+//#line 145 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
 
 										Symbol variable = la.getSymbolsTable().getSymbol(val_peek(0).sval);
@@ -1036,25 +1022,25 @@ case 43:
 										}
 break;
 case 44:
-//#line 155 "specification.y"
-{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
-break;
-case 45:
 //#line 156 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 break;
-case 46:
+case 45:
 //#line 157 "specification.y"
+{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
+break;
+case 46:
+//#line 158 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir una maximo de 3 parametros");}
 break;
 case 47:
-//#line 160 "specification.y"
+//#line 161 "specification.y"
 {
 									if(linkToDeclaration(val_peek(3).sval)){ /*hay un identificador declarado al alcance con el mismo nombre*/
 										Symbol s = st.getSymbol(st.findSTReference(val_peek(3).sval + scope)); /*obtengo el simbolo correspondiente al identificador*/
 										if(s.getUse().equals(Symbol._PROCEDURE)){ /*si el uso es un procedimiento*/
 											lastIdentifierFound = val_peek(3).sval; /*guardo el nombre para que cuando lea los parametros saber si es correcta la invocación*/
-											Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,st.findSTReference(val_peek(3).sval + scope)),new Operand(Operand.TO_BE_DEFINED,"-1"));
+											Triplet t = createTriplet("PC","[" + st.findSTReference(val_peek(3).sval + scope) + "]");
 
 										}
 										else /*hay una variable al alcance con el mismo nombre pero no es un procedimiento*/
@@ -1065,194 +1051,213 @@ case 47:
 										ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no existe un procedimiento " + val_peek(3).sval + " declarado al alcance");}
 break;
 case 48:
-//#line 174 "specification.y"
+//#line 175 "specification.y"
 {
-      							Triplet t = createTriplet("FC",new Operand(Operand.ST_POINTER,val_peek(2).sval),new Operand(Operand.TO_BE_DEFINED,"-1"));}
+      							Triplet t = createTriplet("PC","[" + st.findSTReference(val_peek(2).sval + scope) + "]");}
 break;
 case 49:
-//#line 178 "specification.y"
+//#line 179 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
   									  	boolean correctlyDeclared = linkToDeclaration(val_peek(2).sval);
   									  	String name = val_peek(2).sval + scope;
   									  	Triplet t;
 										if(!correctlyDeclared){
 											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
-      											t = createEmptyTriplet();
+      											t = createTriplet("=", val_peek(2).sval + ":undefined",(String) val_peek(0).obj);
       										} else {
       											/*se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró*/
       											/*para hacerlo mas legible*/
       											name = la.getSymbolsTable().findSTReference(name);
-      											t = createTriplet("=",new Operand(Operand.ST_POINTER,name),val_peek(0).obj);
+      											t = createTriplet("=", name,(String) val_peek(0).obj);
 										}
-										yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										yyval.obj = t.getId();
 										}
 break;
 case 50:
-//#line 193 "specification.y"
+//#line 194 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una expresion del lado derecho");}
 break;
 case 51:
-//#line 194 "specification.y"
+//#line 195 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una identificador del lado izquierdo");}
 break;
 case 52:
-//#line 195 "specification.y"
+//#line 196 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, ¿quisiste decir '=' ?");}
 break;
 case 53:
-//#line 196 "specification.y"
+//#line 197 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Sentencia IF.");}
 break;
 case 54:
-//#line 197 "specification.y"
+//#line 198 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Sentencia LOOP.");}
 break;
 case 55:
-//#line 198 "specification.y"
+//#line 199 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Invocacion PROC.");}
 break;
 case 56:
-//#line 199 "specification.y"
+//#line 200 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Sentencia OUT.");}
 break;
-case 61:
+case 57:
+//#line 203 "specification.y"
+{yyval.obj = val_peek(0).sval;}
+break;
+case 58:
+//#line 204 "specification.y"
+{yyval.obj = val_peek(0).sval;}
+break;
+case 59:
+//#line 205 "specification.y"
+{yyval.obj = val_peek(0).sval;}
+break;
+case 60:
 //#line 206 "specification.y"
-{yyval.obj = new Operator("<");}
+{yyval.obj = val_peek(0).sval;}
+break;
+case 61:
+//#line 207 "specification.y"
+{yyval.obj = "<";}
+break;
+case 62:
+//#line 208 "specification.y"
+{yyval.obj = ">";}
 break;
 case 63:
-//#line 208 "specification.y"
+//#line 209 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token < duplicado");}
 break;
 case 64:
-//#line 209 "specification.y"
+//#line 210 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token > duplicado");}
 break;
 case 65:
-//#line 210 "specification.y"
+//#line 211 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '<='?");}
 break;
 case 66:
-//#line 211 "specification.y"
+//#line 212 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '>='?");}
 break;
 case 67:
-//#line 212 "specification.y"
-{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");}
-break;
-case 68:
 //#line 213 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");}
 break;
+case 68:
+//#line 214 "specification.y"
+{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");}
+break;
 case 69:
-//#line 216 "specification.y"
+//#line 217 "specification.y"
 {
 													showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
-													Triplet t = createTriplet((Operator)val_peek(1).obj, val_peek(2).obj,val_peek(0).obj);
-													yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+													Triplet t = createTriplet((String) val_peek(1).obj, (String) val_peek(2).obj, (String) val_peek(0).obj);
+													yyval.obj = t.getId();
 													}
 break;
 case 70:
-//#line 221 "specification.y"
+//#line 222 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparacion invalida. ¿Quisiste decir '=='?");}
 break;
 case 74:
-//#line 233 "specification.y"
-{ updateFirstOperandFromStack(1); }
-break;
-case 75:
 //#line 234 "specification.y"
 { updateFirstOperandFromStack(1); }
 break;
-case 76:
+case 75:
 //#line 235 "specification.y"
-{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
+{ updateFirstOperandFromStack(1); }
 break;
-case 77:
+case 76:
 //#line 236 "specification.y"
 { ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
 break;
-case 78:
+case 77:
 //#line 237 "specification.y"
+{ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF"); }
+break;
+case 78:
+//#line 238 "specification.y"
 { ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF"); }
 break;
 case 79:
-//#line 238 "specification.y"
+//#line 239 "specification.y"
 { ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula ELSE_IF"); }
 break;
 case 80:
-//#line 239 "specification.y"
+//#line 240 "specification.y"
 { ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF"); }
 break;
 case 81:
-//#line 243 "specification.y"
-{Triplet t = createTriplet("BF",val_peek(1).obj,new Operand(Operand.TO_BE_DEFINED,"-1"));
-      									ic.pushToStack(t.getNumId());
-      									yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+//#line 244 "specification.y"
+{Triplet t = createTriplet("BF",(String) val_peek(1).obj);
+      									ic.pushToStack(Integer.valueOf(t.getId()));
+      									yyval.obj = t.getId();}
 break;
 case 82:
-//#line 246 "specification.y"
+//#line 247 "specification.y"
 {
 			 							Triplet t = createEmptyTriplet();
-										ic.pushToStack(t.getNumId());
-      									yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										ic.pushToStack(Integer.valueOf(t.getId()));
+      									yyval.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"luego de la palabra reservada IF se espera una condicion entre parentesis");}
 break;
 case 83:
-//#line 251 "specification.y"
+//#line 252 "specification.y"
 {
 			 							Triplet t = createEmptyTriplet();
-										ic.pushToStack(t.getNumId());
-      									yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										ic.pushToStack(Integer.valueOf(t.getId()));
+      									yyval.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); }
 break;
 case 84:
-//#line 256 "specification.y"
+//#line 257 "specification.y"
 {	    	 
 			 							Triplet t = createEmptyTriplet();
-										ic.pushToStack(t.getNumId());
-      									yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+										ic.pushToStack(Integer.valueOf(t.getId()));
+      									yyval.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); }
 break;
 case 85:
-//#line 263 "specification.y"
+//#line 264 "specification.y"
 { 
-								Triplet t = createBITriplet(new Operand(Operand.TO_BE_DEFINED,"-1"));
-							    ic.pushToStack(t.getNumId());			
+								Triplet t = createTriplet("BI");
+								updateSecondOperandFromStack(1);
+							    ic.pushToStack(Integer.valueOf(t.getId()));
 							    }
 break;
 case 88:
-//#line 273 "specification.y"
+//#line 275 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la clausula UNTIL en la sentencia LOOP");}
 break;
 case 89:
-//#line 274 "specification.y"
+//#line 276 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir un bloque de sentencias");}
 break;
 case 90:
-//#line 277 "specification.y"
+//#line 279 "specification.y"
 {       
-							   		Triplet t = createBFTriplet(val_peek(1).obj);
-						       		yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); /*finally we associate an operand created with the tiplet to the loop_condition*/
+							   		Triplet t = createTriplet("BF",(String) val_peek(1).obj);
+						       		yyval.obj = t.getId(); /*finally we associate an operand created with the tiplet to the loop_condition*/
 							        }
 break;
 case 91:
-//#line 281 "specification.y"
+//#line 283 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la clausula UNTIL debe incluir una condicion entre parentesis"); }
 break;
 case 92:
-//#line 282 "specification.y"
+//#line 284 "specification.y"
 {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir una condicion encerrada por '(' ')'"); }
 break;
 case 93:
-//#line 285 "specification.y"
+//#line 287 "specification.y"
 {ic.pushToStack(ic.currentTripletIndex() + 1); /*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/}
 break;
 case 94:
-//#line 293 "specification.y"
-{ 
-										Operand op = new Operand(Operand.TO_BE_DEFINED,val_peek(1).sval);
-									   	Operator opt = new Operator("OUT");
-									   	Triplet t = new Triplet(opt,op);
+//#line 295 "specification.y"
+{
+									   	Triplet t = new Triplet("OUT",(String) val_peek(1).sval);
 									   	ic.addTriplet(t);
 			 						 	}
 break;
@@ -1267,14 +1272,14 @@ break;
 case 97:
 //#line 307 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
-      										Triplet t = createTriplet("+",val_peek(2).obj,val_peek(0).obj);
-      										yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      										Triplet t = createTriplet("+",(String) val_peek(2).obj, (String) val_peek(0).obj);
+      										yyval.obj = t.getId();}
 break;
 case 98:
 //#line 310 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
-	      									Triplet t = createTriplet("-",val_peek(2).obj,val_peek(0).obj);
-	      									yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+	      									Triplet t = createTriplet("-",(String) val_peek(2).obj, (String) val_peek(0).obj);
+	      									yyval.obj = t.getId();}
 break;
 case 99:
 //#line 313 "specification.y"
@@ -1304,14 +1309,14 @@ break;
 case 105:
 //#line 322 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
-      							Triplet t = createTriplet("*",val_peek(2).obj,val_peek(0).obj);
-      							yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      							Triplet t = createTriplet("*",(String) val_peek(2).obj, (String) val_peek(0).obj);
+      							yyval.obj = t.getId();}
 break;
 case 106:
 //#line 325 "specification.y"
 {showMessage("[Linea " + la.getCurrentLine() + "] Division.");
-      							Triplet t = createTriplet("/",val_peek(2).obj, val_peek(0).obj);
-      							yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());}
+      							Triplet t = createTriplet("/",(String) val_peek(2).obj, (String) val_peek(0).obj);
+      							yyval.obj = t.getId();}
 break;
 case 107:
 //#line 328 "specification.y"
@@ -1347,15 +1352,15 @@ case 114:
 {   boolean correctlyDeclared = linkToDeclaration(val_peek(0).sval);	
 							if(!correctlyDeclared){
 							    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"se utiliza una variable antes de declararla");
-								yyval.obj = new Operand(Operand.ST_POINTER);	
+								yyval.obj = val_peek(0).sval + ":undefined";
 							} else {
-								yyval.obj = new Operand(Operand.ST_POINTER, val_peek(0).sval+scope);										
+								yyval.obj = val_peek(0).sval+scope;
 							}				
 						}
 break;
 case 115:
 //#line 346 "specification.y"
-{  yyval.obj = new Operand(Operand.ST_POINTER,val_peek(0).sval); }
+{  yyval.obj = val_peek(0).sval; }
 break;
 case 116:
 //#line 347 "specification.y"
@@ -1380,11 +1385,11 @@ case 116:
 		    				 }
 		    				 val_peek(0).sval = "-"+val_peek(0).sval;
 		    				 
-		    				 yyval.obj = new Operand(Operand.ST_POINTER,val_peek(0).sval);
+		    				 yyval.obj = val_peek(0).sval;
 	    				 }		    				 		
 	    			 	}
 break;
-//#line 1311 "Parser.java"
+//#line 1316 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####
