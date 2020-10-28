@@ -10,9 +10,9 @@ public class Symbol {
 	public final static String _STRING_CONSTANT = "STRING Constant";
 
 	//data types
-	public final static String _DOUBLE_TYPE = "Double";
-	public final static String _ULONGINT_TYPE = "Unsigned Long Int";
-	public final static String _STRING_TYPE = "String";
+	public final static String _DOUBLE_TYPE = "DOUBLE";
+	public final static String _ULONGINT_TYPE = "ULONGINT";
+	public final static String _STRING_TYPE = "STRING";
 
 	//uses
 	public final static String _VARIABLE = "Variable";
@@ -26,9 +26,15 @@ public class Symbol {
 	private String dataType;
 	private String lexeme = "";
 	private int referenceCount = 0;
+	
 	private String use;
 	private String passByType = _COPY_VALUE;
 
+	// Procs specifics
+	private int NA = 0;
+	private String shadowing = "FALSE";
+	private int cantidadDeParametros = 0;
+	
 	public Symbol(String lexeme, String lexemeType) {
 		this.lexeme = lexeme;
 		this.lexemeType = lexemeType;
@@ -51,21 +57,16 @@ public class Symbol {
 	}
 
 	public Symbol(String lexeme, String lexemeType, String dataType) {
-		this.lexeme = lexeme;
-		this.lexemeType = lexemeType;
+		this(lexeme,lexemeType);
 		this.dataType = dataType;
-		this.referenceCount = 1;
-		this.use = "Undefined";
+		
 	}
 
 	public Symbol(String lexeme, String lexemeType, String dataType, String use) {
-		this.lexeme = lexeme;
-		this.lexemeType = lexemeType;
-		this.dataType = dataType;
+		this(lexeme,lexemeType,dataType);
 		this.use = use;
-		this.referenceCount = 1;
 	}
-
+	
 	public void setLexemeType(String type) {
 		this.lexemeType = type;
 	}

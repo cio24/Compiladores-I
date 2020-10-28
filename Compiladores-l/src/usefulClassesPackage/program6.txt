@@ -1,4 +1,4 @@
 IF(5_ul < carlos){
-	DOUBLE int;
+	ULONGINT int;
 }
 END_IF;

@@ -28,7 +28,10 @@ public class SymbolsTable {
 	}
 
 	public void removeSymbol(String name) {
-		this.symbolsTable.remove(name);
+		Symbol s = getSymbol(name);
+
+		if(s.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
+			this.symbolsTable.remove(name);
 	}
 	
 	public void setScope(String name, String scope) {

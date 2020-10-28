@@ -41,22 +41,14 @@ declaration  : type  variable_list	{
 										showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
 										Symbol symbol;
 										for (String v : variableDeclarationIdentifiers){
-											symbol = la.getSymbolsTable().getSymbol(v+scope);
-											if(symbol != null){
-												ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," doble declaración de la variable \"" + symbol.getLexeme() + "\".");
-												la.getSymbolsTable().removeSymbol(v);
-											}
-											else{
-												symbol = la.getSymbolsTable().getSymbol(v);
-												symbol.setUse(Symbol._VARIABLE);
-												la.getSymbolsTable().setScope(v,scope);					
-											}
+											// Agregar a la tabla de simbolos la varialbe con el scope, salvo que ya este declarada entonces tira error
+											ic.variableDeclaration(v,scope,$1.sval,la.getSymbolsTable(),la.getCurrentLine());
 										}
 										//Resetear la lista de identificadores siendo identificados.
 										variableDeclarationIdentifiers.clear();
 									} 
 			 | procedure			
-			 | variable_list 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no hay tipo para el identificador\"" + $1.sval + "\".");}  /*testeado*/
+			 | variable_list 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no hay tipo para el identificador\"" + $1.sval + "\".");}  
 			 | type 				{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un identificador y no se encontro");}
 ;
 
@@ -96,13 +88,13 @@ procedure  :  PROC  ID  '('  parameter_list  ')'  na_shad_definition proc_body {
 procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body {
 							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
 							scope = la.getSymbolsTable().removeScope(scope);
-							st.setScope(lastIdentifierFound,scope);
-							lastIdentifierFound = null;
-
+							ic.procedureDeclaration($1.sval,scope,la.getSymbolsTable(),la.getCurrentLine());
  							}
-		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
-		   										scope = la.getSymbolsTable().removeScope(scope);
-		   										}
+		   |  procedure_header  '('   ')'                 na_shad_definition proc_body {
+							showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+							scope = la.getSymbolsTable().removeScope(scope);
+							ic.procedureDeclaration($1.sval,scope,la.getSymbolsTable(),la.getCurrentLine());
+ 							}
 		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}	
 		   |  procedure_header  '('    ')'                na_shad_definition           {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");}		
 	       |  procedure_header  '(' error  ')'            na_shad_definition proc_body {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se definio mal la lista de parametros");}	
@@ -110,19 +102,18 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 
 procedure_header  :  PROC  ID  {
                                	//setear en el atabla de simbolos el tipo del identificador en procedure
-                               	la.getSymbolsTable().getSymbol($2.sval).setUse(Symbol._PROCEDURE);
-                               	lastIdentifierFound = $2.sval;
+                               	$$.sval = $2.sval;
                                	scope += ":"+$2.sval;
                                }
-             	|  PROC 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}
+             	   |  PROC 	   {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el identificador del procedimiento");}
 ;
 
 na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false 
-				   | '='  CONSTANT  SHADOWING  '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra NA");}
-				   | NA CONSTANT  SHADOWING  '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del NA");}
-				   | NA '=' SHADOWING  '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el valor de NA");}
-				   | NA  '='  CONSTANT '='  true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra SHADOWING");}
-				   | NA  '='  CONSTANT  SHADOWING true_false {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del SHADOWING");}
+				   | '='  CONSTANT  SHADOWING  '='  true_false 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra NA");}
+				   | NA CONSTANT  SHADOWING  '='  true_false 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del NA");}
+				   | NA '=' SHADOWING  '='  true_false 				{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el valor de NA");}
+			   	   | NA  '='  CONSTANT '='  true_false				{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra SHADOWING");}
+				   | NA  '='  CONSTANT  SHADOWING true_false 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del SHADOWING");}
 ;
 
 
@@ -142,52 +133,45 @@ parameter  :  type  ID
 		   |  ID 		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el tipo en declaracion de parametro");}
 ;
 
-id_list  :  ID									{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
-
-										Symbol variable = la.getSymbolsTable().getSymbol($1.sval);
-										boolean correctlyDeclared = linkToDeclaration($1.sval);
-										if(correctlyDeclared){
-											Symbol parameter = new Symbol($1.sval,Symbol._ID_LEXEME,variable.getDataType(),Symbol._PARAMETER);
-											//la.getSymbolsTable().addSymbol($1.sval + scope, parameter);
-										}
-										else
-											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"El parametro " + $1.sval + " hace referencia a una variable que no existe");
-										}
+id_list  :  ID	{
+				showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+				Symbol variable = la.getSymbolsTable().getSymbol($1.sval);
+				boolean isDeclared = ic.isDeclared($1.sval,scope,la.getSymbolsTable());
+				la.getSymbolsTable().removeSymbol($1.sval);
+				if(isDeclared){
+					Symbol parameter = new Symbol($1.sval,Symbol._ID_LEXEME,variable.getDataType(),Symbol._PARAMETER);
+					//la.getSymbolsTable().addSymbol($1.sval + scope, parameter);
+					
+				}
+				else
+					ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"El parametro " + $1.sval + " hace referencia a una variable que no existe");
+				}
 		 |  ID  ','  ID							{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID	        	{showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");}
 		 |  ID  ','  ID  ','  ID  ',' id_list 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir una maximo de 3 parametros");}
 ;
 
 procedure_call :  ID  '('  id_list  ')' {
-									if(linkToDeclaration($1.sval)){ //hay un identificador declarado al alcance con el mismo nombre
-										Symbol s = st.getSymbol(st.findSTReference($1.sval + scope)); //obtengo el simbolo correspondiente al identificador
-										if(s.getUse().equals(Symbol._PROCEDURE)){ //si el uso es un procedimiento
-											lastIdentifierFound = $1.sval; //guardo el nombre para que cuando lea los parametros saber si es correcta la invocación
-											Triplet t = createTriplet("PC","[" + st.findSTReference($1.sval + scope) + "]");
-
+											ic.procedureCall($1.sval,scope,la.getSymbolsTable(),la.getCurrentLine());
 										}
-										else //hay una variable al alcance con el mismo nombre pero no es un procedimiento
-											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,$1.sval + "no es un procedimiento");
-
-									}
-									else  //no hay nada declarado con ese identificador al alcance
-										ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no existe un procedimiento " + $1.sval + " declarado al alcance");}
-		       |  ID  '('  ')' 			{
-      							Triplet t = createTriplet("PC","[" + st.findSTReference($1.sval + scope) + "]");}
+		       |  ID  '('  ')' {
+									ic.procedureCall($1.sval,scope,la.getSymbolsTable(),la.getCurrentLine());
+								}
 ;
 
 executable  :  ID  '='  expression		{showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
-  									  	boolean correctlyDeclared = linkToDeclaration($1.sval);
+  									  	boolean isDeclared = ic.isDeclared($1.sval,scope,la.getSymbolsTable());  									  	
+										la.getSymbolsTable().removeSymbol($1.sval);
   									  	String name = $1.sval + scope;
   									  	Triplet t;
-										if(!correctlyDeclared){
+										if(!isDeclared){
 											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
-      											t = createTriplet("=", $1.sval + ":undefined",(String) $3.obj);
-      										} else {
-      											//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
-      											//para hacerlo mas legible
-      											name = la.getSymbolsTable().findSTReference(name);
-      											t = createTriplet("=", name,(String) $3.obj);
+  											t = ic.createTriplet("=", $1.sval + ":undefined",(String) $3.obj);
+  										} else {
+  											//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
+  											//para hacerlo mas legible
+  											name = la.getSymbolsTable().findSTReference(name);
+  											t = ic.createTriplet("=", name,(String) $3.obj);
 										}
 										$$.obj = t.getId();
 										}
@@ -216,7 +200,7 @@ comparator  :  EQUAL		{$$.obj = $1.sval;}
 
 condition  :  expression  comparator  expression 	{
 													showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
-													Triplet t = createTriplet((String) $2.obj, (String) $1.obj, (String) $3.obj);
+													Triplet t = ic.createTriplet((String) $2.obj, (String) $1.obj, (String) $3.obj);
 													$$.obj = t.getId();
 													}
 		   |  expression '=' expression 			{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparacion invalida. ¿Quisiste decir '=='?");}
@@ -231,14 +215,14 @@ sentence_block  :  '{'  sentences  '}'
 ;			   
 
 
-if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFirstOperandFromStack(1);
+if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ ic.updateFirstOperandFromStack(1);
  									  ic.popFromStack();
  									}
  		   |  IF  if_condition   then_body END_IF                   	{
 										  ic.popFromStack(); //desapilo el último terceto xq era el del BI
  		    								  ic.removeLastTriplet(); //lo saco de la lista de tercetos
  		    								  //actualizo el terceto del BF xq se realiza suponiendo que va a haber un BI
-										updateSecondOperandFromStack(0);
+										ic.updateSecondOperandFromStack(0);
 										ic.popFromStack();
 
  		    								}
@@ -250,30 +234,30 @@ if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF 	{ updateFir
  
 ;
 
-if_condition  :   '('  condition  ')'  {Triplet t = createTriplet("BF",(String) $2.obj);
+if_condition  :   '('  condition  ')'  {Triplet t = ic.createTriplet("BF",(String) $2.obj);
       									ic.pushToStack(Integer.valueOf(t.getId()));
       									$$.obj = t.getId();}
 			 |    '('  error  ')'		{
-			 							Triplet t = createEmptyTriplet();
+			 							Triplet t = ic.createEmptyTriplet();
 										ic.pushToStack(Integer.valueOf(t.getId()));
       									$$.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"luego de la palabra reservada IF se espera una condicion entre parentesis");}
 		     |    condition             {
-			 							Triplet t = createEmptyTriplet();
+			 							Triplet t = ic.createEmptyTriplet();
 										ic.pushToStack(Integer.valueOf(t.getId()));
       									$$.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); }
 	    	 |    condition  ')'        {	    	 
-			 							Triplet t = createEmptyTriplet();
+			 							Triplet t = ic.createEmptyTriplet();
 										ic.pushToStack(Integer.valueOf(t.getId()));
       									$$.obj = t.getId();
       									ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"La clausula IF requiere una condicion encerrada en '(' ')'."); } 
 ;
 
 then_body  :  sentence_block  	{ 
-								Triplet t = createTriplet("BI");
+								Triplet t = ic.createTriplet("BI");
 								//va 1, xq el terceto que correponde con el 0 es el de BI y queremos saltar a uno después con el BF
-								updateSecondOperandFromStack(1);
+								ic.updateSecondOperandFromStack(1);
 							    	ic.pushToStack(Integer.valueOf(t.getId()));
 							    }
 ;
@@ -287,7 +271,7 @@ loop_clause  :  loop_begin  sentence_block  UNTIL loop_condition
 ;
 
 loop_condition : '('  condition  ')'{       
-							   		Triplet t = createTriplet("BF",(String) $2.obj);
+							   		Triplet t = ic.createTriplet("BF",(String) $2.obj);
 						       		$$.obj = t.getId(); //finally we associate an operand created with the tiplet to the loop_condition
 							        }
 				| '('  error  ')'	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la clausula UNTIL debe incluir una condicion entre parentesis"); }
@@ -315,10 +299,10 @@ out_clause  :  OUT  '('  CSTRING  ')'	{
 /*-------> Gramatica de expresiones <-------*/
 
 expression  :  expression  '+'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
-      										Triplet t = createTriplet("+",(String) $1.obj, (String) $3.obj);
+      										Triplet t = ic.createTriplet("+",(String) $1.obj, (String) $3.obj);
       										$$.obj = t.getId();}
 			|  expression  '-'  term 		{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
-	      									Triplet t = createTriplet("-",(String) $1.obj, (String) $3.obj);
+	      									Triplet t = ic.createTriplet("-",(String) $1.obj, (String) $3.obj);
 	      									$$.obj = t.getId();}
 			|  term 				 		{showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
 											 $$.obj = $1.obj;}
@@ -330,10 +314,10 @@ expression  :  expression  '+'  term 		{showMessage("[Linea " + la.getCurrentLin
 ;
 
 term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
-      							Triplet t = createTriplet("*",(String) $1.obj, (String) $3.obj);
+      							Triplet t = ic.createTriplet("*",(String) $1.obj, (String) $3.obj);
       							$$.obj = t.getId();}
       |  term  '/'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] Division.");
-      							Triplet t = createTriplet("/",(String) $1.obj, (String) $3.obj);
+      							Triplet t = ic.createTriplet("/",(String) $1.obj, (String) $3.obj);
       							$$.obj = t.getId();}
 	  |  factor            		{showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
 	  						 	$$.obj = $1.obj;}
@@ -345,8 +329,9 @@ term  :  term  '*'  factor 		{showMessage("[Linea " + la.getCurrentLine() + "] M
       |  term  '/'  '/'  factor {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '/' sobrante");}
 ;
 
-factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sval);	
-							if(!correctlyDeclared){
+factor  :  ID           {   boolean isDeclared = ic.isDeclared($1.sval,scope,la.getSymbolsTable());	
+							la.getSymbolsTable().removeSymbol($1.sval);
+							if(!isDeclared){
 							    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"se utiliza una variable antes de declararla");
 								$$.obj = $1.sval + ":undefined";
 							} else {
@@ -360,10 +345,8 @@ factor  :  ID           {   boolean correctlyDeclared = linkToDeclaration($1.sva
 	    				 if (positivo.getDataType()==Symbol._ULONGINT_TYPE)
 	    				 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"una constante del tipo entero largo sin signo no puede ser negativa");
 	    				 else{
-		    				 if(positivo.subtractReference() == 0){ // Remove reference and if it reaches 0, remove SyboleTable entry
-		    				 	la.getSymbolsTable().removeSymbol(positivo.getLexeme());
-		    				 }
-		    				 	    				 
+	    				 	 la.getSymbolsTable().removeSymbol(positivo.getLexeme());
+		    				 		    				 	    				 
 		    				 // Creo nueva entrada o actualizo la existente con una referencia
 		    				 Symbol negativo = la.getSymbolsTable().getSymbol("-"+$2.sval);
 		    				 if (negativo != null){
@@ -424,63 +407,6 @@ int yylex(){
 
 public void showMessage(String message) {
 	System.out.println(message);
-}
-
-public void updateSecondOperandFromStack(int amount){
-	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
-	//ic.popFromStack(); //we remove the id triplet from the top of the stack
-	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-	trip.setSecondOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
-}
-
-public void updateFirstOperandFromStack(int amount){
-	int unstacked = ic.topOfStack(); //we get the id of the triplet on the top of the stack
-	//ic.popFromStack(); //we remove the id triplet from the top of the stack
-	Triplet trip = ic.getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-	trip.setFirstOperand("[" + String.valueOf(ic.currentTripletIndex()+amount) + "]"); //the adress of the jump
-}
-
-public Triplet createEmptyTriplet(){
-	Triplet t = new Triplet("ERROR");
-	ic.addTriplet(t);
-	return t;
-}
-
-public Triplet createTriplet(String operator, String firstOperand, String secondOperand){
-	Triplet t = new Triplet(operator, firstOperand, secondOperand);
-	showMessage("NUEVO TRIPLET CREADO CON EL OPERANDO: " + operator + " --> " + t.toString());
-	ic.addTriplet(t);
-	return t;
-}
-
-public Triplet createTriplet(String Operator, String firstOperand){
-	Triplet t = new Triplet(Operator, firstOperand);
-	ic.addTriplet(t);
-	return t;
-}
-
-public Triplet createTriplet(String Operator){
-	Triplet t = new Triplet(Operator);
-	ic.addTriplet(t);
-	return t;
-}
-
-//true si esta declarada en el scope actual o en uno que lo contiene
-public boolean linkToDeclaration(String idName){
-	String name = idName + scope; // Nombre entero
-
-	//te devuelve el nombre que tiene una referencia en la tabla de simbolos, puede ser exactamente el mismo
-	//si se definio en el scope actual o un nombre más corto si se definio en un scope que contiene al actual
-	//no te puede dar nunca null, ya que si o si esta en la tabla de símbolos
-	name = st.findSTReference(name);
-
-	Symbol s = st.getSymbol(idName);
-	//si llega a cero, significa que la única referencia que tiene el id en la tabla de simbolos era de esta
-	//sentencia ejecutable, por lo tanto no estaba declarada
-	if(s.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
-		la.getSymbolsTable().removeSymbol(idName);
-	
-	return name != null && name.contains(":");
 }
 
 public void showErrorMessage(String message) {
