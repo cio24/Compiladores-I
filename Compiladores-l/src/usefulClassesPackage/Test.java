@@ -8,8 +8,8 @@ import java.io.IOException;
 public class Test {
 
 
-	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
-	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/usefulClassesPackage/";
+	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\usefulClassesPackage\\";
 	
 	public static void main(String[] args) throws IOException {
@@ -18,7 +18,7 @@ public class Test {
 	
 	public Test() throws IOException {
 
-		test("program7.txt");
+		test("program9.txt");
 
 		/*
 		System.out.println("TEST CADENAS: ");

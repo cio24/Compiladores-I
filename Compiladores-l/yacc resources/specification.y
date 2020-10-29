@@ -357,11 +357,11 @@ executable  :  ID  '='  expression
 							Triplet t;
 							if(varIdDeclaration == null){
 								ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
-								t = ic.createTriplet("=", $1.sval + ":undefined",(String) $3.obj);
+								t = ic.createTriplet("=", new Operand(Operand.ST_POINTER,$1.sval + ":undefined"),(Operand) $3.obj);
 							} else {
 								//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
 								//para hacerlo mas legible
-								t = ic.createTriplet("=", varIdDeclaration,(String) $3.obj);
+								t = ic.createTriplet("=", new Operand(Operand.ST_POINTER,varIdDeclaration),(Operand) $3.obj);
 
 								//se incrementa la cantidad de referencias que tiene la variable
 								st.getSymbol(varIdDeclaration).addReference();
@@ -469,16 +469,18 @@ if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF
 	
 			{ ic.updateFirstOperandFromStack(1);
  			  ic.popFromStack();
+			  ic.popFromStack();
+ 			  
  			}
  			
- 		   |  IF  if_condition   then_body END_IF      
+ 		   |  IF  if_condition then_body END_IF      
  		                	
  		   {
-			  ic.popFromStack(); //desapilo el último terceto xq era el del BI
-				  ic.removeLastTriplet(); //lo saco de la lista de tercetos
-				  //actualizo el terceto del BF xq se realiza suponiendo que va a haber un BI
-			ic.updateSecondOperandFromStack(0);
-			ic.popFromStack();
+			  	ic.popFromStack(); //desapilo el último terceto xq era el del BI
+			  	ic.removeLastTriplet(); //lo saco de la lista de tercetos
+			  	//actualizo el terceto del BF xq se realiza suponiendo que va a haber un BI
+				ic.updateSecondOperandFromStack(0);
+				ic.popFromStack();
            }
            
  		   |  IF  if_condition   then_body  ELSE  else_body error 		
@@ -541,8 +543,11 @@ if_condition  :   '('  condition  ')'
 ;
 
 then_body  :  sentence_block  	{ 
-								Triplet t = createBITriplet(new Operand(Operand.TO_BE_DEFINED));
-								ic.popFromStack();
+								// actualizo el triplete del salto del if al cuerpo de then
+								ic.updateSecondOperandFromStack(2);	
+								//ic.popFromStack();
+								// Creo el triplete de salto incondicional para que salte el else
+								Triplet t = ic.createBITriplet(new Operand(Operand.TO_BE_DEFINED));
 								ic.pushToStack(Integer.valueOf(t.getId()));
 							    }
 ;
@@ -564,7 +569,7 @@ loop_clause  :  loop_begin  sentence_block  UNTIL loop_condition
 loop_condition : '('  condition  ')'
 
 				{       
-				Triplet t = createBFTriplet($2.obj); //Desapilar la direccion de salto del comienzo del loop.
+				Triplet t = ic.createBTriplet($2.obj,"BT"); //Desapilar la direccion de salto del comienzo del loop.
 				//$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition //Comentado porque no sabemos para que lo queremos.
 				}
 				
@@ -698,26 +703,27 @@ factor  :  ID
 	    |  '-' CONSTANT 
 	    
 	    {
-		 // Manejo la entrada positiva de esta constante		    				
-		 Symbol positivo = st.getSymbol($2.sval);
-		 if (positivo.getDataType()==Symbol._ULONGINT_TYPE)
-		 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"una constante del tipo entero largo sin signo no puede ser negativa");
-		 else{
-		 	 st.removeSymbol(positivo.getLexeme());
-			 		    				 	    				 
-			 // Creo nueva entrada o actualizo la existente con una referencia
-			 Symbol negativo = st.getSymbol("-"+$2.sval);
-			 if (negativo != null){
-			 	negativo.addReference();  // Ya existe la entrada
-			 }else{
-			 	String lexema = "-"+positivo.getLexeme();
-			 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getLexemeType(),positivo.getDataType());
-			 	st.addSymbol(lexema,nuevoNegativo);
-			 }
-			 $2.sval = "-"+$2.sval;
-			 
-			 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
-		 }		    				 		
+			 // Manejo la entrada positiva de esta constante		    				
+			 Symbol positivo = st.getSymbol($2.sval);
+			 if (positivo.getDataType()==Symbol._ULONGINT_TYPE)
+			 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"una constante del tipo entero largo sin signo no puede ser negativa");
+			 else{
+			 	 st.removeSymbol(positivo.getLexeme());
+				 		    				 	    				 
+				 // Creo nueva entrada o actualizo la existente con una referencia
+				 Symbol negativo = st.getSymbol("-"+$2.sval);
+				 if (negativo != null){
+				 	negativo.addReference();  // Ya existe la entrada
+				 }else{
+				 	String lexema = "-"+positivo.getLexeme();
+				 	Symbol nuevoNegativo = new Symbol(lexema,positivo.getLexemeType(),positivo.getDataType());
+				 	st.addSymbol(lexema,nuevoNegativo);
+				 }
+				 $2.sval = "-"+$2.sval;
+				 
+				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
+			 }	
+		 }	    				 		
 	 	
 ;
 

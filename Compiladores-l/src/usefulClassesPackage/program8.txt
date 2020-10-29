@@ -1,0 +1,10 @@
+LOOP{
+	DOUBLE double;
+	double = 5.0 + 1.0 * 2.0;
+	LOOP{
+		DOUBLE double2;
+		double2 = 7.0 + 9.0 * 12.0;
+	}
+	UNTIL ( 6_ul < 6_ul);
+}
+UNTIL ( 5_ul < 5_ul);

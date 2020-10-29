@@ -262,19 +262,18 @@ public class IntermediateCode {
 	}
 	
 	//Crea un triplet de salto dirigido al comienzo de la sentencia loop
-	public Triplet createBFTriplet(Object obj1){	
+	public Triplet createBTriplet(Object obj1, String branchType){	
 		int unstacked = this.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump	
 	    this.popFromStack(); //we remove the id triplet from the top of the stack	
 	    Operand op1 = (Operand) obj1; //we get the triplet asociate to the condition	
 	    Operand op2 = new Operand(Operand.TRIPLET_POINTER,String.valueOf(unstacked)); //this will contain the jump adress	
-	    String opt = "BF"; //the operation of the tiplet is the branch not equal	
+	    String opt = branchType; //the operation of the tiplet is the branch not equal	
 	    Triplet t = this.createTriplet(opt,op1,op2);	
 	    return t;	
 	}	
 
 	//Actualiza un triplet de salto que se encuentra en el final de la rama THEN de un IF,dirigido al final de toda la sentencia IF.
 	public Triplet createBITriplet(Object obj1){	
-		updateSecondOperandFromStack(1);	
 		Operand op1 = (Operand) obj1;	
 		String opt = "BI";	
 		Triplet t = this.createTriplet(opt,op1);	
