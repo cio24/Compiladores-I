@@ -45,9 +45,9 @@ public class SymbolsTable {
 	public String findClosestIdDeclaration(String fullId) {
 		while(fullId != null && this.getSymbol(fullId) == null)//mientras no encuentre el simbolo para este nombre
 			fullId = removeScope(fullId); //le saco la última parte del scope
-		//if(fullId.contains(":"))
+		if(fullId.contains(":"))
 			return fullId;
-		//return null;
+		return null;
 	}
 
 	public Set<String> getAll() {

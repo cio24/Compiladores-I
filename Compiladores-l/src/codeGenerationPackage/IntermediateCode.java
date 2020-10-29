@@ -137,7 +137,7 @@ public class IntermediateCode {
 		if(IdNameDeclaration != null){ //hay un identificador declarado al alcance con el mismo nombre
 			Symbol s = st.getSymbol(IdNameDeclaration);
 			if(s.getUse().equals(Symbol._PROCEDURE)) {
-				Triplet t = createTriplet("PC",IdNameDeclaration); //que hacemos con este terceto??
+				Triplet t = createTriplet("PC",new Operand(Operand.ST_POINTER,IdNameDeclaration)); //que hacemos con este terceto??
 			}
 			else //hay una variable al alcance con el mismo nombre pero no es un procedimiento
 				ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SINTACTICO,idName + "no es un procedimiento");
@@ -146,18 +146,18 @@ public class IntermediateCode {
 			ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SINTACTICO,"no existe un procedimiento " + idName + " declarado al alcance");
 	}
 	
-	public void updateSecondOperandFromStack(int amount){
+	public void updateSecondOperandFromStack(int offset){
 		int unstacked = topOfStack(); //we get the id of the triplet on the top of the stack
 		//ic.popFromStack(); //we remove the id triplet from the top of the stack
 		Triplet trip = getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-		trip.setSecondOperand("[" + String.valueOf(currentTripletIndex()+amount) + "]"); //the adress of the jump
+		trip.setSecondOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(currentTripletIndex()+offset))); //the adress of the jump
 	}
 	
-	public void updateFirstOperandFromStack(int amount){
+	public void updateFirstOperandFromStack(int offset){
 		int unstacked = topOfStack(); //we get the id of the triplet on the top of the stack
 		//ic.popFromStack(); //we remove the id triplet from the top of the stack
 		Triplet trip = getTriplet(unstacked); //then we get the triplet so we can write in the second operand
-		trip.setFirstOperand("[" + String.valueOf(currentTripletIndex()+amount) + "]"); //the adress of the jump
+		trip.setFirstOperand(new Operand(Operand.TRIPLET_POINTER,String.valueOf(currentTripletIndex()+offset))); //the adress of the jump
 	}
 	
 	public Triplet createEmptyTriplet(){
@@ -166,14 +166,14 @@ public class IntermediateCode {
 		return t;
 	}
 	
-	public Triplet createTriplet(String operator, String firstOperand, String secondOperand){
+	public Triplet createTriplet(String operator, Operand firstOperand, Operand secondOperand){
 		Triplet t = new Triplet(operator, firstOperand, secondOperand);
 		//showMessage("NUEVO TRIPLET CREADO CON EL OPERANDO: " + operator + " --> " + t.toString());
 		addTriplet(t);
 		return t;
 	}
 	
-	public Triplet createTriplet(String Operator, String firstOperand){
+	public Triplet createTriplet(String Operator, Operand firstOperand){
 		Triplet t = new Triplet(Operator, firstOperand);
 		addTriplet(t);
 		return t;
@@ -260,4 +260,26 @@ public class IntermediateCode {
 			setDeclaration(varId,scope,dataType,Symbol._VARIABLE);
 		}
 	}
+	
+	//Crea un triplet de salto dirigido al comienzo de la sentencia loop
+	public Triplet createBFTriplet(Object obj1){	
+		int unstacked = this.topOfStack(); //we get the id of the triplet that represent the adress of the tag that we need to jump	
+	    this.popFromStack(); //we remove the id triplet from the top of the stack	
+	    Operand op1 = (Operand) obj1; //we get the triplet asociate to the condition	
+	    Operand op2 = new Operand(Operand.TRIPLET_POINTER,String.valueOf(unstacked)); //this will contain the jump adress	
+	    String opt = "BF"; //the operation of the tiplet is the branch not equal	
+	    Triplet t = this.createTriplet(opt,op1,op2);	
+	    return t;	
+	}	
+
+	//Actualiza un triplet de salto que se encuentra en el final de la rama THEN de un IF,dirigido al final de toda la sentencia IF.
+	public Triplet createBITriplet(Object obj1){	
+		updateSecondOperandFromStack(1);	
+		Operand op1 = (Operand) obj1;	
+		String opt = "BI";	
+		Triplet t = this.createTriplet(opt,op1);	
+		return t;	
+	}
+	
+	
 }

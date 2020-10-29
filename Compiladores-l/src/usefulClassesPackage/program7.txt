@@ -14,11 +14,12 @@ DOUBLE var;
 var = var + 5.0;
 %/
 
-
+DOUBLE var;
 
 PROC procedure () NA = 2_ul SHADOWING = TRUE {
 	DOUBLE var;
-	PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
+	PROC procedure2 () NA = 1_ul SHADOWING = FALSE {
+		DOUBLE var;
 		DOUBLE var;
 		var = 3.0;
 	};

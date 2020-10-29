@@ -3,43 +3,43 @@ package codeGenerationPackage;
 public class Triplet {
 	public static int TRIPLET_COUNTER = 0;
 	
-	private String getId;
+	private String id;
 	private String operator;
-	private String firstOperand;
-	private String secondOperand;
+	private Operand firstOperand;
+	private Operand secondOperand;
 	
 
 	public Triplet(String operator) {
-		this.getId = String.valueOf(++TRIPLET_COUNTER);
+		this.id = String.valueOf(++TRIPLET_COUNTER);
 		this.operator = operator;
-		this.firstOperand = "-";
-		this.secondOperand = "-";
+		this.firstOperand = new Operand(Operand.NULL_OPERATOR,"-");
+		this.secondOperand = new Operand(Operand.NULL_OPERATOR,"-");
 	}
 
-	public Triplet(String operator, String firstOperand) {
+	public Triplet(String operator, Operand firstOperand) {
 		this(operator);
 		this.firstOperand = firstOperand;
 	}
 
-	public Triplet(String operator, String firstOperand, String secondOperand) {
+	public Triplet(String operator, Operand firstOperand, Operand secondOperand) {
 		this(operator,firstOperand);
 		this.secondOperand = secondOperand;
 	}
 	
 	public String getId() {
-		return this.getId;
+		return this.id;
 	}
 	
 	@Override
 	public String toString() {
-		return this.getId + ": (" + this.operator + ", " + this.firstOperand + ", " + this.secondOperand + ")";
+		return this.id + ": (" + this.operator + ", " + this.firstOperand + ", " + this.secondOperand + ")";
 	}
 	
-	public void setFirstOperand(String firstOperand) {
+	public void setFirstOperand(Operand firstOperand) {
 		this.firstOperand=firstOperand;
 	}
 	
-	public void setSecondOperand(String secondOperand) {
+	public void setSecondOperand(Operand secondOperand) {
 		this.secondOperand=secondOperand;
 	}
 }
