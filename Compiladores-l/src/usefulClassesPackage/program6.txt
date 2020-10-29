@@ -1,5 +1,5 @@
 
 DOUBLE aux;
-PROC procedureparent () NA = 2_ul SHADOWING = TRUE {
+PROC procedureparent () NA = 5_ul SHADOWING = TRUE {
 	DOUBLE aux;
 };

@@ -138,6 +138,11 @@ na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false {
 									else{ //si es la primera vez que se declara el procedimiento es se declaro en otro ambito al alcance
 
 										int NA = Integer.valueOf($3.sval);
+										if(NA < 1 || NA > 4){
+											ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO ,"El valor que indica los niveles de anidamientos debe estar entre 1 y 4, se define por defecto 4");
+											NA = 4;
+										}
+
 										boolean shadowing;
 
 										if($6.sval.equals("TRUE"))
