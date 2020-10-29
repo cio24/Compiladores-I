@@ -1,4 +1,5 @@
-IF(5_ul < carlos){
-	ULONGINT int;
-}
-END_IF;
+
+DOUBLE aux;
+PROC procedureparent () NA = 2_ul SHADOWING = TRUE {
+	DOUBLE aux;
+};

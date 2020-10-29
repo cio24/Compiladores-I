@@ -2,19 +2,26 @@ package codeGenerationPackage;
 
 import java.util.ArrayList;
 import java.util.Stack;
-
+import lexicalAnalyzerPackage.LexicalAnalyzer;
 import lexicalAnalyzerPackage.Symbol;
 import lexicalAnalyzerPackage.SymbolsTable;
 import usefulClassesPackage.ErrorReceiver;
+import usefulClassesPackage.ProcedureData;
 
 public class IntermediateCode {
 	
 	private ArrayList<Triplet> triplets;
 	private Stack<Integer> stk;
-	
-	public IntermediateCode() {
+	private SymbolsTable st;
+	private ArrayList<ProcedureData> procedureStack;
+	private LexicalAnalyzer la;
+
+	public IntermediateCode(SymbolsTable st, LexicalAnalyzer la) {
 		triplets = new ArrayList<Triplet>();
 		stk = new Stack<Integer>();
+		this.st = st;
+		procedureStack = new ArrayList<>();
+		this.la = la;
 	}
 	
 	public void addTriplet(Triplet t) {
@@ -49,7 +56,7 @@ public class IntermediateCode {
 		}
 		System.out.println("Estado de la pila: "+stk); 
 	}
-	
+
 	public Integer topOfStack() { 
 		Integer i;
 		try {
@@ -69,13 +76,26 @@ public class IntermediateCode {
 	public int currentTripletIndex() {
 		return Triplet.TRIPLET_COUNTER;
 	}
+
+	public void setDeclaration(String idName, String scope, String type, String use){
+		Symbol s = st.getSymbol(idName);
+		s.setDataType(type);
+		s.setUse(use);
+
+		//se le agrega el scope a la key del símbolo que posee la key idName
+		st.setScope(idName,scope);
+	}
+
+	public void setDeclaration(String idName, String scope, String use){
+		setDeclaration(idName,scope,"None",use);
+	}
 	
-	public void variableDeclaration(String v,String scope, String type, SymbolsTable st, String currentLine) {		
-		// Ver si la variable ya esta declarada
+	public void variableDeclaration(String v,String scope, String type, String currentLine) {
+		// Ver si la variable ya esta declarada en este scope
 		Symbol symbol = st.getSymbol(v+scope);
 		if(symbol != null){
 			// Si ya se declaro tirar error y eliminar de la tabla de simbolos 
-			ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SEMANTICO," doble declaración de la variable \"" + symbol.getLexeme() + "\".");
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SEMANTICO," esta variable ya ha sido declarada \"" + symbol.getLexeme() + "\".");
 			symbol = st.getSymbol(v);
 			if(symbol.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
 				st.removeSymbol(v);
@@ -110,18 +130,20 @@ public class IntermediateCode {
 		}
 	}
 	
-	public void procedureCall(String name,String scope, SymbolsTable st, String currentLine) {
-		boolean isDeclared = isDeclared(name,scope,st);
-		st.removeSymbol(name);
-		if(isDeclared){ //hay un identificador declarado al alcance con el mismo nombre
-			Symbol s = st.getSymbol(st.findSTReference(name + scope)); //obtengo el simbolo correspondiente al identificador
-			if(s.getUse().equals(Symbol._PROCEDURE)){ //si el uso es un procedimiento
-				Triplet t = createTriplet("PC",st.findSTReference(name + scope));
+	public void procedureCall(String idName,String scope, String currentLine) {
+		st.removeSymbol(idName); //no entiendo xq se hace esto
+
+		String IdNameDeclaration = st.findClosestIdDeclaration(idName + scope);
+		if(IdNameDeclaration != null){ //hay un identificador declarado al alcance con el mismo nombre
+			Symbol s = st.getSymbol(IdNameDeclaration);
+			if(s.getUse().equals(Symbol._PROCEDURE)) {
+				Triplet t = createTriplet("PC",IdNameDeclaration); //que hacemos con este terceto??
 			}
 			else //hay una variable al alcance con el mismo nombre pero no es un procedimiento
-				ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SINTACTICO,name + "no es un procedimiento");
-		}else  //no hay nada declarado con ese identificador al alcance
-			ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SINTACTICO,"no existe un procedimiento " + name + " declarado al alcance");		
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SINTACTICO,idName + "no es un procedimiento");
+		}
+		else  //no hay nada declarado con ese identificador al alcance
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,currentLine,ErrorReceiver.SINTACTICO,"no existe un procedimiento " + idName + " declarado al alcance");
 	}
 	
 	public void updateSecondOperandFromStack(int amount){
@@ -162,14 +184,80 @@ public class IntermediateCode {
 		addTriplet(t);
 		return t;
 	}
-	
-	//true si esta declarada en el scope actual o en uno que lo contiene
-	public boolean isDeclared(String name, String scope, SymbolsTable st){
-		String fullName = name + scope; // Nombre entero
-		
-		fullName = st.findSTReference(fullName);
-		
-		return fullName != null && fullName.contains(":");
+
+	public void addProcedureToStack(String fullProcedureId,int NA, boolean shadowing){
+		int remainingNests;
+
+		//para cada procedimiento apilado
+		for(ProcedureData p: procedureStack){
+
+			//le resto 1 a la cantidad de anidamientos restantes
+			remainingNests = p.subtractNA();
+
+			//si la cantidad de anidamientos restantes es negativa signifca que ya supero su cantidad permitida
+			if(remainingNests < 0)
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),
+					ErrorReceiver.SEMANTICO, "No se puede declarar el procedimiento " +
+					fullProcedureId + " porque supera su cantidad de anidamientos permitidos");
+		}
+
+		//agrego el nuevo procedimiento a la pila
+		procedureStack.add(new ProcedureData(fullProcedureId,NA,shadowing));
 	}
 
+	public void unstackLastProcedure(){
+
+		//desapilo el último procedimiento agregado
+		procedureStack.remove(procedureStack.size() - 1);
+
+		//le sumo 1 a todos los procedimientos apilados
+		for(ProcedureData p: procedureStack)
+			p.sumNA();
+	}
+
+	public void procedureDeclarationControl(String procedureId, String scope){
+		String fullProcedureId = procedureId + scope;
+		String idDeclaration = st.findClosestIdDeclaration(fullProcedureId);
+
+		//si el procedimiento no fue declarado en este scope concretamos la declaración
+		if(idDeclaration != fullProcedureId)
+			setDeclaration(procedureId, scope, Symbol._PROCEDURE);
+
+		//desapilo el último procedimiento y actualizo el numero de anidamientos de los apilados
+		unstackLastProcedure();
+	}
+
+	public void variableDeclarationControl(String varId,String scope, String dataType) {
+		String fullVarId = varId + scope;
+
+		//obtengo (de existir) el nombre con el que la variable se declaro antes
+		String idDeclaration = st.findClosestIdDeclaration(fullVarId);
+
+		//obtengo el valor del shadowing en caso de que se este declarando dentro de un procedimiento
+		boolean shadowing = false;
+		if(!procedureStack.isEmpty())
+			shadowing = procedureStack.get(procedureStack.size() -1).isShadowing();
+
+		if(idDeclaration == null){
+			//si es la primera vez que se quiere declarar, se concreta la declaración
+			setDeclaration(varId,scope,dataType,Symbol._VARIABLE);
+		}
+		else if(idDeclaration.equals(fullVarId)){
+			//si ya existe una declaración de esta variable en el mismo ambito tiramos error
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," esta variable ya ha sido declarada \"" + varId + "\".");
+
+			//acomodamos la tabla de simbolos
+			Symbol s = st.getSymbol(varId);
+			if(s.subtractReference() <= 0) // Remove reference and if it reaches 0, remove SymbolTable entry
+				st.removeSymbol(varId);
+		}
+		else{
+			//si el shadowing es true y ya existe una declaración en otro ambito al alcance tiramos error
+			if(shadowing)
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," la variable \"" + varId + scope + "\" viola el shadowing");
+			//aunque no se pueda declarar por shadowing la declaramos igual
+			//asi se pueden detectar errores en relación a esta variable
+			setDeclaration(varId,scope,dataType,Symbol._VARIABLE);
+		}
+	}
 }

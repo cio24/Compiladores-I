@@ -3,7 +3,7 @@ package lexicalAnalyzerPackage;
 public class Symbol {
 
 	//Lexeme types
-	public final static String _DEFAULT_TYPE = "Default type";
+
 	public final static String _ID_LEXEME = "Identifier";
 	public final static String _DOUBLE_CONSTANT = "DOUBLE Constant";
 	public final static String _ULONGINT_CONSTANT = "ULONGINT Constant";
@@ -13,6 +13,7 @@ public class Symbol {
 	public final static String _DOUBLE_TYPE = "DOUBLE";
 	public final static String _ULONGINT_TYPE = "ULONGINT";
 	public final static String _STRING_TYPE = "STRING";
+	public final static String _DEFAULT_TYPE = "Default type";
 
 	//uses
 	public final static String _VARIABLE = "Variable";

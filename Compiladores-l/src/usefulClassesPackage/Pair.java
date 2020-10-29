@@ -1,15 +1,23 @@
 package usefulClassesPackage;
 
 public class Pair {
-	Object el1,el2;
-	public Pair(Object el1,Object el2) {
-		this.el1=el1;
-		this.el2=el2;
+	Object firstElement, secondElement;
+	public Pair(Object firstElement, Object secondElement) {
+		this.firstElement = firstElement;
+		this.secondElement =secondElement;
 	}
 	public Object firstElement() {
-		return el1;
+		return firstElement;
 	}
 	public Object secondElement() {
-		return el2;
+		return secondElement;
+	}
+
+	public void setFirstElement(Object firstElement){
+		this.firstElement = firstElement;
+	}
+
+	public void setSecondElement(Object secondElement){
+		this.secondElement = secondElement;
 	}
 }

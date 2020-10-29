@@ -41,14 +41,13 @@ public class SymbolsTable {
 		s.setLexeme(newName);
 		this.addSymbol(newName, s);		
 	}
-	
-	public String findSTReference(String name) {
-		while(this.getSymbol(name) == null) { //mientras no encuentre el simbolo para este id
-			name = removeScope(name); //le saco la última parte del scope
-			if(name == null) //si no existe retorno un null aparentemente xD
-				break;
-		}
-		return name;
+	//te devuelve el nombre que corresponde al lugar en donde fue declarado el id, de haber sido declarado
+	public String findClosestIdDeclaration(String fullId) {
+		while(fullId != null && this.getSymbol(fullId) == null)//mientras no encuentre el simbolo para este nombre
+			fullId = removeScope(fullId); //le saco la última parte del scope
+		//if(fullId.contains(":"))
+			return fullId;
+		//return null;
 	}
 
 	public Set<String> getAll() {
