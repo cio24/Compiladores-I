@@ -156,7 +156,7 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 				String procedureId = $1.sval;
 
 				//se actualiza la pila de los procedimientos y si este no se declaro se declara
-					ic.procedureDeclarationControl(procedureId, scope);
+				ic.procedureDeclarationControl(procedureId, scope);
 
 			}
 
@@ -172,6 +172,8 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 
 				//se actualiza la pila de los procedimientos y si este no se declaro se declara
 				ic.procedureDeclarationControl(procedureId, scope);
+				
+				ic.createTriplet("PE",new Operand(Operand.ST_POINTER,procedureId+scope));
 			}
 			
 		   |  procedure_header  '('  parameter_list  ')'  na_shad_definition   
@@ -190,15 +192,26 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 
 procedure_header  :  PROC  ID  
 				{
-				//guardo el nombre del procedimiento en el procedure_header
-				$$.sval = $2.sval;
-
-				//guardo el nombre completo del procedimiento xq lo necesito para hacer cosas
-				 //en la parte del NA de abajo en donde NO se puede acceder al procedure_header!
-				lastIdentifierFound = $2.sval + scope;
-
-				//actualizo el scope
-				scope += ":"+$2.sval;
+					//guardo el nombre del procedimiento en el procedure_header
+					$$.sval = $2.sval;
+					
+					Symbol symbol = st.getSymbol($2.sval+scope);
+					if(symbol != null){
+						// Si ya se declaro tirar error y eliminar de la tabla de simbolos 
+						ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," doble declaración de procedimiento \"" + symbol.getLexeme() + "\".");
+						symbol = st.getSymbol($2.sval);
+						if(symbol.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
+							st.removeSymbol($2.sval);
+					}else{
+						ic.createTriplet("PD",new Operand(Operand.ST_POINTER,$2.sval+scope));
+					}
+	
+					//guardo el nombre completo del procedimiento xq lo necesito para hacer cosas
+					 //en la parte del NA de abajo en donde NO se puede acceder al procedure_header!
+					lastIdentifierFound = $2.sval + scope;
+	
+					//actualizo el scope
+					scope += ":"+$2.sval;
                 }
                 
              	   |  PROC 	   
@@ -210,26 +223,16 @@ na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false
 
 					{
 						String fullProcedureId = lastIdentifierFound;
-						String idNameDeclaration = st.findClosestIdDeclaration(fullProcedureId);
-						if(idNameDeclaration == fullProcedureId)
-							ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO ,"El procedimiento " + fullProcedureId + "ya se encuentra declarado en el mismo scope");
-						else{ //si es la primera vez que se declara el procedimiento es se declaro en otro ambito al alcance
-	
-							int NA = Integer.valueOf($3.sval);
-							if(NA < 1 || NA > 4){
-								ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO ,"El valor que indica los niveles de anidamientos debe estar entre 1 y 4, se define por defecto 4");
-								NA = 4;
-					}
-
+						int NA = Integer.valueOf($3.sval);
+						
 						boolean shadowing;
-	
 						if($6.sval.equals("TRUE"))
 							shadowing = true;
 						else
 							shadowing = false;
 						//lo agrego al stack y tira error si supera el anidamiento de un procedimiento padre
 						ic.addProcedureToStack(fullProcedureId,NA,shadowing);
-						}
+						
 	                }
 	                
 				   | '='  CONSTANT  SHADOWING  '='  true_false 		

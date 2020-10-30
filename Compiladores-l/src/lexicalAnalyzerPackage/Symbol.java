@@ -114,6 +114,12 @@ public class Symbol {
 		return this.use;
 	}
 	
+	public void setProcedureData(int NA, String shadowing, int cantParams) {
+		this.NA = NA;
+		this.shadowing = shadowing;
+		this.cantidadDeParametros = cantParams;
+	}
+	
 	@Override
 	public String toString() {
 		String use;
@@ -124,6 +130,12 @@ public class Symbol {
 		String passByType = "";
 		if(this.use.equals(_PARAMETER))
 			passByType = " | Pass by: " + _COPY_VALUE;
-		return "\n\tLexeme: \"" + this.lexemeType + "\"" + use + passByType + " | Type: " + this.dataType + " | References: " + this.referenceCount;
+
+		String procInfo = "";
+		if(this.use.equals(_PROCEDURE))
+			procInfo = " | NA: " + NA + " | SHADOWING: " + shadowing + " | Params: " + String.valueOf(cantidadDeParametros);
+
+		
+		return "\n\tLexeme: \"" + this.lexemeType + "\"" + use + passByType  + procInfo + " | Type: " + this.dataType + " | References: " + this.referenceCount;
 	}
 }

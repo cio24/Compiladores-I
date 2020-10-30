@@ -16,13 +16,17 @@ var = var + 5.0;
 
 DOUBLE var;
 
-PROC procedure () NA = 2_ul SHADOWING = TRUE {
+PROC procedure () NA = 2_ul SHADOWING = FALSE {
 	DOUBLE var;
-	PROC procedure2 () NA = 1_ul SHADOWING = FALSE {
-		DOUBLE var;
-		DOUBLE var;
+	PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
 		var = 3.0;
+				
+		PROC procedure3 () NA = 0_ul SHADOWING = FALSE {
+		};
 	};
 };
+/%
+PROC procedure () NA = 5_ul SHADOWING = FALSE {
+};%/
 
 procedure();

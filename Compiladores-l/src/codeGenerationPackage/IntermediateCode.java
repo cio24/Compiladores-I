@@ -77,17 +77,20 @@ public class IntermediateCode {
 		return Triplet.TRIPLET_COUNTER;
 	}
 
-	public void setDeclaration(String idName, String scope, String type, String use){
+	public Symbol setDeclaration(String idName, String scope, String type, String use, int NA, String shadowing){
+		Symbol s = setDeclaration(idName,scope,type,use);
+		s.setProcedureData(NA,shadowing,0);
+		return s;
+	}
+	
+	public Symbol setDeclaration(String idName, String scope, String type, String use){
 		Symbol s = st.getSymbol(idName);
 		s.setDataType(type);
 		s.setUse(use);
 
 		//se le agrega el scope a la key del símbolo que posee la key idName
 		st.setScope(idName,scope);
-	}
-
-	public void setDeclaration(String idName, String scope, String use){
-		setDeclaration(idName,scope,"None",use);
+		return s;
 	}
 	
 	public void variableDeclaration(String v,String scope, String type, String currentLine) {
@@ -126,7 +129,10 @@ public class IntermediateCode {
 			// Sino setear el uso como variable
 			symbol.setUse(Symbol._PROCEDURE);
 			// Setear scope correctamente (cambia id en tabla de simbolos)
-			st.setScope(v,scope);					
+			st.setScope(v,scope);		
+			// Creo el triplete de declaracion de procedimietno
+			createTriplet("PD",new Operand(Operand.ST_POINTER,v+scope)); //que hacemos con este terceto??
+
 		}
 	}
 	
@@ -205,26 +211,28 @@ public class IntermediateCode {
 		procedureStack.add(new ProcedureData(fullProcedureId,NA,shadowing));
 	}
 
-	public void unstackLastProcedure(){
+	public ProcedureData unstackLastProcedure(){
 
 		//desapilo el último procedimiento agregado
-		procedureStack.remove(procedureStack.size() - 1);
+		ProcedureData pRemoved = procedureStack.remove(procedureStack.size() - 1);
 
 		//le sumo 1 a todos los procedimientos apilados
 		for(ProcedureData p: procedureStack)
 			p.sumNA();
+		
+		return pRemoved;
 	}
 
 	public void procedureDeclarationControl(String procedureId, String scope){
 		String fullProcedureId = procedureId + scope;
 		String idDeclaration = st.findClosestIdDeclaration(fullProcedureId);
 
+		//desapilo el último procedimiento y actualizo el numero de anidamientos de los apilados
+		ProcedureData p = unstackLastProcedure();
 		//si el procedimiento no fue declarado en este scope concretamos la declaración
 		if(idDeclaration != fullProcedureId)
-			setDeclaration(procedureId, scope, Symbol._PROCEDURE);
+			setDeclaration(procedureId, scope, "None", Symbol._PROCEDURE,p.getNA(),p.getShadowing());
 
-		//desapilo el último procedimiento y actualizo el numero de anidamientos de los apilados
-		unstackLastProcedure();
 	}
 
 	public void variableDeclarationControl(String varId,String scope, String dataType) {

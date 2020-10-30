@@ -24,7 +24,7 @@ public class ProcedureData {
     }
 
     public int subtractNA() {
-        return this.NA--;
+        return --this.NA;
     }
 
     public boolean isShadowing() {
@@ -33,5 +33,17 @@ public class ProcedureData {
 
     public void setShadowing(boolean shadowing) {
         this.shadowing = shadowing;
+    }
+    
+    public int getNA() {
+    	return NA;
+    }
+    
+    public String getShadowing() {
+    	if (shadowing) {
+    		return "TRUE";
+    	}else {
+    		return "FALSE";
+    	}
     }
 }
