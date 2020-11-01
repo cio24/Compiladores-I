@@ -1,9 +1,8 @@
 package semanticActionPackage;
 
 import java.math.BigDecimal;
-
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import lexicalAnalyzerPackage.Symbol;
+import symbolPackage.Symbol;
 import usefulClassesPackage.Constants;
 import usefulClassesPackage.ErrorReceiver;
 
@@ -17,9 +16,9 @@ public class SA07DoubleConstantFound extends SemanticAction {
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		String lexem=lexicalAnalyzer.getCurrentLexeme();
-		String snumber=lexem.replace('d','e');
-		BigDecimal number= new BigDecimal(snumber);
+		String lexem = lexicalAnalyzer.getCurrentLexeme();
+		String snumber = lexem.replace('d','e');
+		BigDecimal number = new BigDecimal(snumber);
 
 		lexicalAnalyzer.returnLastCharacterRead();
 		if (number.compareTo(Constants.MAX_RANGE_DOUBLE) < 0  && Constants.MIN_RANGE_DOUBLE.compareTo(number)< 0) {
@@ -27,8 +26,8 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			// Utilizamos como lexema de los double el valor pasado a string del BigDecimal, para unificar los 2.0515 con los 0.20515d+1
 			String lexeme = new String(number.toString());
 			//Ingresar en la tabla de simbolos
-			Symbol symbol = new Symbol(lexeme,Symbol._DOUBLE_CONSTANT);
-			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+			Symbol s = new Symbol(lexeme,Symbol._CONSTANT_LEXEME,Symbol._DOUBLE_TYPE);
+			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,s);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 			}
 		else 

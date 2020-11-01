@@ -1,9 +1,8 @@
 package semanticActionPackage;
 
 import java.math.BigDecimal;
-
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import lexicalAnalyzerPackage.Symbol;
+import symbolPackage.Symbol;
 import usefulClassesPackage.Constants;
 import usefulClassesPackage.ErrorReceiver;
 
@@ -16,22 +15,20 @@ public class SA06LongConstantFound extends SemanticAction {
 
 	@Override
 	public void execute() {
-		String lexem=lexicalAnalyzer.getCurrentLexeme();
-		//Integer value=Integer.parseInt(lexem);
-		BigDecimal value=new BigDecimal(lexem);
+		String lexeme = lexicalAnalyzer.getCurrentLexeme();
+		BigDecimal value = new BigDecimal(lexeme);
 
 		if ((Constants.MIN_RANGE_ULONGINT.compareTo(value)<0 || Constants.MIN_RANGE_ULONGINT.compareTo(value)==0)  && value.compareTo(Constants.MAX_RANGE_ULONGINT)<0)
 				{
 			lexicalAnalyzer.setTokenId(Constants.CONSTANT);
 			
 			//agregar a la tabla de simbolos
-			String lexeme = lexicalAnalyzer.getCurrentLexeme();
-			Symbol symbol = new Symbol(lexeme,Symbol._ULONGINT_CONSTANT);
-			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+			Symbol s = new Symbol(lexeme,Symbol._CONSTANT_LEXEME,Symbol._ULONGINT_TYPE);
+			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,s);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 		}
 		else {
-			ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"constante ("+lexem+") de tipo ULONGINT fuera de rango.");
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"constante ("+lexeme+") de tipo ULONGINT fuera de rango.");
 			lexicalAnalyzer.setNextState(0);
 		}
 	}

@@ -1,5 +1,8 @@
 
-DOUBLE aux;
-PROC procedureparent () NA = 5_ul SHADOWING = TRUE {
-	DOUBLE aux;
+
+PROC corrimiento (DOUBLE hola) NA = 1_ul SHADOWING = TRUE {
 };
+
+ULONGINT aux;
+corrimiento(aux);
+

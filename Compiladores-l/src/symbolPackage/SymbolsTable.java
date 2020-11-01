@@ -1,11 +1,11 @@
-package lexicalAnalyzerPackage;
+package symbolPackage;
 
 import java.util.HashMap;
 import java.util.Set;
 
 public class SymbolsTable {
 
-	HashMap<String, Symbol> symbolsTable;
+	HashMap<String,Symbol> symbolsTable;
 	private String scope;
 
 	// Takes in a string returns a symbol
@@ -13,7 +13,6 @@ public class SymbolsTable {
 		this.symbolsTable = new HashMap<>();
 		this.scope = ":main";
 	}
-
 
 	public void addSymbol(String name, Symbol symbol) {
 		if (!this.symbolsTable.containsKey(name))
@@ -30,7 +29,7 @@ public class SymbolsTable {
 	public void removeSymbol(String name) {
 		Symbol s = getSymbol(name);
 
-		if(s.subtractReference() == 0) // Remove reference and if it reaches 0, remove SymbolTable entry
+		if(s.subtractReference() <= 0) // Remove reference and if it reaches 0, remove SymbolTable entry
 			this.symbolsTable.remove(name);
 	}
 	
@@ -41,6 +40,13 @@ public class SymbolsTable {
 		s.setLexeme(newName);
 		this.addSymbol(newName, s);		
 	}
+
+	public String removeScope(String name) { //le va quitando la última parte del scope al nombre
+		if(!name.contains(":")) //si llega a un nombre sin ":" significa que se llego al string vacio?
+			return null;
+		return name.substring(0,name.lastIndexOf(":"));
+	}
+
 	//te devuelve el nombre que corresponde al lugar en donde fue declarado el id, de haber sido declarado
 	public String findClosestIdDeclaration(String fullId) {
 		while(fullId != null && this.getSymbol(fullId) == null)//mientras no encuentre el simbolo para este nombre
@@ -60,12 +66,6 @@ public class SymbolsTable {
 		for( HashMap.Entry<String, Symbol> entry : this.symbolsTable.entrySet() ){
 		    System.out.println( entry.getKey() + " => " + entry.getValue() );
 		}
-	}
-	
-	public String removeScope(String name) { //le va quitando la última parte del scope al nombre
-		if(!name.contains(":")) //si llega a un nombre sin ":" significa que se llego al string vacio?
-			return null;
-		return name.substring(0,name.lastIndexOf(":"));
 	}
 }
 

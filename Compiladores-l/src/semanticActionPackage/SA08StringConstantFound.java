@@ -1,12 +1,12 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import lexicalAnalyzerPackage.Symbol;
+import symbolPackage.Symbol;
 import usefulClassesPackage.Constants;
 
-public class SA08StringFound extends SemanticAction {
+public class SA08StringConstantFound extends SemanticAction {
 
-	public SA08StringFound(LexicalAnalyzer lexicalAnalyzer) {
+	public SA08StringConstantFound(LexicalAnalyzer lexicalAnalyzer) {
 		super(lexicalAnalyzer);
 		// TODO Auto-generated constructor stub
 	}
@@ -16,8 +16,8 @@ public class SA08StringFound extends SemanticAction {
 		//ingresar en la talba de simbolos
 		lexicalAnalyzer.addNextCharacter();
 		String lexeme = lexicalAnalyzer.getCurrentLexeme();
-		Symbol symbol = new Symbol(lexeme,Symbol._STRING_CONSTANT);
-		lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,symbol);
+		Symbol s= new Symbol(lexeme,Symbol._CONSTANT_LEXEME,Symbol._STRING_TYPE);
+		lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,s);
 		lexicalAnalyzer.getYylval().sval = lexeme;
 		lexicalAnalyzer.setTokenId(Constants.CSTRING);
 	}

@@ -222,7 +222,7 @@ public class TransitionMatrix {
 	    SemanticAction semanticAction05 = new SA05ResWordFound(lexicalAnalyzer);
 	    SemanticAction semanticAction06 = new SA06LongConstantFound(lexicalAnalyzer);
 	    SemanticAction semanticAction07 = new SA07DoubleConstantFound(lexicalAnalyzer);
-	    SemanticAction semanticAction08 = new SA08StringFound(lexicalAnalyzer);
+	    SemanticAction semanticAction08 = new SA08StringConstantFound(lexicalAnalyzer);
 	    SemanticAction semanticAction10 = new SA10InitLexeme(lexicalAnalyzer);
 	    SemanticAction semanticAction11 = new SA11SingleCharTokenFound(lexicalAnalyzer);
 	    SemanticAction semanticAction12 = new SA12LessThanOrEqFound(lexicalAnalyzer);
