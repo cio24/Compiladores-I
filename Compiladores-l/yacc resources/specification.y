@@ -215,7 +215,7 @@ na_shad_definition : NA  '='  CONSTANT  SHADOWING  '='  true_false
 
 					{
 						ProcedureData pd = ic.getProcedureDataFromStack();
-						if(!pd.getFullProcId().equals("ERROR")){
+						if(!pd.getFullProcId().contains("ERROR")){
 
 							//guardo los nuevos datos del procedimiento
 							pd.setNA(Integer.valueOf($3.sval));

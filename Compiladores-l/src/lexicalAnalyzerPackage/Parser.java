@@ -964,7 +964,7 @@ case 27:
 //#line 216 "specification.y"
 {
 						ProcedureData pd = ic.getProcedureDataFromStack();
-						if(!pd.getFullProcId().equals("ERROR")){
+						if(!pd.getFullProcId().contains("ERROR")){
 
 							/*guardo los nuevos datos del procedimiento*/
 							pd.setNA(Integer.valueOf(val_peek(3).sval));

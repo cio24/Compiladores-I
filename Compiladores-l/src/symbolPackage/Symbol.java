@@ -29,6 +29,8 @@ public class Symbol {
     private String dataType;
     private String use;
     private String parameterSemantic;
+    private boolean shadowing;
+    private int NA;
 
     //MILLONES DE CONSTRUCTORES LAY AHEAD
 
@@ -51,6 +53,7 @@ public class Symbol {
         this.dataType = dataType;
         this.use = use;
         this.parameterSemantic = parameterSemantic;
+        this.NA = -1;
     }
 
     //MILLONES DE SETTERS & GETTERS
@@ -78,22 +81,56 @@ public class Symbol {
     public void setUse(String use) {
         this.use = use;
     }
-    public String getParameterSemantic() {
-        return parameterSemantic;
-    }
-    public void setParameterSemantic(String parameterSemantic) {
-        this.parameterSemantic = parameterSemantic;
-    }
     public int addReference() {
         return ++this.referenceCount;
     }
     public int subtractReference() {
         return --this.referenceCount;
     }
+    public void setShadowing(boolean shadowing) {
+        this.shadowing = shadowing;
+    }
+    public void setNA(int NA){
+        this.NA = NA;
+    }
 
     @Override
     public String toString() {
-        return "\n\tLexeme: \"" + this.lexemeType + "\"" + " | References: " + this.referenceCount 
-                + " | Type: " + this.dataType + " | Use: " + this.use + " | Semantic: " + this.parameterSemantic;
+        String dataType;
+        if(this.dataType.equals("-"))
+            dataType = "";
+        else
+            dataType = " | Type: " + this.dataType;
+
+        String use;
+        if(this.use.equals("-"))
+            use = "";
+        else
+            use = " | Use: " + this.use;
+
+
+        String shadowing;
+        if(this.use.equals(_PROCEDURE_USE))
+            if(this.shadowing)
+                shadowing = " | Shadowing: true";
+            else
+                shadowing = " | Shadowing: false";
+        else
+            shadowing = "";
+
+        String semantic;
+        if(this.parameterSemantic.equals("-"))
+            semantic = "";
+        else
+            semantic = " | Semantic: " + this.parameterSemantic;
+
+        String NA;
+        if(this.NA == -1)
+            NA = "";
+        else
+            NA = " | NA: " + this.NA;
+
+        return "\n\tLexeme: \"" + this.lexemeType + "\"" + " | References: " + this.referenceCount
+                + use + dataType + semantic + shadowing + NA;
     }
 }

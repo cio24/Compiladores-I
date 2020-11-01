@@ -32,6 +32,8 @@ public class IntermediateCode {
 
 		//agrego el simbolo del procedimiento a la tabla de símbolos
 		Symbol ps = new Symbol(pd.getFullProcId(),Symbol._IDENTIFIER_LEXEME,"-",Symbol._PROCEDURE_USE);
+		ps.setShadowing(pd.isShadowingActivated());
+		ps.setNA(pd.getNA());
 		st.addSymbol(pd.getFullProcId(),ps);
 
 		return ps;
