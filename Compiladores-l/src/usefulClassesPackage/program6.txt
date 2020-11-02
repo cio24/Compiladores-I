@@ -1,8 +1,5 @@
 
-
-PROC corrimiento (DOUBLE hola) NA = 1_ul SHADOWING = TRUE {
-};
-
-ULONGINT aux;
-corrimiento(aux);
-
+DOUBLE aux;
+ULONGINT carlos;
+DOUBLE charles;
+charles = aux * carlos;

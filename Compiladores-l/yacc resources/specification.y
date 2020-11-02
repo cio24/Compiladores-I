@@ -390,24 +390,11 @@ procedure_call :  ID  '('  id_list  ')'
 executable  :  ID  '='  expression
 		
 				{
-					showMessage("[Linea " + la.getCurrentLine() + "] Asignacion.");
-					String fullVarId = $1.sval + scope;
-					String varIdDeclaration = st.findClosestIdDeclaration(fullVarId);
-					//se borra el símbolo xq se tiene que agregar uno nuevo con los datos del scope y el tipo
-					st.removeSymbol($1.sval);
-					Triplet t;
-					if(varIdDeclaration == null){
-						ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se utiliza una variable antes de declararla");
-						t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,$1.sval + ":undefined"),(Operand) $3.obj);
-					} else {
-						//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
-						//para hacerlo mas legible
-						t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,varIdDeclaration),(Operand) $3.obj);
-
-						//se incrementa la cantidad de referencias que tiene la variable
-						st.getSymbol(varIdDeclaration).addReference();
-					}
-					$$.obj = t.getId();
+					/*
+					además de controlar que se use una variable que se claro, se chequea si
+					los tipos son compatibles y se tira error de ser necesario
+					*/
+					$$.obj = ic.variableAssignmentControl($1.sval,scope,(Operand) $3.obj);
 				}
 						
 			|  ID  '='  error		
@@ -488,7 +475,8 @@ comparator  :  EQUAL
             {ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");}
 ;
 
-condition  :  expression  comparator  expression 	{
+condition  :  expression  comparator  expression
+{
 													showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
 													Triplet t = tm.createTriplet((String) $2.obj, (Operand) $1.obj, (Operand) $3.obj);
 													$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
@@ -632,7 +620,8 @@ loop_begin : LOOP
 
 /*-------> Gramatica de salida<-------*/
 
-out_clause  :  OUT  '('  CSTRING  ')'	{
+out_clause  :  OUT  '('  CSTRING  ')'
+{
 									   	Triplet t = tm.createTriplet("OUT",new Operand(Operand.ST_POINTER,(String) $3.sval));
 			 						 	}
 			|  OUT  '('  error  ')' 	{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT solo acepta cadenas de caracteres"); }
@@ -645,16 +634,27 @@ out_clause  :  OUT  '('  CSTRING  ')'	{
 
 expression  :  expression  '+'  term 
 		
-			{showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
-      		Triplet t = tm.createTriplet("+",(Operand) $1.obj, (Operand) $3.obj);
-      	    $$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
-      		}
+		{
+
+			showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
+			/*
+			controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
+			en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
+			sabe dios después como voy a controlar eso xD
+			*/
+			$$.obj = ic.operationTypesControl("+", (Operand) $1.obj,(Operand) $3.obj);
+		}
       		
 			|  expression  '-'  term 		
 			
-			{showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
-	      	Triplet t = tm.createTriplet("-",(Operand) $1.obj, (Operand) $3.obj);
-	      	$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+		{
+			showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
+			/*
+			controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
+			en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
+			sabe dios después como voy a controlar eso xD
+			*/
+			$$.obj = ic.operationTypesControl("-", (Operand) $1.obj,(Operand) $3.obj);
 	      	}
 	      	
 			|  term 
@@ -687,25 +687,33 @@ expression  :  expression  '+'  term
 
 term  :  term  '*'  factor 	
 	
-		{
+{
 		showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
-		Triplet t = tm.createTriplet("*",(Operand) $1.obj, (Operand) $3.obj);
-		$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
-		}
+		/*
+		controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
+		en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
+		sabe dios después como voy a controlar eso xD
+		*/
+		$$.obj = ic.operationTypesControl("*", (Operand) $1.obj,(Operand) $3.obj);
+	}
 		
       |  term  '/'  factor 		
       
       {
-      showMessage("[Linea " + la.getCurrentLine() + "] Division.");
-	  Triplet t = tm.createTriplet("/",(Operand) $1.obj, (Operand) $3.obj);
-	  $$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+		showMessage("[Linea " + la.getCurrentLine() + "] Division.");
+		/*
+		controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
+		en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
+		sabe dios después como voy a controlar eso xD
+		*/
+		$$.obj = ic.operationTypesControl("/", (Operand) $1.obj,(Operand) $3.obj);
 	  }
 	  
 	  |  factor            		
 	  
 	  {
 	  	showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
-	   $$.obj = $1.obj;
+	   	$$.obj = $1.obj;
 	  }
 	  			
 	  |  term '*' error    		{ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la multiplicacion debe llevar una constante o un identificador");}
@@ -725,21 +733,29 @@ factor  :  ID
         			
 			{
 			String fullId = $1.sval + scope;
-			st.removeSymbol($1.sval); 										//NO ENTIENDO ESTO PLEASE
+			st.removeSymbol($1.sval);
 			String realName = st.findClosestIdDeclaration(fullId);
+			String dataType = st.getSymbol(realName).getDataType();
 			if(realName == null){
 			    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"se utiliza una variable antes de declararla");
-				$$.obj = new Operand(Operand.ST_POINTER,$1.sval + ":undefined");
+				$$.obj = new Operand(Operand.ST_POINTER,$1.sval + ":undefined",dataType);
 			} else {
-				$$.obj = new Operand(Operand.ST_POINTER,realName);
+
+				$$.obj = new Operand(Operand.ST_POINTER,realName,dataType);
 			}				
 		}
 		
 	    |  CONSTANT     
 	    
-	    {  			 
-	    $$.obj = new Operand(Operand.ST_POINTER,$1.sval);
-        }
+		{
+			Operand op1;
+			if($1.sval.contains("."))
+				op1 = new Operand(Operand.ST_POINTER,$1.sval,Symbol._DOUBLE_TYPE);
+			else
+				op1 = new Operand(Operand.ST_POINTER,$1.sval,Symbol._ULONGINT_TYPE);
+			$$.obj = op1;
+
+		}
 	    
 	    |  '-' CONSTANT 
 	    
@@ -762,7 +778,7 @@ factor  :  ID
 				 }
 				 $2.sval = "-"+$2.sval;
 				 
-				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval);
+				 $$.obj = new Operand(Operand.ST_POINTER,$2.sval,Symbol._ULONGINT_TYPE);
 			 }	
 		 }	    				 		
 	 	

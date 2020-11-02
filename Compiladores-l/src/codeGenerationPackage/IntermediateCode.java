@@ -270,4 +270,60 @@ public class IntermediateCode {
 		//se lo debe apilar para controlar en el resto del procedimiento
 		addProcedureDataToStack(pd);
 	}
+
+	public String variableAssignmentControl(String varId, String scope, Operand expression){
+		String fullVarId = varId + scope;
+		String varIdDeclaration = st.findClosestIdDeclaration(fullVarId);
+
+		//se borra el símbolo xq se tiene que agregar uno nuevo con los datos del scope y el tipo
+		st.removeSymbol(varId);
+		Triplet t;
+
+		//si no se encuentran una declaración se tira error
+		if(varIdDeclaration == null){
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,
+					"se utiliza una variable antes de declararla");
+			t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,varId + ":undefined"),expression);
+		} else {
+
+			//si se encuentra la declaración, se debe controlar los tipos
+			String varType = st.getSymbol(varIdDeclaration).getDataType();
+			String expressionType = expression.getDataType();
+			if(!varType.equals(expressionType)){
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,
+						"tipos incopatbiles, el tipo de la variable es " + varType
+								+ " y se le asigno una expresión de tipo " + expressionType);
+
+				//creamos un triplet que indique el error
+				t = tm.createTriplet("ERROR");
+			}
+			else{
+				//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
+				//para hacerlo mas legible
+				t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,varIdDeclaration),expression);
+
+				//se incrementa la cantidad de referencias que tiene la variable
+				st.getSymbol(varIdDeclaration).addReference();
+			}
+
+
+		}
+		//retornamos el numero de triplet para que se pueda asignar al $$ de la sentencia ejecutable
+		return t.getId();
+	}
+
+	public Operand operationTypesControl(String operator, Operand op1, Operand op2){
+		Triplet t;
+		if(op1.getDataType().equals(op2.getDataType())){
+			System.out.println("tipo 1: " + op1.getDataType() + " Tipo 2: " + op2.getDataType());
+			t = tm.createTriplet(operator,op1, op2);
+			return new Operand(Operand.TRIPLET_POINTER,t.getId(), op1.getDataType());
+		}
+		else{
+			System.out.println("[Linea " + la.getCurrentLine() + "] Incopatibilidad de tipos: "
+					+ op1.getDataType() + operator + op2.getDataType() );
+			t = tm.createTriplet("ERROR");
+			return new Operand(Operand.TRIPLET_POINTER,t.getId(), "ERROR");
+		}
+	}
 }

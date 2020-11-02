@@ -76,6 +76,9 @@ public class ProcedureData {
     public void setNA(int NA){
         this.NA = NA;
     }
+    public int getNA(){
+        return this.NA;
+    }
     public int addNA(){
         return ++this.NA;
     }
