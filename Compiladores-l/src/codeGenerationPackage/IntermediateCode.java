@@ -10,7 +10,6 @@ public class IntermediateCode {
 
 	private SymbolsTable st;
 	private ArrayList<ProcedureData> procedureStack;
-	private HashMap<String,ProcedureData> proceduresData;
 	private ArrayList<String> realParametersTypes;
 	private LexicalAnalyzer la;
 	private TripletsManager tm;
@@ -19,7 +18,6 @@ public class IntermediateCode {
 	public IntermediateCode(SymbolsTable st, LexicalAnalyzer la, TripletsManager tm) {
 		this.st = st;
 		procedureStack = new ArrayList<>();
-		proceduresData = new HashMap<>();
 		realParametersTypes = new ArrayList<>();
 		this.la = la;
 		this.tm = tm;
@@ -131,18 +129,6 @@ public class IntermediateCode {
 	//######### MANEJO DE PROCEDIMIENTOS #########
 
 	/*
-	 *	se preservan los datos de los procedimientos mas que nada
-	 *  para controlar los tipos y cantidad de parametros
-	 */
-	public void saveProcedureData(ProcedureData pd){
-		this.proceduresData.put(pd.getFullProcId(),pd);
-	}
-	public ProcedureData getProcedureData(String fullProcId){
-		return this.proceduresData.get(fullProcId);
-	}
-
-
-	/*
 	 *	se maneja un stack de procedimientos para controlar
 	 *  los anidamientos que se permiten con los NA's
 	 */
@@ -158,7 +144,7 @@ public class IntermediateCode {
 			//si la cantidad de anidamientos restantes es negativa signifca que ya supero su cantidad permitida
 			if(remainingNests < 0)
 				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),
-						ErrorReceiver.SEMANTICO, "No se puede declarar el procedimiento " +
+								ErrorReceiver.SEMANTICO, "No se puede declarar el procedimiento " +
 								newProcedureData.getFullProcId() + " porque se supera la cantidad de anidamientos permitidos del procedimiento " + pd.getFullProcId());
 		}
 
@@ -264,8 +250,7 @@ public class IntermediateCode {
 
 		//agrego el simbolo del procedimiento a la tabla de símbolos
 		Symbol ps = new Symbol(pd.getFullProcId(),Symbol._IDENTIFIER_LEXEME,"-",Symbol._PROCEDURE_USE);
-		ps.setShadowing(pd.isShadowingActivated());
-		ps.setNA(pd.getNA());
+		ps.setProcedureData(pd);
 		st.addSymbol(pd.getFullProcId(),ps);
 
 		return ps;
@@ -286,11 +271,9 @@ public class IntermediateCode {
 		if(idDeclaration != null){
 			Symbol is = st.getSymbol(idDeclaration);
 			if(is.getUse().equals(Symbol._PROCEDURE_USE)){
-
-				if(areParametersCallCorrect(idDeclaration,this.realParametersTypes)){
-					//obtenemos los datos del procedimiento
-					ProcedureData pd = proceduresData.get(idDeclaration);
-
+				//obtenemos los datos del procedimiento
+				ProcedureData pd = is.getProcedureData();
+				if(areParametersCallCorrect(idDeclaration,this.realParametersTypes,pd)){
 					//guardamos un terceto asociado a la llamada del procedimiento
 					tm.createTriplet("PC",new Operand(Operand.ST_POINTER,idDeclaration));
 
@@ -307,24 +290,24 @@ public class IntermediateCode {
 			//no hay nada declarado con ese identificador al alcance
 			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"no existe un procedimiento " + id + " declarado al alcance");
 	}
-	public boolean areParametersCallCorrect(String procFullId, ArrayList<String> realParametersType){
-		ProcedureData pd = proceduresData.get(procFullId);
+	
+	public boolean areParametersCallCorrect(String procFullId, ArrayList<String> realParametersType, ProcedureData pd){
 		int realParametersAmount = realParametersType.size();
 		if(pd.getParametersAmount() != realParametersAmount){
-			System.out.println("HIJO DE PUTA ESTA CANTIDAD DE PARAMETROS NO ES LA CORRECTA");
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la cantidad de parametros en el llamado al procedimiento " + procFullId + " es incorrecta.");
 			return false;
 		}
 		else {
 			if (realParametersAmount-- > 0  && !realParametersType.get(0).equals(pd.getFirstFormalParameterType())) {
-				System.out.println("ERROR EL PRIMER PARAMETRO DEBE SER UN " + pd.getFirstFormalParameterType() + " y es " + realParametersType.get(0));
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"en el primer parametro del llamado al procedimiento "+ procFullId +" se esperaba un "+ pd.getFirstFormalParameterType() + " y se encontró " + realParametersType.get(0) + ".");
 				return false;
 			}
 			if(realParametersAmount-- > 0 && !realParametersType.get(1).equals(pd.getSecondFormalParameterType())){
-				System.out.println("ERROR EL SEGUNDO PARAMETRO DEBE SER UN " + pd.getSecondFormalParameterType() + " y es " + realParametersType.get(1));
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"en el segundo parametro del llamado al procedimiento "+ procFullId +" se esperaba un "+ pd.getSecondFormalParameterType() + " y se encontró " + realParametersType.get(1) + ".");
 				return false;
 			}
 			if(realParametersAmount > 0 && !realParametersType.get(2).equals(pd.getThirdFormalParameterType())){
-				System.out.println("ERROR EL TERCER PARAMETRO DEBE SER UN " + pd.getThirdFormalParameterType() + " y es " + realParametersType.get(2));
+				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"en el tercer parametro del llamado al procedimiento "+ procFullId +" se esperaba un "+ pd.getThirdFormalParameterType() + " y se encontró " + realParametersType.get(2) + ".");
 				return false;
 			}
 		}

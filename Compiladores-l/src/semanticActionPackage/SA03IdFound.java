@@ -22,7 +22,6 @@ public class SA03IdFound extends SemanticAction {
 			lexeme = lexeme.substring(0,20);
 		}
 
-		System.out.println("Se encontró el lexema: " + lexeme);
 		Symbol s = new Symbol(lexeme,Symbol._IDENTIFIER_LEXEME);
 		lexicalAnalyzer.setTokenId(Constants.ID);
 		lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,s);

@@ -111,7 +111,7 @@ public class TripletsManager {
 
     @Override
     public String toString() {
-        String str = "\n ******* TRIPLETES ********** \n";
+        String str = " \n\n ******* TRIPLETES ********** \n";
         for(Triplet t : triplets) {
             str += t.toString() + "\n";
         }

@@ -583,7 +583,7 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 859 "specification.y"
+//#line 855 "specification.y"
 
 public LexicalAnalyzer la;
 public IntermediateCode ic;
@@ -607,6 +607,8 @@ public Parser(String path) throws FileNotFoundException {
 	
 	scope = ":main";
 	
+	System.out.println(" ****** Secuencía de generación de código intermedio ******\n");
+	
 }
 
 public void parse(){
@@ -627,13 +629,13 @@ int yylex(){
 }
 
 public void showMessage(String message) {
-	System.out.println(message);
+	System.out.println("[Linea " + la.getCurrentLine() + "] " + message);
 }
 
 public void showErrorMessage(String message) {
 	System.out.println(message);
 }
-//#line 565 "Parser.java"
+//#line 567 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -796,7 +798,7 @@ break;
 case 2:
 //#line 29 "specification.y"
 {
-	showMessage( "[Linea " + la.getCurrentLine() + "] Programa completo.");
+	showMessage( "Programa completo.");
 }
 break;
 case 3:
@@ -808,13 +810,13 @@ break;
 case 4:
 //#line 41 "specification.y"
 {
-	/*showMessage( "[Linea " + la.getCurrentLine() + "] Sentencia.");*/
+	/*showMessage( "Sentencia.");*/
 }
 break;
 case 5:
 //#line 46 "specification.y"
 {
-	/*showMessage( "[Linea " + la.getCurrentLine() + "] Sentencia.");*/
+	/*showMessage( "Sentencia.");*/
 }
 break;
 case 6:
@@ -826,13 +828,13 @@ break;
 case 7:
 //#line 56 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mal construida.");
+	showMessage("ERROR sintactico: ';' sentencia mal construida.");
 }
 break;
 case 10:
 //#line 68 "specification.y"
 {
-	 showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
+	 showMessage("Declaracion de variable/s.");
 	 Symbol symbol;
 	 for (String v : variableDeclarationIdentifiers){
 		/* Agregar a la tabla de simbolos la varialbe con el scope, salvo que ya este declarada entonces tira error*/
@@ -895,7 +897,7 @@ break;
 case 20:
 //#line 132 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+	showMessage("Procedimiento declarado.");
 
 	ProcedureData pd = ic.getProcedureDataFromStack();
 	String fullProcId = pd.getFullProcId();
@@ -909,7 +911,6 @@ case 20:
 		ic.procedureDeclarationControl(procId, scope);
 
 		/*se guarda para que cuando se invoque se puedan controlar los parametros*/
-		ic.saveProcedureData(pd);
 		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
 	}
 	else{
@@ -921,9 +922,9 @@ case 20:
 }
 break;
 case 21:
-//#line 159 "specification.y"
+//#line 158 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+	showMessage("Procedimiento declarado.");
 
 	ProcedureData pd = ic.getProcedureDataFromStack();
 	String fullProcId = pd.getFullProcId();
@@ -935,9 +936,6 @@ case 21:
 
 		/*se actualiza la pila de los procedimientos y si este no se declaro se declara*/
 		ic.procedureDeclarationControl(procId, scope);
-
-		/*se guarda para que cuando se invoque se puedan controlar los parametros*/
-		ic.saveProcedureData(pd);
 
 		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
 	}
@@ -951,25 +949,25 @@ case 21:
 }
 break;
 case 22:
-//#line 188 "specification.y"
+//#line 184 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");
 }
 break;
 case 23:
-//#line 193 "specification.y"
+//#line 189 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el cuerpo del procedimiento");
 }
 break;
 case 24:
-//#line 198 "specification.y"
+//#line 194 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se definio mal la lista de parametros");
 }
 break;
 case 25:
-//#line 205 "specification.y"
+//#line 201 "specification.y"
 {
 	/*
 	si el procedimiento se definio en este scope tira error y preserva información
@@ -984,7 +982,7 @@ case 25:
 }
 break;
 case 26:
-//#line 219 "specification.y"
+//#line 215 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,
 		"falta definir el identificador del procedimiento");
@@ -994,7 +992,7 @@ case 26:
 }
 break;
 case 27:
-//#line 230 "specification.y"
+//#line 226 "specification.y"
 {
 	ProcedureData pd = ic.getProcedureDataFromStack();
 	if(!pd.getFullProcId().contains("ERROR")){
@@ -1011,45 +1009,45 @@ case 27:
 }
 break;
 case 28:
-//#line 246 "specification.y"
+//#line 242 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra NA");
 }
 break;
 case 29:
-//#line 251 "specification.y"
+//#line 247 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del NA");
 }
 break;
 case 30:
-//#line 256 "specification.y"
+//#line 252 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta definir el valor de NA");
 }
 break;
 case 31:
-//#line 261 "specification.y"
+//#line 257 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la palabra SHADOWING");
 }
 break;
 case 32:
-//#line 266 "specification.y"
+//#line 262 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el '=' del SHADOWING");
 }
 break;
 case 34:
-//#line 275 "specification.y"
+//#line 271 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"cuerpo del procedimiento mal definido");
 }
 break;
 case 36:
-//#line 284 "specification.y"
+//#line 280 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");
+	showMessage("Lista de parametros detectada.");
 
 	/*obtengo los datos del procedimiento que se esta declarando*/
 	ProcedureData pd = ic.getProcedureDataFromStack();
@@ -1061,9 +1059,9 @@ case 36:
 }
 break;
 case 37:
-//#line 297 "specification.y"
+//#line 293 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");
+	showMessage("Lista de parametros detectada.");
 	/*obtengo los datos del procedimiento que se esta declarando*/
 	ProcedureData pd = ic.getProcedureDataFromStack();
 
@@ -1075,9 +1073,9 @@ case 37:
 }
 break;
 case 38:
-//#line 310 "specification.y"
+//#line 306 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");
+	showMessage("Lista de parametros detectada.");
 	/*obtengo los datos del procedimiento que se esta declarando*/
 	ProcedureData pd = ic.getProcedureDataFromStack();
 
@@ -1090,13 +1088,13 @@ case 38:
 }
 break;
 case 39:
-//#line 324 "specification.y"
+//#line 320 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir un maximo de 3 parametros");
 }
 break;
 case 40:
-//#line 331 "specification.y"
+//#line 327 "specification.y"
 {
 	/*borro de la tabla de símbolos el identificador del parametro*/
 	st.removeSymbol(val_peek(0).sval);
@@ -1111,55 +1109,55 @@ case 40:
 }
 break;
 case 41:
-//#line 345 "specification.y"
+//#line 341 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta identificador en declaracion de parametro");
 }
 break;
 case 42:
-//#line 350 "specification.y"
+//#line 346 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta el tipo en declaracion de parametro");
 }
 break;
 case 43:
-//#line 357 "specification.y"
+//#line 353 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	/*chequea que el parametro haga referencia a una variable*/
 	/*si es correcto seguarda en un arreglo para más adelante controlar si el tipo se corresponde*/
 	ic.realParameterControl(val_peek(0).sval,scope);
 }
 break;
 case 44:
-//#line 365 "specification.y"
+//#line 361 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	ic.realParameterControl(val_peek(2).sval,scope);
 	ic.realParameterControl(val_peek(0).sval,scope);
 }
 break;
 case 45:
-//#line 372 "specification.y"
+//#line 368 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	ic.realParameterControl(val_peek(4).sval,scope);
 	ic.realParameterControl(val_peek(2).sval,scope);
 	ic.realParameterControl(val_peek(0).sval,scope);
 }
 break;
 case 46:
-//#line 380 "specification.y"
+//#line 376 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir una maximo de 3 parametros");
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	ic.realParameterControl(val_peek(6).sval,scope);
 	ic.realParameterControl(val_peek(4).sval,scope);
 	ic.realParameterControl(val_peek(2).sval,scope);
 }
 break;
 case 47:
-//#line 391 "specification.y"
+//#line 387 "specification.y"
 {
 	ic.procedureCall(val_peek(3).sval,scope);
 
@@ -1168,7 +1166,7 @@ case 47:
 }
 break;
 case 48:
-//#line 399 "specification.y"
+//#line 395 "specification.y"
 {
 	ic.procedureCall(val_peek(2).sval,scope);
 
@@ -1177,7 +1175,7 @@ case 48:
 }
 break;
 case 49:
-//#line 409 "specification.y"
+//#line 405 "specification.y"
 {
 	/*
 	además de controlar que se use una variable que se claro, se chequea si
@@ -1187,133 +1185,133 @@ case 49:
 }
 break;
 case 50:
-//#line 418 "specification.y"
+//#line 414 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una expresion del lado derecho");
 }
 break;
 case 51:
-//#line 423 "specification.y"
+//#line 419 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, se espera una identificador del lado izquierdo");
 }
 break;
 case 52:
-//#line 428 "specification.y"
+//#line 424 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"asignacion erronea, ¿quisiste decir '=' ?");
 }
 break;
 case 53:
-//#line 433 "specification.y"
+//#line 429 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Sentencia IF.");
+	showMessage("Sentencia IF.");
 }
 break;
 case 54:
-//#line 438 "specification.y"
+//#line 434 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Sentencia LOOP.");
+	showMessage("Sentencia LOOP.");
 }
 break;
 case 55:
-//#line 443 "specification.y"
+//#line 439 "specification.y"
 {
-showMessage("[Linea " + la.getCurrentLine() + "] Invocacion PROC.");
+showMessage("Invocacion PROC.");
 }
 break;
 case 56:
-//#line 448 "specification.y"
+//#line 444 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Sentencia OUT.");
+	showMessage("Sentencia OUT.");
 }
 break;
 case 57:
-//#line 455 "specification.y"
+//#line 451 "specification.y"
 {yyval.obj = val_peek(0).sval;}
 break;
 case 58:
-//#line 458 "specification.y"
+//#line 454 "specification.y"
 {
 	yyval.obj = val_peek(0).sval;
 }
 break;
 case 59:
-//#line 463 "specification.y"
+//#line 459 "specification.y"
 {
 	yyval.obj = val_peek(0).sval;
 }
 break;
 case 60:
-//#line 468 "specification.y"
+//#line 464 "specification.y"
 {
 	yyval.obj = val_peek(0).sval;
 }
 break;
 case 61:
-//#line 473 "specification.y"
+//#line 469 "specification.y"
 {
 	yyval.obj = "<";
 }
 break;
 case 62:
-//#line 478 "specification.y"
+//#line 474 "specification.y"
 {
 	yyval.obj = ">";
 }
 break;
 case 63:
-//#line 483 "specification.y"
+//#line 479 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token < duplicado");
 }
 break;
 case 64:
-//#line 488 "specification.y"
+//#line 484 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"token > duplicado");
 }
 break;
 case 65:
-//#line 493 "specification.y"
+//#line 489 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '<='?");
 }
 break;
 case 66:
-//#line 498 "specification.y"
+//#line 494 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '>='?");
 }
 break;
 case 67:
-//#line 503 "specification.y"
+//#line 499 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");
 }
 break;
 case 68:
-//#line 508 "specification.y"
+//#line 504 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparador erroneo. ¿Quisiste decir '!='?");
 }
 break;
 case 69:
-//#line 515 "specification.y"
+//#line 511 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
+	showMessage("Condicion.");
 	Triplet t = tm.createTriplet((String) val_peek(1).obj, (Operand) val_peek(2).obj, (Operand) val_peek(0).obj);
 	yyval.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
 }
 break;
 case 70:
-//#line 521 "specification.y"
+//#line 517 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"comparacion invalida. ¿Quisiste decir '=='?");
 }
 break;
 case 74:
-//#line 536 "specification.y"
+//#line 532 "specification.y"
 {
 	tm.updateOperandFromStack(1,1);
 	tm.popFromStack();
@@ -1321,7 +1319,7 @@ case 74:
 }
 break;
 case 75:
-//#line 543 "specification.y"
+//#line 539 "specification.y"
 {
 	tm.popFromStack(); /*desapilo el último terceto xq era el del BI*/
 	tm.removeLastTriplet(); /*lo saco de la lista de tercetos*/
@@ -1331,37 +1329,37 @@ case 75:
 }
 break;
 case 76:
-//#line 552 "specification.y"
+//#line 548 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF");
 }
 break;
 case 77:
-//#line 557 "specification.y"
+//#line 553 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta palabra reservada END_INF al final de la sentencia IF");
 }
 break;
 case 78:
-//#line 562 "specification.y"
+//#line 558 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF");
 }
 break;
 case 79:
-//#line 567 "specification.y"
+//#line 563 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula ELSE_IF");
 }
 break;
 case 80:
-//#line 572 "specification.y"
+//#line 568 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"se esperaba un bloque de sentencias dentro de la clausula IF");
 }
 break;
 case 81:
-//#line 579 "specification.y"
+//#line 575 "specification.y"
 {
 	Triplet t = tm.createTriplet("BF",(Operand) val_peek(1).obj,new Operand(Operand.TO_BE_DEFINED));
 	tm.pushToStack(Integer.valueOf(t.getId()));
@@ -1369,7 +1367,7 @@ case 81:
 }
 break;
 case 82:
-//#line 586 "specification.y"
+//#line 582 "specification.y"
 {
 	Triplet t = tm.createEmptyTriplet();
 	tm.pushToStack(Integer.valueOf(t.getId()));
@@ -1378,7 +1376,7 @@ case 82:
 }
 break;
 case 83:
-//#line 594 "specification.y"
+//#line 590 "specification.y"
 {
 	Triplet t = tm.createEmptyTriplet();
 	tm.pushToStack(Integer.valueOf(t.getId()));
@@ -1388,7 +1386,7 @@ case 83:
 }
 break;
 case 84:
-//#line 603 "specification.y"
+//#line 599 "specification.y"
 {
 	Triplet t = tm.createEmptyTriplet();
 	tm.pushToStack(Integer.valueOf(t.getId()));
@@ -1397,7 +1395,7 @@ case 84:
 }
 break;
 case 85:
-//#line 613 "specification.y"
+//#line 609 "specification.y"
 {
 	/* actualizo el triplete del salto del if al cuerpo de then*/
 	tm.updateOperandFromStack(2,2);
@@ -1408,66 +1406,66 @@ case 85:
 }
 break;
 case 88:
-//#line 631 "specification.y"
+//#line 627 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"falta la clausula UNTIL en la sentencia LOOP");
 }
 break;
 case 89:
-//#line 636 "specification.y"
+//#line 632 "specification.y"
 {
 ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir un bloque de sentencias");
 }
 break;
 case 90:
-//#line 643 "specification.y"
+//#line 639 "specification.y"
 {
 	Triplet t = tm.createBTriplet(val_peek(1).obj,"BT"); /*Desapilar la direccion de salto del comienzo del loop.*/
 	/*$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition //Comentado porque no sabemos para que lo queremos.*/
 }
 break;
 case 91:
-//#line 649 "specification.y"
+//#line 645 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la clausula UNTIL debe incluir una condicion entre parentesis");
 }
 break;
 case 92:
-//#line 654 "specification.y"
+//#line 650 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia LOOP debe incluir una condicion encerrada por '(' ')'");
 }
 break;
 case 93:
-//#line 661 "specification.y"
+//#line 657 "specification.y"
 {
 	/*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/
 	tm.pushToStack(tm.getCurrentTripletIndex() + 1);
 }
 break;
 case 94:
-//#line 673 "specification.y"
+//#line 669 "specification.y"
 {
 	Triplet t = tm.createTriplet("OUT",new Operand(Operand.ST_POINTER,(String) val_peek(1).sval));
 }
 break;
 case 95:
-//#line 678 "specification.y"
+//#line 674 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT solo acepta cadenas de caracteres");
 }
 break;
 case 96:
-//#line 683 "specification.y"
+//#line 679 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");
 }
 break;
 case 97:
-//#line 693 "specification.y"
+//#line 689 "specification.y"
 {
 
-	showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
+	showMessage("Suma.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -1477,9 +1475,9 @@ case 97:
 }
 break;
 case 98:
-//#line 705 "specification.y"
+//#line 701 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
+	showMessage("Resta.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -1489,46 +1487,46 @@ case 98:
 }
 break;
 case 99:
-//#line 716 "specification.y"
+//#line 712 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
+	showMessage("Termino.");
 	yyval.obj = val_peek(0).obj;
 }
 break;
 case 100:
-//#line 722 "specification.y"
+//#line 718 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la suma debe contener un termino valido");
 }
 break;
 case 101:
-//#line 727 "specification.y"
+//#line 723 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la resta debe contener un termino valido");
 }
 break;
 case 102:
-//#line 732 "specification.y"
+//#line 728 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la suma debe contener una expresion valida");
 }
 break;
 case 103:
-//#line 737 "specification.y"
+//#line 733 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la resta debe contener una expresion valida");
 }
 break;
 case 104:
-//#line 742 "specification.y"
+//#line 738 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '+' sobrante");
 }
 break;
 case 105:
-//#line 749 "specification.y"
+//#line 745 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
+	showMessage("Multiplicacion.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -1538,9 +1536,9 @@ case 105:
 }
 break;
 case 106:
-//#line 760 "specification.y"
+//#line 756 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Division.");
+	showMessage("Division.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -1550,50 +1548,50 @@ case 106:
 }
 break;
 case 107:
-//#line 771 "specification.y"
+//#line 767 "specification.y"
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
+	showMessage("Factor.");
 	yyval.obj = val_peek(0).obj;
 }
 break;
 case 108:
-//#line 777 "specification.y"
+//#line 773 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la multiplicacion debe llevar una constante o un identificador");
 }
 break;
 case 109:
-//#line 782 "specification.y"
+//#line 778 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la division debe llevar una constante o un identificador");
 }
 break;
 case 110:
-//#line 787 "specification.y"
+//#line 783 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la multiplicacion debe llevar una termino o un factor");
 }
 break;
 case 111:
-//#line 792 "specification.y"
+//#line 788 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la division debe llevar un termino o un factor");
 }
 break;
 case 112:
-//#line 797 "specification.y"
+//#line 793 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '*' sobrante");
 }
 break;
 case 113:
-//#line 802 "specification.y"
+//#line 798 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '/' sobrante");
 }
 break;
 case 114:
-//#line 809 "specification.y"
+//#line 805 "specification.y"
 {
 	String fullId = val_peek(0).sval + scope;
 	st.removeSymbol(val_peek(0).sval);
@@ -1609,7 +1607,7 @@ case 114:
 }
 break;
 case 115:
-//#line 824 "specification.y"
+//#line 820 "specification.y"
 {
 	
 	Symbol symbol = st.getSymbol(val_peek(0).sval);
@@ -1618,7 +1616,7 @@ case 115:
 }
 break;
 case 116:
-//#line 832 "specification.y"
+//#line 828 "specification.y"
 {
 	 /* Manejo la entrada positiva de esta constante*/
 	 Symbol positivo = st.getSymbol(val_peek(0).sval);
@@ -1642,7 +1640,7 @@ case 116:
 	 }
 }
 break;
-//#line 1569 "Parser.java"
+//#line 1567 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

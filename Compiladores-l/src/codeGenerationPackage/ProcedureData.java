@@ -3,11 +3,11 @@ package codeGenerationPackage;
 
 public class ProcedureData {
     private boolean shadowingActivated;
-    private int NA;
+    private int NA = -1;
     private String firstFormalParameterType;
     private String secondFormalParameterType;
     private String thirdFormalParameterType;
-    private int parametersAmount;
+    private int parametersAmount = 0;
     private String fullProcId;
 
     public ProcedureData(String fullProcId){
@@ -63,6 +63,25 @@ public class ProcedureData {
     }
     public boolean isShadowingActivated() {
         return shadowingActivated;
+    }
+    
+    @Override
+    public String toString() {
+    	String shadowing = " Shadowing: " + String.valueOf(this.shadowingActivated);        
+        String NA = " | NA: " + this.NA;
+        
+        String parameters = " | Parametros: ";
+        if(this.parametersAmount == 0)
+        	parameters = " | Sin parametros";
+        if(this.parametersAmount >= 1)
+        	parameters += this.firstFormalParameterType;
+        if(this.parametersAmount >= 2)
+        	parameters += ", " + this.secondFormalParameterType;
+        if(this.parametersAmount >= 3)
+        	parameters += ", " + this.thirdFormalParameterType;
+        
+        
+        return shadowing + NA + parameters;
     }
 
 }

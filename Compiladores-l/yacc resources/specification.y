@@ -27,7 +27,7 @@ program :  /* EMPTY */
 		
 	|  sentences
 {
-	showMessage( "[Linea " + la.getCurrentLine() + "] Programa completo.");
+	showMessage( "Programa completo.");
 }
 		
 	|  error
@@ -39,12 +39,12 @@ program :  /* EMPTY */
 
 sentences  :  sentence ';'
 {
-	//showMessage( "[Linea " + la.getCurrentLine() + "] Sentencia.");
+	//showMessage( "Sentencia.");
 }
            
 	   |  sentences sentence ';'
 {
-	//showMessage( "[Linea " + la.getCurrentLine() + "] Sentencia.");
+	//showMessage( "Sentencia.");
 }
 		   
 	   |  sentence error
@@ -54,7 +54,7 @@ sentences  :  sentence ';'
 
 	   |  error	';'
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] ERROR sintactico: ';' sentencia mal construida.");
+	showMessage("ERROR sintactico: ';' sentencia mal construida.");
 }
 	   ;
 
@@ -66,7 +66,7 @@ sentence  :  declaration
 
 declaration  : type  variable_list
  {
-	 showMessage("[Linea " + la.getCurrentLine() + "] Declaracion de variable/s.");
+	 showMessage("Declaracion de variable/s.");
 	 Symbol symbol;
 	 for (String v : variableDeclarationIdentifiers){
 		// Agregar a la tabla de simbolos la varialbe con el scope, salvo que ya este declarada entonces tira error
@@ -130,7 +130,7 @@ true_false : TRUE
 
 procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition proc_body
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+	showMessage("Procedimiento declarado.");
 
 	ProcedureData pd = ic.getProcedureDataFromStack();
 	String fullProcId = pd.getFullProcId();
@@ -144,7 +144,6 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 		ic.procedureDeclarationControl(procId, scope);
 
 		//se guarda para que cuando se invoque se puedan controlar los parametros
-		ic.saveProcedureData(pd);
 		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
 	}
 	else{
@@ -157,7 +156,7 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 
 	   |  procedure_header  '('   ')'      na_shad_definition proc_body
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Procedimiento declarado.");
+	showMessage("Procedimiento declarado.");
 
 	ProcedureData pd = ic.getProcedureDataFromStack();
 	String fullProcId = pd.getFullProcId();
@@ -169,9 +168,6 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 
 		//se actualiza la pila de los procedimientos y si este no se declaro se declara
 		ic.procedureDeclarationControl(procId, scope);
-
-		//se guarda para que cuando se invoque se puedan controlar los parametros
-		ic.saveProcedureData(pd);
 
 		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
 	}
@@ -282,7 +278,7 @@ proc_body : '{' sentences '}'
 
 parameter_list  :  parameter
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");
+	showMessage("Lista de parametros detectada.");
 
 	//obtengo los datos del procedimiento que se esta declarando
 	ProcedureData pd = ic.getProcedureDataFromStack();
@@ -295,7 +291,7 @@ parameter_list  :  parameter
 				
 		|  parameter  ','  parameter
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");
+	showMessage("Lista de parametros detectada.");
 	//obtengo los datos del procedimiento que se esta declarando
 	ProcedureData pd = ic.getProcedureDataFromStack();
 
@@ -308,7 +304,7 @@ parameter_list  :  parameter
 				
 		|  parameter  ','  parameter  ','  parameter
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de parametros detectada.");
+	showMessage("Lista de parametros detectada.");
 	//obtengo los datos del procedimiento que se esta declarando
 	ProcedureData pd = ic.getProcedureDataFromStack();
 
@@ -355,7 +351,7 @@ parameter  :  type  ID
 
 id_list  :  ID		
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	//chequea que el parametro haga referencia a una variable
 	//si es correcto seguarda en un arreglo para más adelante controlar si el tipo se corresponde
 	ic.realParameterControl($1.sval,scope);
@@ -363,14 +359,14 @@ id_list  :  ID
 			
 	 |  ID  ','  ID
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	ic.realParameterControl($1.sval,scope);
 	ic.realParameterControl($3.sval,scope);
 }
 		 
 	 |  ID  ','  ID  ','  ID
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	ic.realParameterControl($1.sval,scope);
 	ic.realParameterControl($3.sval,scope);
 	ic.realParameterControl($5.sval,scope);
@@ -379,7 +375,7 @@ id_list  :  ID
 	 |  ID  ','  ID  ','  ID  ',' id_list
  {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"un procedimiento puede recibir una maximo de 3 parametros");
-	showMessage("[Linea " + la.getCurrentLine() + "] Lista de identificadores detectada.");
+	showMessage("Lista de identificadores detectada.");
 	ic.realParameterControl($1.sval,scope);
 	ic.realParameterControl($3.sval,scope);
 	ic.realParameterControl($5.sval,scope);
@@ -431,22 +427,22 @@ executable  :  ID  '='  expression
 			
 	    |  if_clause
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Sentencia IF.");
+	showMessage("Sentencia IF.");
 }
 			
 	    |  loop_clause
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Sentencia LOOP.");
+	showMessage("Sentencia LOOP.");
 }
 			
 	    |  procedure_call
 {
-showMessage("[Linea " + la.getCurrentLine() + "] Invocacion PROC.");
+showMessage("Invocacion PROC.");
 }
 			
 	    |  out_clause
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Sentencia OUT.");
+	showMessage("Sentencia OUT.");
 }
 	    ;
 
@@ -513,7 +509,7 @@ comparator  :  EQUAL
 
 condition  :  expression  comparator  expression
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Condicion.");
+	showMessage("Condicion.");
 	Triplet t = tm.createTriplet((String) $2.obj, (Operand) $1.obj, (Operand) $3.obj);
 	$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
 }
@@ -692,7 +688,7 @@ out_clause  :  OUT  '('  CSTRING  ')'
 expression  :  expression  '+'  term
 {
 
-	showMessage("[Linea " + la.getCurrentLine() + "] Suma.");
+	showMessage("Suma.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -703,7 +699,7 @@ expression  :  expression  '+'  term
       		
 	    |  expression  '-'  term
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Resta.");
+	showMessage("Resta.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -714,7 +710,7 @@ expression  :  expression  '+'  term
 	      	
 	    |  term
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Termino.");
+	showMessage("Termino.");
 	$$.obj = $1.obj;
 }
 			
@@ -747,7 +743,7 @@ expression  :  expression  '+'  term
 
 term  :  term  '*'  factor
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Multiplicacion.");
+	showMessage("Multiplicacion.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -758,7 +754,7 @@ term  :  term  '*'  factor
 		
       |  term  '/'  factor
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Division.");
+	showMessage("Division.");
 	/*
 	controla que los operandos sean del mismo tipo en caso de no serlo muestra un mensaje de error
 	en cualquier caso crea un triplet y retorna su id para que se vaya pasando hacía arriba
@@ -769,7 +765,7 @@ term  :  term  '*'  factor
 	  
       |  factor
 {
-	showMessage("[Linea " + la.getCurrentLine() + "] Factor.");
+	showMessage("Factor.");
 	$$.obj = $1.obj;
 }
 	  			
@@ -879,6 +875,8 @@ public Parser(String path) throws FileNotFoundException {
 	
 	scope = ":main";
 	
+	System.out.println(" ****** Secuencía de generación de código intermedio ******\n");
+	
 }
 
 public void parse(){
@@ -899,7 +897,7 @@ int yylex(){
 }
 
 public void showMessage(String message) {
-	System.out.println(message);
+	System.out.println("[Linea " + la.getCurrentLine() + "] " + message);
 }
 
 public void showErrorMessage(String message) {

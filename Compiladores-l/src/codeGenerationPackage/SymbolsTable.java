@@ -62,9 +62,12 @@ public class SymbolsTable {
 	}
 	
 	public void print(){ 
-		System.out.println("\n\n ****** TABLA DE SIMBOLOS ******* ");
+		System.out.println("\n\n ****** TABLA DE SIMBOLOS ******* \n");
+        System.out.format("%40s | %20s | %12s | %15s | %10s | %10s | %40s","Lexema","Tipo del lexema","Referencias","Uso","Tipo dato","Semantica", "Info procedimiento");
+        System.out.println();
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 		for( HashMap.Entry<String, Symbol> entry : this.symbolsTable.entrySet() ){
-		    System.out.println( entry.getKey() + " => " + entry.getValue() );
+		    entry.getValue().printRow(entry.getKey()); 
 		}
 	}
 }

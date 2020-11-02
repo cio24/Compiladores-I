@@ -16,7 +16,7 @@ var = var + 5.0;
 
 DOUBLE var;
 
-PROC procedure () NA = 2_ul SHADOWING = FALSE {
+PROC procedure (DOUBLE d, ULONGINT u) NA = 2_ul SHADOWING = FALSE {
 	DOUBLE var;
 	PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
 		var = 3.0;

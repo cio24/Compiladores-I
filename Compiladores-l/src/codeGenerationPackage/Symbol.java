@@ -29,8 +29,7 @@ public class Symbol {
     private String dataType;
     private String use;
     private String parameterSemantic;
-    private boolean shadowing;
-    private int NA;
+    private ProcedureData procedureData;
 
     //MILLONES DE CONSTRUCTORES LAY AHEAD
 
@@ -53,10 +52,9 @@ public class Symbol {
         this.dataType = dataType;
         this.use = use;
         this.parameterSemantic = parameterSemantic;
-        this.NA = -1;
     }
 
-    //MILLONES DE SETTERS & GETTERS
+    // MILLONES DE SETTERS & GETTERS UNTIL THE END OF TIMES
     public String getLexeme(){
         return this.lexeme;
     }
@@ -87,13 +85,17 @@ public class Symbol {
     public int subtractReference() {
         return --this.referenceCount;
     }
-    public void setShadowing(boolean shadowing) {
-        this.shadowing = shadowing;
-    }
-    public void setNA(int NA){
-        this.NA = NA;
-    }
 
+    public ProcedureData getProcedureData() {
+    	return this.procedureData;
+    }
+    
+    public void setProcedureData(ProcedureData pd) {
+    	this.procedureData = pd;
+    }
+    
+    // OVERRIDE PRINT PARA TABLA DE SIMBOLOS
+    
     @Override
     public String toString() {
         String dataType;
@@ -108,29 +110,31 @@ public class Symbol {
         else
             use = " | Use: " + this.use;
 
-
-        String shadowing;
-        if(this.use.equals(_PROCEDURE_USE))
-            if(this.shadowing)
-                shadowing = " | Shadowing: true";
-            else
-                shadowing = " | Shadowing: false";
-        else
-            shadowing = "";
-
+        String pd = "";
+        if(this.procedureData != null)
+        	pd = this.procedureData.toString();
+        
         String semantic;
         if(this.parameterSemantic.equals("-"))
             semantic = "";
         else
             semantic = " | Semantic: " + this.parameterSemantic;
 
-        String NA;
-        if(this.NA == -1)
-            NA = "";
-        else
-            NA = " | NA: " + this.NA;
-
-        return "\n\tLexeme: \"" + this.lexemeType + "\"" + " | References: " + this.referenceCount
-                + use + dataType + semantic + shadowing + NA;
+       
+        return " Lexeme: \"" + this.lexemeType + "\"" + " | References: " + this.referenceCount
+                + use + dataType + semantic + pd + "\n";
+    }
+    
+    public void printRow(String lexeme)
+    {        
+        String pd = "";
+        if(this.procedureData != null)
+        	pd = this.procedureData.toString();
+            
+        System.out.format("%40s | %20s | %12s | %15s | %10s | %10s | %40s",
+        		 lexeme, this.lexemeType, this.referenceCount, this.use,  this.dataType, this.parameterSemantic, pd);
+        System.out.println();
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+    	
     }
 }
