@@ -2,9 +2,9 @@ package semanticActionPackage;
 
 import java.math.BigDecimal;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import symbolPackage.Symbol;
-import usefulClassesPackage.Constants;
-import usefulClassesPackage.ErrorReceiver;
+import codeGenerationPackage.Symbol;
+import utilitiesPackage.Constants;
+import utilitiesPackage.ErrorReceiver;
 
 public class SA07DoubleConstantFound extends SemanticAction {
 

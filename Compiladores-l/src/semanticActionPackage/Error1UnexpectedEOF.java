@@ -1,6 +1,6 @@
 package semanticActionPackage;
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import usefulClassesPackage.ErrorReceiver;
+import utilitiesPackage.ErrorReceiver;
 
 public class Error1UnexpectedEOF extends SemanticAction {
 

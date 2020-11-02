@@ -1,7 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import usefulClassesPackage.ErrorReceiver;
+import utilitiesPackage.ErrorReceiver;
 
 public class Warning01UnexpectedCharInComment extends SemanticAction{
 	

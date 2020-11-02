@@ -1,0 +1,32 @@
+/%ULONGINT variable_1,variable_2,variable_3,variable_4;
+variable_1 = 3_ul;
+DOUBLE var;
+DOUBLE var, variable_2;
+var = 3.0;
+
+PROC procedure () NA = 0_ul SHADOWING = TRUE {
+	DOUBLE var;
+	var = 3.0;
+};
+DOUBLE var;
+var = 5.0 + var;
+DOUBLE var;
+var = var + 5.0;
+%/
+
+DOUBLE var;
+
+PROC procedure () NA = 2_ul SHADOWING = FALSE {
+	DOUBLE var;
+	PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
+		var = 3.0;
+				
+		PROC procedure3 () NA = 0_ul SHADOWING = FALSE {
+		};
+	};
+};
+/%
+PROC procedure () NA = 5_ul SHADOWING = FALSE {
+};%/
+
+procedure();

@@ -2,7 +2,7 @@ package lexicalAnalyzerPackage;
 
 import java.util.Vector;
 
-import usefulClassesPackage.Constants;;
+import utilitiesPackage.Constants;;
 
 public class KeywordsTable {
 	private Vector<String> tokensKeyWords;

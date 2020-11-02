@@ -1,4 +1,4 @@
-package symbolPackage;
+package codeGenerationPackage;
 
 public class Symbol {
 

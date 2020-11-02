@@ -1,17 +1,14 @@
 %{
 package lexicalAnalyzerPackage;
 import codeGenerationPackage.*;
-import symbolPackage.*;
-import usefulClassesPackage.Constants;
+import utilitiesPackage.*;
 import java.io.FileNotFoundException;
-import java.util.concurrent.atomic.AtomicReference;
 import java.lang.Math;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import usefulClassesPackage.ErrorReceiver;
 %}
 
 

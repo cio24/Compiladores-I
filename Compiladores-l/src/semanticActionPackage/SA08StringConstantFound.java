@@ -1,8 +1,8 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import symbolPackage.Symbol;
-import usefulClassesPackage.Constants;
+import codeGenerationPackage.Symbol;
+import utilitiesPackage.Constants;
 
 public class SA08StringConstantFound extends SemanticAction {
 

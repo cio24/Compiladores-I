@@ -1,0 +1,15 @@
+ULONGINT carlos;
+
+IF(5_ul < carlos){
+	DOUBLE int;
+	carlos = int;
+	IF(6_ul < carlos2){
+		carlos = int;
+	}
+	ELSE {
+		carlos = int;
+	}END_IF;		
+}
+ELSE {
+	carlos = int;
+}END_IF;

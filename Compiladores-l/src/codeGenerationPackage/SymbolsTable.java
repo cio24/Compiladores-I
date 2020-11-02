@@ -1,4 +1,4 @@
-package symbolPackage;
+package codeGenerationPackage;
 
 import java.util.HashMap;
 import java.util.Set;

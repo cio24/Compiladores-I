@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
-import symbolPackage.SymbolsTable;
-import usefulClassesPackage.Constants;
+import codeGenerationPackage.SymbolsTable;
+import utilitiesPackage.Constants;
+import utilitiesPackage.ReturnableBufferedReader;
 
 public class LexicalAnalyzer {
 

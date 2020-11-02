@@ -1,7 +1,7 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import usefulClassesPackage.Constants;
+import utilitiesPackage.Constants;
 
 
 public class SA12LessThanOrEqFound extends SemanticAction {

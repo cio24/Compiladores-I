@@ -1,9 +1,9 @@
 package semanticActionPackage;
 
 import lexicalAnalyzerPackage.LexicalAnalyzer;
-import symbolPackage.Symbol;
-import usefulClassesPackage.Constants;
-import usefulClassesPackage.ErrorReceiver;
+import codeGenerationPackage.Symbol;
+import utilitiesPackage.Constants;
+import utilitiesPackage.ErrorReceiver;
 
 public class SA03IdFound extends SemanticAction {
 
