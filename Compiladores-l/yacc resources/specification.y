@@ -822,12 +822,9 @@ factor  :  ID
 		
         |  CONSTANT
 {
-	Operand op1;
-	if($1.sval.contains("."))
-		op1 = new Operand(Operand.ST_POINTER,$1.sval,Symbol._DOUBLE_TYPE);
-	else
-		op1 = new Operand(Operand.ST_POINTER,$1.sval,Symbol._ULONGINT_TYPE);
-	$$.obj = op1;
+	
+	Symbol symbol = st.getSymbol($1.sval);
+	$$.obj = new Operand(Operand.ST_POINTER,$1.sval,symbol.getDataType());;
 
 }
 	    

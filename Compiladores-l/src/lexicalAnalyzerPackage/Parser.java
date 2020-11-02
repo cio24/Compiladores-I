@@ -583,7 +583,7 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 862 "specification.y"
+//#line 859 "specification.y"
 
 public LexicalAnalyzer la;
 public IntermediateCode ic;
@@ -1611,17 +1611,14 @@ break;
 case 115:
 //#line 824 "specification.y"
 {
-	Operand op1;
-	if(val_peek(0).sval.contains("."))
-		op1 = new Operand(Operand.ST_POINTER,val_peek(0).sval,Symbol._DOUBLE_TYPE);
-	else
-		op1 = new Operand(Operand.ST_POINTER,val_peek(0).sval,Symbol._ULONGINT_TYPE);
-	yyval.obj = op1;
+	
+	Symbol symbol = st.getSymbol(val_peek(0).sval);
+	yyval.obj = new Operand(Operand.ST_POINTER,val_peek(0).sval,symbol.getDataType());;
 
 }
 break;
 case 116:
-//#line 835 "specification.y"
+//#line 832 "specification.y"
 {
 	 /* Manejo la entrada positiva de esta constante*/
 	 Symbol positivo = st.getSymbol(val_peek(0).sval);
@@ -1645,7 +1642,7 @@ case 116:
 	 }
 }
 break;
-//#line 1572 "Parser.java"
+//#line 1569 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

@@ -2,4 +2,4 @@
 DOUBLE aux;
 ULONGINT carlos;
 DOUBLE charles;
-charles = aux * carlos;
+charles = aux * charles * 2.0 / carlos;
