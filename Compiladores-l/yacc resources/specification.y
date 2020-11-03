@@ -54,7 +54,7 @@ sentences  :  sentence ';'
 
 	   |  error	';'
 {
-	showMessage("ERROR sintactico: ';' sentencia mal construida.");
+	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO," sentencia mal construida.");
 }
 	   ;
 
@@ -158,24 +158,34 @@ procedure  :  procedure_header  '('  parameter_list  ')'  na_shad_definition pro
 {
 	showMessage("Procedimiento declarado.");
 
+	/*restauramos el scope ahora que se termino de detectar el procedimiento*/
+	scope = st.removeScope(scope);
+	
 	ProcedureData pd = ic.getProcedureDataFromStack();
 	String fullProcId = pd.getFullProcId();
-	String procId = fullProcId.substring(0,fullProcId.indexOf(":"));
-
-	//restauramos el scope ahora que se termino de detectar el procedimiento
-	scope = st.removeScope(scope);
-	if(!fullProcId.equals(procId + ":ERROR")){
-
-		//se actualiza la pila de los procedimientos y si este no se declaro se declara
-		ic.procedureDeclarationControl(procId, scope);
-
-		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
-	}
-	else{
-		//se quita del stack el procedimiento
+		
+	if(fullProcId == "ERROR") {
+		/*se quita del stack el procedimiento*/
 		ic.removeLastProcedureFromStack();
 
-		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
+		tm.createTriplet("PDE",new Operand(Operand.ST_POINTER));		
+	}else {
+	
+		String procId = fullProcId.substring(0,fullProcId.indexOf(":"));
+	
+		if(!fullProcId.equals(procId + ":ERROR")){
+	
+			/*se actualiza la pila de los procedimientos y si este no se declaro se declara*/
+			ic.procedureDeclarationControl(procId, scope);
+	
+			tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
+		}
+		else{
+			/*se quita del stack el procedimiento*/
+			ic.removeLastProcedureFromStack();
+	
+			tm.createTriplet("PDE",new Operand(Operand.ST_POINTER,procId + scope));
+		}
 	}
 
 }
@@ -448,21 +458,21 @@ showMessage("Invocacion PROC.");
 
 
 comparator  :  EQUAL
-{$$.obj = $1.sval;}
-           
+{
+	$$.obj = "==";
+}           
             |  NEQUAL
 {
-	$$.obj = $1.sval;
-}
-           
+	$$.obj = "!=";
+}           
             |  LESSEQUAL
 {
-	$$.obj = $1.sval;
+	$$.obj = "<=";
 }
            
             |  GREATEQUAL
 {
-	$$.obj = $1.sval;
+	$$.obj = ">=";
 }
           
             |  '<'
@@ -509,9 +519,10 @@ comparator  :  EQUAL
 
 condition  :  expression  comparator  expression
 {
-	showMessage("Condicion.");
-	Triplet t = tm.createTriplet((String) $2.obj, (Operand) $1.obj, (Operand) $3.obj);
-	$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
+	showMessage("Condicion."); 
+	$$.obj = ic.operationTypesControl((String) $2.obj, (Operand) $1.obj,(Operand) $3.obj);
+	//Triplet t = tm.createTriplet((String) $2.obj, (Operand) $1.obj, (Operand) $3.obj);
+	//$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId());
 }
 	   |  expression '=' expression
 {
@@ -806,12 +817,11 @@ factor  :  ID
 	String fullId = $1.sval + scope;
 	st.removeSymbol($1.sval);
 	String realName = st.findClosestIdDeclaration(fullId);
-	String dataType = st.getSymbol(realName).getDataType();
 	if(realName == null){
-	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"se utiliza una variable antes de declararla");
-		$$.obj = new Operand(Operand.ST_POINTER,$1.sval + ":undefined",dataType);
+	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"la variable \2"+ $1.sval +"\" no esta declarada.");
+		$$.obj = new Operand(Operand.ST_POINTER,$1.sval + ":undefined");
 	} else {
-
+		String dataType = st.getSymbol(realName).getDataType();
 		$$.obj = new Operand(Operand.ST_POINTER,realName,dataType);
 	}
 }
@@ -844,7 +854,7 @@ factor  :  ID
 		 }
 		 $2.sval = "-"+$2.sval;
 
-		 $$.obj = new Operand(Operand.ST_POINTER,$2.sval,Symbol._ULONGINT_TYPE);
+		 $$.obj = new Operand(Operand.ST_POINTER,$2.sval,Symbol._DOUBLE_TYPE);
 	 }
 }
 	;

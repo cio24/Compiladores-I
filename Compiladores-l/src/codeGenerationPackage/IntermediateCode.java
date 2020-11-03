@@ -42,7 +42,7 @@ public class IntermediateCode {
 		}
 		else if(idDeclaration.equals(fullVarId)){
 			//si ya existe una declaración de esta variable en el mismo ambito tiramos error
-			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO," esta variable ya ha sido declarada \"" + varId + "\".");
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"declaración repetida de la variable \"" + varId + "\".");
 
 			//acomodamos la tabla de simbolos
 			Symbol s = st.getSymbol(varId);
@@ -81,7 +81,7 @@ public class IntermediateCode {
 		//si no se encuentran una declaración se tira error
 		if(varIdDeclaration == null){
 			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,
-					"se utiliza una variable antes de declararla");
+					"la variable \""+ varId +"\" no está declarada.");
 			t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,varId + ":undefined"),expression);
 		} else {
 
@@ -113,13 +113,12 @@ public class IntermediateCode {
 	public Operand operationTypesControl(String operator, Operand op1, Operand op2){
 		Triplet t;
 		if(op1.getDataType().equals(op2.getDataType())){
-			System.out.println("tipo 1: " + op1.getDataType() + " Tipo 2: " + op2.getDataType());
 			t = tm.createTriplet(operator,op1, op2);
 			return new Operand(Operand.TRIPLET_POINTER,t.getId(), op1.getDataType());
 		}
 		else{
-			System.out.println("[Linea " + la.getCurrentLine() + "] Incopatibilidad de tipos: "
-					+ op1.getDataType() + operator + op2.getDataType() );
+			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),
+					ErrorReceiver.SEMANTICO, " incopatibilidad de tipos en la operación "+ op1.getDataType() +" "+ operator +" "+ op2.getDataType() );
 			t = tm.createTriplet("ERROR");
 			return new Operand(Operand.TRIPLET_POINTER,t.getId(), "ERROR");
 		}

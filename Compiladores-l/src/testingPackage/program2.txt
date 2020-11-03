@@ -1,7 +1,8 @@
-PROC  ( ) NA = 0_ul SHADOWING = TRUE {	
+PROC  ( ) NA = 0_ul SHADOWING = TRUE {	/% ERROR -> falta id del PROC%/
 	IF ( 5_ul - 4_ul < 5_ul ) {
-		DOUBLE int asd;
-		int = 5_ul - 4_ul + 6_ul * - 5.0;
+		DOUBLE int asd; /% ERROR -> doble identificador mal construido %/
+		DOUBLE int;		
+		int = 5_ul - 4_ul + 6_ul * - 5.0; /% ERROR ->hace operaciones entre != tipos  %/
 		OUT('Texto de salida');
 	} ELSE {
 		IF(5_ul < carlos){

@@ -21,6 +21,7 @@ public  class Operand {
 	}	
 
 	public Operand(String operandType) {
+		this.operandType = operandType;
 		this.ref = "-";	
 	}	
 

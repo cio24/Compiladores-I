@@ -22,7 +22,7 @@ public class TripletsManager {
 
     public void pushToStack(Integer i) {
         tripletsIdStack.push(i);
-        System.out.println("Estado de la pila: " + tripletsIdStack);
+        //System.out.println("Estado de la pila: " + tripletsIdStack);
 
     }
 
@@ -33,7 +33,7 @@ public class TripletsManager {
         catch(Exception e) {
             System.out.println("La pila ya está vacía.");
         }
-        System.out.println("Estado de la pila: " + tripletsIdStack);
+        //System.out.println("Estado de la pila: " + tripletsIdStack);
     }
 
     public Integer topOfStack() {

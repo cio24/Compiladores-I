@@ -11,7 +11,7 @@ public class ErrorReceiver {
 	public static final String SEMANTICO = "Semantico";
 	
 	public static void displayError(String mode,String line,String type,String additionalInfo) {
-		System.out.println("----> [Línea " + line  + "] "+ mode +" "+type +"; "+additionalInfo);
+		System.out.println("----> [Línea " + line  + "] "+ mode +" "+type +": "+additionalInfo);
 		if (mode==ERROR) 
 			hasErrors=true;		
 	}

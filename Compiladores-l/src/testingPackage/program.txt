@@ -1,8 +1,21 @@
-DOUBLE int;
+/% La tabla de simbolos debe tener:
+	double:main -> tipo DOUBLE
+	asdf:main -> tipo ULONGINT
+	124.0 -> tipo DOUBLE
+	125.0 -> tipo DOUBLE
+	'This are some characters' -> tipo STRING
+	56 -> tipo ULONGINT
+	
+   Errores:
+	error declaración doble para "asdf".
+	variable no declarada "pedro"
+ %/
+ 
+DOUBLE double;
 ULONGINT asdf;
-int = 124.0;
-IF (int == 125_ul){
+double = 124.0; /% triplete de asignacion (=,double:main,124.0)%/
+IF (double == 125.0){  /% triplete de comparación (==,double:main,125.0)%/
 ULONGINT asdf;
-OUT('This are some characters');
+OUT('This are some characters');  /% triplete (binario) de función OUT (OUT,'This are some characters',-)%/
 } END_IF;
-pedro=56_ul/56_ul;
+pedro=56_ul/56_ul;  /% triplete de división (/,56,56) + triplete de asignación con variable no definida (=, pedro:undefined, [6])%/
