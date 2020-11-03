@@ -1610,7 +1610,7 @@ case 114:
 	st.removeSymbol(val_peek(0).sval);
 	String realName = st.findClosestIdDeclaration(fullId);
 	if(realName == null){
-	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"la variable \2"+ val_peek(0).sval +"\" no esta declarada.");
+	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"la variable \""+ val_peek(0).sval +"\" no esta declarada.");
 		yyval.obj = new Operand(Operand.ST_POINTER,val_peek(0).sval + ":undefined");
 	} else {
 		String dataType = st.getSymbol(realName).getDataType();

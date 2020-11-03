@@ -90,7 +90,7 @@ public class IntermediateCode {
 			String expressionType = expression.getDataType();
 			if(!varType.equals(expressionType)){
 				ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,
-						"tipos incopatbiles, el tipo de la variable es " + varType
+						"tipos incompatibles, el tipo de la variable es " + varType
 								+ " y se le asigno una expresión de tipo " + expressionType);
 
 				//creamos un triplet que indique el error
@@ -118,7 +118,7 @@ public class IntermediateCode {
 		}
 		else{
 			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),
-					ErrorReceiver.SEMANTICO, " incopatibilidad de tipos en la operación "+ op1.getDataType() +" "+ operator +" "+ op2.getDataType() );
+					ErrorReceiver.SEMANTICO, " incompatibilidad de tipos en la operación "+ op1.getDataType() +" "+ operator +" "+ op2.getDataType() );
 			t = tm.createTriplet("ERROR");
 			return new Operand(Operand.TRIPLET_POINTER,t.getId(), "ERROR");
 		}

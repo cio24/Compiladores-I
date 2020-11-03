@@ -5,30 +5,14 @@ PROC  ( ) NA = 0_ul SHADOWING = TRUE {	/% ERROR -> falta id del PROC%/
 		int = 5_ul - 4_ul + 6_ul * - 5.0; /% ERROR ->hace operaciones entre != tipos  %/
 		OUT('Texto de salida');
 	} ELSE {
-		IF(5_ul < carlos){
-			DOUBLE int;
+		IF(5_ul < carlos){ /% ERROR -> carlos no esta declarado, esta comparacion no se puede hacer %/
+			DOUBLE int; /% ERROR ->int ya esta declarada %/
 		}
 		ELSE {
-			carlos = int;
+			carlos = int; /% ERROR ->carlos no esta declarada %/
 		}END_IF;
 	}END_IF;
 };
-my_procedimiento();
-/%
-aux = 1.7976931348623156d+308;
-aux = -1.7976931348623156d+308;
-aux = 2.2250738585072015d-308;
-aux = -2.2250738585072015d-308;
-%/
-/%
-LOOP {
-	DOUBLE double;
-	double = 15.0 - 13.0 * 25.001;
-}
-UNTIL (5_ul - 5_ul >= 0_ul);
 
-OUT('Hola');
-aux = - 4_ul;
-%/
+my_procedimiento(); /% ERROR ->no existe PROC con ese nombre %/
 
-aux = 4_ul / 5_ul;

@@ -1,11 +1,6 @@
-aux = 5_ul;
+DOUBLE aux;
+aux = 5_ul; /% ERROR -> asignación a un tipo no compatible %/
 aux = 5.0;
 aux = -5.0;
-aux = -5.0;
-aux = -5.0;
-aux = -5.0 +  5_ul;
-aux = -5.0;
-aux = -5.0;
-aux = -45.0;
-aux = -45.0d+0;
+aux = -5.0 +  5_ul; /% ERROR -> operación entre tipos no compatibles + ERROR -> asignación a tipo no compatible %/
 aux = -45.0d+0;

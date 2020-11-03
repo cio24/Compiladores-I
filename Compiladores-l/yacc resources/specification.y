@@ -818,7 +818,7 @@ factor  :  ID
 	st.removeSymbol($1.sval);
 	String realName = st.findClosestIdDeclaration(fullId);
 	if(realName == null){
-	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"la variable \2"+ $1.sval +"\" no esta declarada.");
+	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"la variable \""+ $1.sval +"\" no esta declarada.");
 		$$.obj = new Operand(Operand.ST_POINTER,$1.sval + ":undefined");
 	} else {
 		String dataType = st.getSymbol(realName).getDataType();

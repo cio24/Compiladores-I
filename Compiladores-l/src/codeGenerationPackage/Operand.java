@@ -16,13 +16,14 @@ public  class Operand {
 	}
 
 	public Operand(String operandType, String ref) {
-		this.operandType = operandType;
+		this(operandType);
 		this.ref = ref;	
 	}	
 
 	public Operand(String operandType) {
 		this.operandType = operandType;
 		this.ref = "-";	
+		this.dataType = "ERROR";
 	}	
 
 	public String getOperandType() {
