@@ -2,13 +2,18 @@ package testingPackage;
 
 import lexicalAnalyzerPackage.Parser;
 
+import assemblerPackage.AssemblerGenerator;
+
 import java.io.IOException;
 
 public class Test {
 
-	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
-	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
+	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	
+	public static final String FILENAME = "program4.txt";
+
 	
 	public static void main(String[] args) throws IOException {
 		Test test = new Test();	
@@ -16,7 +21,7 @@ public class Test {
 	
 	public Test() throws IOException {
 
-		test("program4.txt");
+		test();
 
 		/*
 		System.out.println("TEST CADENAS: ");
@@ -36,12 +41,15 @@ public class Test {
 		*/
 	}
 	
-	public void test(String fileName) throws IOException {
-		Parser p = new Parser(BASE_PATH + fileName);
+	public void test() throws IOException {
+		Parser p = new Parser(BASE_PATH+FILENAME);
 		//p.yydebug = true;
 		p.parse();
 		p.la.getSymbolsTable().print();
 		System.out.println(p.tm);
+		AssemblerGenerator ag= new AssemblerGenerator(p.la.getSymbolsTable(),p.tm);
+		ag.createAssemblerFile();
+		
 		/*
 
 		String nombre;
