@@ -7,6 +7,8 @@ public class Triplet {
 	private String operator;
 	private Operand firstOperand;
 	private Operand secondOperand;
+	
+	private String resultLocation; //Para generacion de assembler
 
 	public Triplet(String operator) {
 		this.id = String.valueOf(++TRIPLET_COUNTER);
@@ -46,5 +48,13 @@ public class Triplet {
 		if (operator=="+" || operator=="*")
 			return true;
 		else return false;
+	}
+
+	public String getResultLocation() {
+		return resultLocation;
+	}
+
+	public void setResultLocation(String resultLocation) {
+		this.resultLocation = resultLocation;
 	}
 }
