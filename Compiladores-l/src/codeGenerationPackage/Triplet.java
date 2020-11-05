@@ -7,7 +7,6 @@ public class Triplet {
 	private String operator;
 	private Operand firstOperand;
 	private Operand secondOperand;
-	
 
 	public Triplet(String operator) {
 		this.id = String.valueOf(++TRIPLET_COUNTER);
@@ -41,5 +40,11 @@ public class Triplet {
 	
 	public void setSecondOperand(Operand secondOperand) {
 		this.secondOperand=secondOperand;
+	}
+	
+	public boolean isCommutativeOperation() {
+		if (operator=="+" || operator=="*")
+			return true;
+		else return false;
 	}
 }

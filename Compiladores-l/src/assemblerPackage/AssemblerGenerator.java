@@ -47,14 +47,25 @@ public class AssemblerGenerator {
 	}
 	
 	public void generateAssembler() throws IOException {
-		generateHeader();
-
+		generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
+		generateDataSection(); // Genera la seccion donde se vuelca toda la información de la tabla de simbolos
+		generateCodeSection(); // Genera la seccion donde se vuelca el codigo
 	}
 	
 	public void writeMov(String dest,String src) throws IOException {
 		code.write("MOV "+dest+","+src);
 		code.newLine();
 	}
+	
+	public void generateDataSection() throws IOException {
+		
+	};
+	
+	public void generateCodeSection() throws IOException {
+		
+	};
+	
+
 	
 	public void generateHeader() throws IOException {
 		
