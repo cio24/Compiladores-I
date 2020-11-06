@@ -1,5 +1,5 @@
-
-DOUBLE aux;
-ULONGINT carlos;
-DOUBLE charles;
-charles = aux * charles * 2.0 / carlos;
+DOUBLE carlos;
+IF(carlos < carlos){
+    carlos = 1.0;
+    carlos = 2.0;
+}END_IF;

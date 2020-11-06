@@ -48,8 +48,10 @@ public class TripletsManager {
     }
 
     public void removeLastTriplet(){
-        if(!triplets.isEmpty())
+        if(!triplets.isEmpty()){
             triplets.remove(triplets.size() -1);
+            Triplet.TRIPLET_COUNTER--;
+        }
     }
 
     public int getCurrentTripletIndex() {

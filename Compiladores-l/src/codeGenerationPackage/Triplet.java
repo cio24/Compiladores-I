@@ -45,7 +45,7 @@ public class Triplet {
 	}
 	
 	public boolean isCommutativeOperation() {
-		if (operator=="+" || operator=="*")
+		if (operator.equals("+") || operator.equals("*"))
 			return true;
 		else return false;
 	}
