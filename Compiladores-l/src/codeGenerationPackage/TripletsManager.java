@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class TripletsManager {
-    private ArrayList<Triplet> triplets;
+    public ArrayList<Triplet> triplets;
     private Stack<Integer> tripletsIdStack;
 
     public TripletsManager() {

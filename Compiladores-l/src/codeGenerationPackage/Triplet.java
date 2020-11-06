@@ -4,9 +4,15 @@ public class Triplet {
 	public static int TRIPLET_COUNTER = 0;
 	
 	private String id;
+
+	public String getOperator() {
+		return operator;
+	}
+
 	private String operator;
 	private Operand firstOperand;
 	private Operand secondOperand;
+	private String dataType;
 	
 	private String resultLocation; //Para generacion de assembler
 
@@ -26,7 +32,15 @@ public class Triplet {
 		this(operator,firstOperand);
 		this.secondOperand = secondOperand;
 	}
-	
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+
 	public String getId() {
 		return this.id;
 	}

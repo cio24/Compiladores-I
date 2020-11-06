@@ -7,10 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import codeGenerationPackage.Operand;
-import codeGenerationPackage.SymbolsTable;
-import codeGenerationPackage.Triplet;
-import codeGenerationPackage.TripletsManager;
+import codeGenerationPackage.*;
 import utilitiesPackage.ErrorReceiver;
 
 public class AssemblerGenerator {
@@ -21,20 +18,20 @@ public class AssemblerGenerator {
 	
 	public static final String FILENAME = "codigo1.txt";
 
-	private int variablesAuxCounter;
+	public static int variablesAuxCounter;
 	private RegistersManager rm;
 	
-	static BufferedWriter code;
+	public static BufferedWriter code;
 
 	
-	SymbolsTable st;
-	TripletsManager tm;
+	public static SymbolsTable st;
+	public static TripletsManager tm;
 	//String outfilepath;
 	
 	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
 		this.st=st;
 		this.tm=tm;
-		this.variablesAuxCounter = 0;
+		variablesAuxCounter = 0;
 		rm = new RegistersManager();
 		//this.outfilepath = outfilepath;
 	}
@@ -69,7 +66,80 @@ public class AssemblerGenerator {
 	};
 	
 	public void generateCodeSection() throws IOException {
-		
+
+		for(Triplet t: tm.triplets) {
+			String operator = t.getOperator();
+			String type = t.getDataType();
+			switch (operator) {
+				case "+":
+					switch (type) {
+						case "ULONGINT":
+							mulInteger(t);
+							break;
+						case "DOUBLE":
+							break;
+					}
+					break;
+
+				case "-":
+					switch (type) {
+						case "ULONGINT":
+							break;
+						case "DOUBLE":
+							break;
+					}
+					break;
+
+				case "*":
+					switch (type) {
+						case "ULONGINT":
+							break;
+						case "DOUBLE":
+							break;
+					}
+					break;
+
+				case "/":
+					switch (type) {
+						case "ULONGINT":
+						case "DOUBLE":
+					}
+				case "<":
+					switch (type) {
+						case "ULONGINT":
+						case "DOUBLE":
+					}
+				case "<=":
+					switch (type) {
+						case "ULONGINT":
+						case "DOUBLE":
+					}
+				case ">":
+					switch (type) {
+						case "ULONGINT":
+						case "DOUBLE":
+					}
+				case ">=":
+					switch (type) {
+						case "ULONGINT":
+						case "DOUBLE":
+					}
+				case "==":
+					switch (type) {
+						case "ULONGINT":
+						case "DOUBLE":
+					}
+				case "=":
+				case "OUT":
+				case "BF":
+				case "BT":
+				case "BI":
+				case "PDB":
+				case "PDE":
+				case "PC":
+				case "label":
+			}
+		}
 	};
 	
 	public void generateHeader() throws IOException {
@@ -93,18 +163,46 @@ public class AssemblerGenerator {
 	}
 
 	public void mulInteger(Triplet t) throws IOException {
+
+		//los souce pueden ser un string con una variable o un string con una constante
+		//la variable puede ser una que guarde un resultado de un triplet
 		String source1 = getSource(t.getFirstOperand());
 		String source2 = getSource(t.getSecondOperand());
-		String reg = rm.getHalfRegister();
 
-		code.write("MOV " + reg + "," + source1);
+		//antes de esto se tiene que ver si esta libre y sino, liberarlo y guardar lo que tenia
+		//en una variable auxiliar
+		Register registerA = rm.getRegister("A");
+		Register registerD = rm.getRegister("D");
+		if(!registerA.isFree())
+			rm.saveValue(registerA);
+
+		if(!registerD.isFree())
+			rm.saveValue(registerD);
+
+		//codigo assembler xD
+		code.write("MOV " + registerA.getEntire() + "," + source1);
 		code.newLine();
-		code.write("MUL " + reg + "," + source2);
+		code.write("MUL " + registerA.getEntire() + "," + source2);
 		code.newLine();
-		code.write("MOV @aux" + (++variablesAuxCounter) + "," + reg);
-		code.newLine();
+
+		//restauramos los registros de haberse guardado
+		rm.restore(registerA);
+		rm.restore(registerD);
+
+		//guardar el resultado de la operación en el triplet
+		t.setResultLocation(registerA.getEntire());
 	}
 
+	public String getSource(Operand op){
+		String source = op.getRef();
+
+		if(op.getOperandType().equals(Operand.TRIPLET_POINTER))
+			source = getTripletAssociated(op).getResultLocation();
+		else if(source.contains(":"))
+			source =  "_" + source;
+
+		return source;
+	}
 
 	public Triplet getTripletAssociated(Operand op){
 		String r = op.getRef();
@@ -113,15 +211,4 @@ public class AssemblerGenerator {
 		return tm.getTriplet(tripletNumber);
 	}
 
-	public String getSource(Operand op){
-		String source = op.getRef();
-
-		if(op.getOperandType().equals(Operand.TRIPLET_POINTER))
-			source = getTripletAssociated(op).getResultLocation();
-
-		if(source.contains(":"))
-				source =  "_" + source;
-
-		return source;
-	}
 }
