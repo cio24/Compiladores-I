@@ -6,8 +6,8 @@ public  class Operand {
 	public static final String TO_BE_DEFINED = "TOBEDEFINED";	
 	public static final String NULL_OPERATOR = "NULL_OPERATOR";	
 
-	public String operandType;
-	public String ref;
+	private String operandType;
+	private String ref;
 	private String dataType;
 
 	public Operand(String operandType, String ref, String dataType){
@@ -43,6 +43,6 @@ public  class Operand {
 		if (operandType.equals(Operand.TRIPLET_POINTER))
 			return "["+ref+"]";	
 		return ref;	
-	}	
+	}
 }	
 

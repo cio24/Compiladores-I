@@ -43,7 +43,15 @@ public class Triplet {
 	public void setSecondOperand(Operand secondOperand) {
 		this.secondOperand=secondOperand;
 	}
-	
+
+	public Operand getFirstOperand() {
+		return firstOperand;
+	}
+
+	public Operand getSecondOperand() {
+		return secondOperand;
+	}
+
 	public boolean isCommutativeOperation() {
 		if (operator.equals("+") || operator.equals("*"))
 			return true;

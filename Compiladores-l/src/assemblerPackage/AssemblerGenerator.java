@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import codeGenerationPackage.Operand;
 import codeGenerationPackage.SymbolsTable;
+import codeGenerationPackage.Triplet;
 import codeGenerationPackage.TripletsManager;
 import utilitiesPackage.ErrorReceiver;
 
@@ -18,17 +20,22 @@ public class AssemblerGenerator {
 	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
 	public static final String FILENAME = "codigo1.txt";
+
+	private int variablesAuxCounter;
+	private RegistersManager rm;
 	
 	static BufferedWriter code;
 
 	
 	SymbolsTable st;
-	TripletsManager tp;
+	TripletsManager tm;
 	//String outfilepath;
 	
-	public AssemblerGenerator(SymbolsTable st,TripletsManager tp/*,String outfilepath*/) {
+	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
 		this.st=st;
-		this.tp=tp;
+		this.tm=tm;
+		this.variablesAuxCounter = 0;
+		rm = new RegistersManager();
 		//this.outfilepath = outfilepath;
 	}
 	
@@ -65,8 +72,6 @@ public class AssemblerGenerator {
 		
 	};
 	
-
-	
 	public void generateHeader() throws IOException {
 		
 		code.write(".386");
@@ -86,5 +91,37 @@ public class AssemblerGenerator {
 		code.write("includelib \\masm32\\lib\\user32.lib");
 		
 	}
-	
+
+	public void mulInteger(Triplet t) throws IOException {
+		String source1 = getSource(t.getFirstOperand());
+		String source2 = getSource(t.getSecondOperand());
+		String reg = rm.getHalfRegister();
+
+		code.write("MOV " + reg + "," + source1);
+		code.newLine();
+		code.write("MUL " + reg + "," + source2);
+		code.newLine();
+		code.write("MOV @aux" + (++variablesAuxCounter) + "," + reg);
+		code.newLine();
+	}
+
+
+	public Triplet getTripletAssociated(Operand op){
+		String r = op.getRef();
+		int tripletNumber = Integer.valueOf(r.substring(1,r.length()-2));
+		System.out.println("EL TRIPLETE ASOCIADO ES:" + tripletNumber);
+		return tm.getTriplet(tripletNumber);
+	}
+
+	public String getSource(Operand op){
+		String source = op.getRef();
+
+		if(op.getOperandType().equals(Operand.TRIPLET_POINTER))
+			source = getTripletAssociated(op).getResultLocation();
+
+		if(source.contains(":"))
+				source =  "_" + source;
+
+		return source;
+	}
 }
