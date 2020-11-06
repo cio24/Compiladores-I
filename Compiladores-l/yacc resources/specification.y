@@ -691,7 +691,8 @@ loop_condition : '('  condition  ')'
 loop_begin : LOOP 	     
 {
 	/*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/
-	tm.pushToStack(tm.getCurrentTripletIndex() + 1);
+	Triplet t = tm.createTriplet("Label" + (tm.getCurrentTripletIndex() + 1));
+	tm.pushToStack(Integer.valueOf(t.getId()));
 }
 	   ;
 

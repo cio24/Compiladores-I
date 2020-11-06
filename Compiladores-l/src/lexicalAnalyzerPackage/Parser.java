@@ -583,7 +583,7 @@ final static String yyrule[] = {
 "factor : '-' CONSTANT",
 };
 
-//#line 890 "specification.y"
+//#line 891 "specification.y"
 
 public LexicalAnalyzer la;
 public IntermediateCode ic;
@@ -1477,29 +1477,30 @@ case 93:
 //#line 692 "specification.y"
 {
 	/*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/
-	tm.pushToStack(tm.getCurrentTripletIndex() + 1);
+	Triplet t = tm.createTriplet("Label" + (tm.getCurrentTripletIndex() + 1));
+	tm.pushToStack(Integer.valueOf(t.getId()));
 }
 break;
 case 94:
-//#line 704 "specification.y"
+//#line 705 "specification.y"
 {
 	Triplet t = tm.createTriplet("OUT",new Operand(Operand.ST_POINTER,(String) val_peek(1).sval));
 }
 break;
 case 95:
-//#line 709 "specification.y"
+//#line 710 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT solo acepta cadenas de caracteres");
 }
 break;
 case 96:
-//#line 714 "specification.y"
+//#line 715 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"la sentencia OUT debe incluir una cadena de caracteres encerrada por '(' ')'");
 }
 break;
 case 97:
-//#line 724 "specification.y"
+//#line 725 "specification.y"
 {
 
 	showMessage("Suma.");
@@ -1512,7 +1513,7 @@ case 97:
 }
 break;
 case 98:
-//#line 736 "specification.y"
+//#line 737 "specification.y"
 {
 	showMessage("Resta.");
 	/*
@@ -1524,44 +1525,44 @@ case 98:
 }
 break;
 case 99:
-//#line 747 "specification.y"
+//#line 748 "specification.y"
 {
 	showMessage("Termino.");
 	yyval.obj = val_peek(0).obj;
 }
 break;
 case 100:
-//#line 753 "specification.y"
+//#line 754 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la suma debe contener un termino valido");
 }
 break;
 case 101:
-//#line 758 "specification.y"
+//#line 759 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la resta debe contener un termino valido");
 }
 break;
 case 102:
-//#line 763 "specification.y"
+//#line 764 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la suma debe contener una expresion valida");
 }
 break;
 case 103:
-//#line 768 "specification.y"
+//#line 769 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la resta debe contener una expresion valida");
 }
 break;
 case 104:
-//#line 773 "specification.y"
+//#line 774 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '+' sobrante");
 }
 break;
 case 105:
-//#line 780 "specification.y"
+//#line 781 "specification.y"
 {
 	showMessage("Multiplicacion.");
 	/*
@@ -1573,7 +1574,7 @@ case 105:
 }
 break;
 case 106:
-//#line 791 "specification.y"
+//#line 792 "specification.y"
 {
 	showMessage("Division.");
 	/*
@@ -1585,50 +1586,50 @@ case 106:
 }
 break;
 case 107:
-//#line 802 "specification.y"
+//#line 803 "specification.y"
 {
 	showMessage("Factor.");
 	yyval.obj = val_peek(0).obj;
 }
 break;
 case 108:
-//#line 808 "specification.y"
+//#line 809 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la multiplicacion debe llevar una constante o un identificador");
 }
 break;
 case 109:
-//#line 813 "specification.y"
+//#line 814 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado derecho de la division debe llevar una constante o un identificador");
 }
 break;
 case 110:
-//#line 818 "specification.y"
+//#line 819 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la multiplicacion debe llevar una termino o un factor");
 }
 break;
 case 111:
-//#line 823 "specification.y"
+//#line 824 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"el lado izquierdo de la division debe llevar un termino o un factor");
 }
 break;
 case 112:
-//#line 828 "specification.y"
+//#line 829 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '*' sobrante");
 }
 break;
 case 113:
-//#line 833 "specification.y"
+//#line 834 "specification.y"
 {
 	ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"operador '/' sobrante");
 }
 break;
 case 114:
-//#line 840 "specification.y"
+//#line 841 "specification.y"
 {
 	String fullId = val_peek(0).sval + scope;
 	st.removeSymbol(val_peek(0).sval);
@@ -1644,7 +1645,7 @@ case 114:
 }
 break;
 case 115:
-//#line 855 "specification.y"
+//#line 856 "specification.y"
 {
 	
 	Symbol symbol = st.getSymbol(val_peek(0).sval);
@@ -1653,7 +1654,7 @@ case 115:
 }
 break;
 case 116:
-//#line 863 "specification.y"
+//#line 864 "specification.y"
 {
 	 /* Manejo la entrada positiva de esta constante*/
 	 Symbol positivo = st.getSymbol(val_peek(0).sval);
@@ -1677,7 +1678,7 @@ case 116:
 	 }
 }
 break;
-//#line 1604 "Parser.java"
+//#line 1605 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

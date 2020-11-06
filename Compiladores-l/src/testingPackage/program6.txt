@@ -1,5 +1,9 @@
 DOUBLE carlos;
-IF(carlos < carlos){
-    carlos = 1.0;
-    carlos = 2.0;
-}END_IF;
+LOOP{
+
+    carlos = 3.0;
+    carlos = 4.0;
+    carlos = 5.0;
+    carlos = 6.0;
+}
+UNTIL ( 6_ul < 6_ul);
