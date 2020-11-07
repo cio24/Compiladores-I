@@ -6,3 +6,18 @@ include \masm32\include\kernel32.inc
 include \masm32\include\user32.inc
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
+
+MOV _carlos:main, 3
+MOV _charles:main, 5
+MOV EBX, _carlos:main
+ADD EBX, _charles:main
+MOV _charly:main, EBX
+MOV EBX, _carlos:main
+ADD EBX, 7
+MOV _carlos:main, EBX
+MOV EBX, _charly:main
+SUB EBX, _carlos:main
+MOV _charles:main, EBX
+MOV EBX, 10
+ADD EBX, 20
+MOV _charly:main, EBX

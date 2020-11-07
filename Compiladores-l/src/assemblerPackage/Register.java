@@ -3,8 +3,8 @@ package assemblerPackage;
 public class Register {
 
     private char name;
-    private boolean H;
-    private boolean L;
+    private boolean HFree;
+    private boolean LFree;
 
 
     public Register(char name){
@@ -27,28 +27,28 @@ public class Register {
         return name + "L";
     }
 
-    public void setFree(){
-        H = false;
-        L = false;
+    public void setFree(boolean isFree){
+        HFree = isFree;
+        LFree = isFree;
     }
 
-    public void setLowerHalfFree(){
-        L = false;
+    public void setLowerHalfFree(boolean isFree){
+        LFree = isFree;
     }
 
-    public void setHigherHalfFree(){
-        L = false;
+    public void setHigherHalfFree(boolean isFree){
+        HFree = isFree;
     }
 
     public boolean isFree(){
-        return !H && !L;
+        return !HFree && !LFree;
     }
 
     public boolean isLowerHalfFree(){
-        return !L;
+        return !LFree;
     }
 
     public boolean isHigherHalfFree(){
-        return !H;
+        return !HFree;
     }
 }
