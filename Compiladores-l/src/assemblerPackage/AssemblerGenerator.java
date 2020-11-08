@@ -17,7 +17,9 @@ public class AssemblerGenerator {
 	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
-	public static final String FILENAME = "codigo1.txt";
+	public static final String DATA_FILENAME = "codigo1data.txt";
+	public static final String CODE_FILENAME = "codigo1code.txt";
+
 	
 	static BufferedWriter code;
 
@@ -48,8 +50,8 @@ public class AssemblerGenerator {
 	
 	public void generateAssembler() throws IOException {
 		generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
-		generateDataSection(); // Genera la seccion donde se vuelca toda la información de la tabla de simbolos
 		generateCodeSection(); // Genera la seccion donde se vuelca el codigo
+		generateDataSection(); // Genera la seccion donde se vuelca toda la información de la tabla de simbolos
 	}
 	
 	public void writeMov(String dest,String src) throws IOException {
