@@ -114,6 +114,7 @@ public class IntermediateCode {
 		Triplet t;
 		if(op1.getDataType().equals(op2.getDataType())){
 			t = tm.createTriplet(operator,op1, op2);
+			t.setDataType(op1.getDataType());
 			return new Operand(Operand.TRIPLET_POINTER,t.getId(), op1.getDataType());
 		}
 		else{

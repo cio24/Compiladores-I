@@ -1,5 +1,11 @@
-
-DOUBLE aux;
 ULONGINT carlos;
-DOUBLE charles;
-charles = aux * charles * 2.0 / carlos;
+ULONGINT charles;
+ULONGINT charly;
+
+carlos = 3_ul;
+charles = 5_ul;
+charly = carlos + charles;
+carlos = carlos + 7_ul;
+charles = charly - carlos;
+charly = 10_ul + 20_ul;
+

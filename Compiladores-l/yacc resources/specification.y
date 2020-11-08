@@ -541,18 +541,34 @@ sentence_block  :  '{'  sentences  '}'
 
 if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF
 {
-	tm.updateOperandFromStack(1,1);
+	//como ya reconocimos todo el else, podemos crear la etiqueta de salto del BI
+	tm.createTriplet("Label" + (tm.getCurrentTripletIndex() + 1));
+
+	//actualizamos el primer operando del triplet BI con la direccion correspondiente al ultimo triplet (label)
+	tm.updateOperandFromStack(0,1);
+
+	//desapilamos los triplets correspondientes al BF y al BI xq ya los actualizamos
 	tm.popFromStack();
 	tm.popFromStack();
 }
  			
 	   |  IF  if_condition then_body END_IF
 {
-	tm.popFromStack(); //desapilo el último terceto xq era el del BI
-	tm.removeLastTriplet(); //lo saco de la lista de tercetos
-	//actualizo el terceto del BF xq se realiza suponiendo que va a haber un BI
-	tm.updateOperandFromStack(0,2);
+	//desapilo el último terceto que se apilo xq es el del BI
 	tm.popFromStack();
+
+	//saco de la lista de tercetos el label ya que quedo mal
+	tm.removeLastTriplet();
+
+	//saco de la lista de tercetos el BI ya que no va xq no hay else
+	tm.removeLastTriplet();
+
+	//actualizo el terceto del BF xq se realiza suponiendo que va a haber un BI
+	tm.updateOperandFromStack(1,2);
+	tm.popFromStack();
+
+	//creo el triplet del label del BF correctamente
+	tm.createTriplet("Label" + (tm.getCurrentTripletIndex() + 1));
 }
            
 	   |  IF  if_condition   then_body  ELSE  else_body error
@@ -584,9 +600,11 @@ if_clause  :  IF  if_condition   then_body  ELSE  else_body  END_IF
 
 if_condition  :   '('  condition  ')'
 {
+	//creamos el triplet correspondiente al branch por false sin definir el terceto de salto xq no lo sabemos
 	Triplet t = tm.createTriplet("BF",(Operand) $2.obj,new Operand(Operand.TO_BE_DEFINED));
+
+	//apilamos el numero de terceto para poder actualizar la dirección de salto cuando se sepa (backpatching)
 	tm.pushToStack(Integer.valueOf(t.getId()));
-	//$$.obj = t.getId();  //Once again i ask for ur forgiveness my lord
 }
 			
 	      |    '('  error  ')'
@@ -618,11 +636,17 @@ if_condition  :   '('  condition  ')'
 
 then_body  :  sentence_block
 {
-	// actualizo el triplete del salto del if al cuerpo de then
-	tm.updateOperandFromStack(2,2);
-	//tm.popFromStack();
-	// Creo el triplete de salto incondicional para que salte el else
+	// como ya reconocimos el cuerpo del then creamos el triplet de salto incondicional para que salte el else
 	Triplet t = tm.createBITriplet(new Operand(Operand.TO_BE_DEFINED));
+
+	// creamos el triplet del label de salto del BF xq ya terminamos el then, notese que se agrega después del BI
+	tm.createTriplet("Label" + (tm.getCurrentTripletIndex() + 1));
+
+	//Como ya creamos el label del bf, podemos actualizar el segundo operando del mismo (2) con el numero
+	//del último triplet (label), como es el ultimo no tenemos que deszplazarnos (0)
+	tm.updateOperandFromStack(0,2);
+
+	//todavía no sabemos la direccion de salto del BI así que lo definimos más adelante
 	tm.pushToStack(Integer.valueOf(t.getId()));
 }
 	   ;
@@ -667,7 +691,8 @@ loop_condition : '('  condition  ')'
 loop_begin : LOOP 	     
 {
 	/*we have to stack this triplet so we can get the adress jump when we make the triplet associate to the condition*/
-	tm.pushToStack(tm.getCurrentTripletIndex() + 1);
+	Triplet t = tm.createTriplet("Label" + (tm.getCurrentTripletIndex() + 1));
+	tm.pushToStack(Integer.valueOf(t.getId()));
 }
 	   ;
 
@@ -821,6 +846,7 @@ factor  :  ID
 	    ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SEMANTICO,"la variable \""+ $1.sval +"\" no esta declarada.");
 		$$.obj = new Operand(Operand.ST_POINTER,$1.sval + ":undefined");
 	} else {
+		st.getSymbol(realName).addReference();
 		String dataType = st.getSymbol(realName).getDataType();
 		$$.obj = new Operand(Operand.ST_POINTER,realName,dataType);
 	}
