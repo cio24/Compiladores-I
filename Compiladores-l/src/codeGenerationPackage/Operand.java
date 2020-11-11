@@ -30,6 +30,9 @@ public  class Operand {
 		return operandType;
 	}
 
+	public String setOperandType(String operandType) {
+		return this.operandType = operandType;
+	}
 	public String getDataType(){
 		return this.dataType;
 	}
@@ -37,7 +40,30 @@ public  class Operand {
 	public String getRef() {	
 		return ref;	
 	}	
+	
+	// Te devuelve el string que usamos en assembler para representar ese operando
+	public String getAssemblerReference(TripletsManager tm){
+		String source = this.getRef();
 
+		// Si es puntero a triplete [1] devolvemos el registro donde se guardo el resultado de ese triplete
+		if(this.getOperandType().equals(Operand.TRIPLET_POINTER))
+			source = tm.getTriplet(Integer.valueOf(this.getRef())).getResultLocation();
+		// Si es una variable le agregamos el underscore
+		else if(source.contains(":"))
+			source =  "_" + source;
+		// Si no es ninguna de las anteriores entonces es una constante y la devolvemos como esta
+		
+		return source;
+	}
+
+	public boolean isPointer() {
+		return this.operandType.equals(Operand.TRIPLET_POINTER);
+	}
+	
+	public boolean isVar() {
+		return this.ref.contains(":") || this.ref.contains("@");
+	}
+	
 	@Override	
 	public String toString() {	
 		if (operandType.equals(Operand.TRIPLET_POINTER))

@@ -9,6 +9,8 @@ public class Register {
 
     public Register(char name){
         this.name = name;
+        this.HFree = true;
+        this.LFree = true;
     }
 
     public String getEntire(){
@@ -28,8 +30,8 @@ public class Register {
     }
 
     public void setFree(boolean isFree){
-        HFree = isFree;
-        LFree = isFree;
+    	setLowerHalfFree(isFree);
+    	setHigherHalfFree(isFree);
     }
 
     public void setLowerHalfFree(boolean isFree){
@@ -41,14 +43,14 @@ public class Register {
     }
 
     public boolean isFree(){
-        return !HFree && !LFree;
+        return isLowerHalfFree() && isHigherHalfFree();
     }
 
     public boolean isLowerHalfFree(){
-        return !LFree;
+        return LFree;
     }
 
     public boolean isHigherHalfFree(){
-        return !HFree;
+        return HFree;
     }
 }

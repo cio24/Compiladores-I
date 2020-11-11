@@ -10,9 +10,9 @@ import codeGenerationPackage.*;
 
 public class AssemblerGenerator {
 	
-	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
 
 	public static final String FILENAME = "codigo1.txt";
@@ -56,7 +56,7 @@ public class AssemblerGenerator {
 	public void generateAssembler() throws IOException {
 		generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
 		generateCodeSection(); // Genera la seccion donde se vuelca el codigo
-		generateDataSection(); // Genera la seccion donde se vuelca toda la información de la tabla de simbolos
+		generateDataSection(); // Genera la seccion donde se vuelca toda la informaciï¿½n de la tabla de simbolos
 	}
 	
 	public void writeMov(String dest,String src) throws IOException {
@@ -72,8 +72,11 @@ public class AssemblerGenerator {
 		for(Triplet t: tm.triplets)
 			if(t.getOperator().equals("="))
 				assignmentOnInt(t);
+			else if(isConmutative(t.getOperator()))
+				conmutativeOpInt(t);
 			else
-				arithmeticOpOnInt(t);
+				//arithmeticOpOnInt(t);
+				continue;
 	};
 	
 	public void generateHeader() throws IOException {
@@ -97,13 +100,13 @@ public class AssemblerGenerator {
 		code.newLine();
 		
 	}
-
+	/*
 	public void mulInteger(Triplet t) throws IOException {
 		
 		//los souce pueden ser un string con una variable o un string con una constante
 		//la variable puede ser una que guarde un resultado de un triplet
-		String source1 = getSource(t.getFirstOperand());
-		String source2 = getSource(t.getSecondOperand());
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
 
 		//antes de esto se tiene que ver si esta libre y sino, liberarlo y guardar lo que tenia
 		//en una variable auxiliar
@@ -117,16 +120,16 @@ public class AssemblerGenerator {
 			rm.saveValue(registerD);
 
 		//codigo assembler xD
-		code.write("MOV " + registerA.getEntire() + "," + source1);
+		code.write("MOV " + registerA.getEntire() + "," + op1.getAssemblerReference(tm));
 		code.newLine();
-		code.write("MUL " + registerA.getEntire() + "," + source2);
+		code.write("MUL " + registerA.getEntire() + "," + op2.getAssemblerReference(tm));
 		code.newLine();
 
 		//restauramos los registros de haberse guardado
 		rm.restore(registerA);
 		rm.restore(registerD);
 
-		//guardar el resultado de la operación en el triplet
+		//guardar el resultado de la operaciï¿½n en el triplet
 		t.setResultLocation(registerA.getEntire());
 
 	}
@@ -137,8 +140,10 @@ public class AssemblerGenerator {
 		
 		//los source pueden ser un string con una variable o un string con una constante
 		//la variable puede ser una que guarde un resultado de un triplet
-		String source1 = getSource(t.getFirstOperand());
-		String source2 = getSource(t.getSecondOperand());
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
+		String source1 = op1.getAssemblerReference(tm);
+		String source2 = op2.getAssemblerReference(tm);
 
 		//antes de esto se tiene que ver si esta libre y sino, liberarlo y guardar lo que tenia
 		//en una variable auxiliar
@@ -146,7 +151,7 @@ public class AssemblerGenerator {
 		Register registerA = rm.getRegister("A");
 		Register registerD = rm.getRegister("D");
 		
-		Register resultRegister; //Para guardar donde quedará el resultado
+		Register resultRegister; //Para guardar donde quedarï¿½ el resultado
 		
 		boolean saveA = true; //suponemos que hay que salvar los registros A y D
 		boolean saveD = true;
@@ -182,7 +187,7 @@ public class AssemblerGenerator {
 		if (source1IsA) {
 			code.write("MUL " + source1 + "," + source2);
 			code.newLine();
-			if (saveD)  //se restaura D si es necesario, A nunca será necesario restaurarlo ya que era uno de los operandos
+			if (saveD)  //se restaura D si es necesario, A nunca serï¿½ necesario restaurarlo ya que era uno de los operandos
 				rm.restore(registerD);
 			else //esto se ejecuta solo si el registro estaba libre antes de la multiplicacion o bien era algun operando,por lo que debe estar libre
 				registerD.setFree(true);
@@ -195,7 +200,7 @@ public class AssemblerGenerator {
 		else if (source2IsA) {
 			code.write("MUL" + " " + source2 + "," + source1);
 			code.newLine();
-			if (saveD)  //se restaura D si es necesario, A nunca será necesario restaurarlo ya que era uno de los operandos
+			if (saveD)  //se restaura D si es necesario, A nunca serï¿½ necesario restaurarlo ya que era uno de los operandos
 				rm.restore(registerD);
 			else //esto se ejecuta solo si el registro estaba libre antes de la multiplicacion o bien era algun operando,por lo que debe estar libre
 				registerD.setFree(true);
@@ -228,39 +233,24 @@ public class AssemblerGenerator {
 
 		
 
-		//guardar el resultado de la operación en el triplet
+		//guardar el resultado de la operaciï¿½n en el triplet
 		t.setResultLocation(resultRegister.getEntire());
 
-	}
-
-	public String getSource(Operand op){
-		String source = op.getRef();
-
-		if(op.getOperandType().equals(Operand.TRIPLET_POINTER))
-			source = getTripletAssociated(op).getResultLocation();
-		else if(source.contains(":"))
-			source =  "_" + source;
-
-		return source;
-	}
-
-	public Triplet getTripletAssociated(Operand op){
-		return tm.getTriplet(Integer.valueOf(op.getRef()));
 	}
 
 	public void arithmeticOpOnInt(Triplet t) throws IOException {
 
 		//los operandos pueden ser un string con una variable, un string con una constante
 		//o un resultado de un triplet que puede ser un registro
-		String op1 = getSource(t.getFirstOperand());
-		String op2 = getSource(t.getSecondOperand());
+		String op1 = t.getFirstOperand().getAssemblerReference(tm);
+		String op2 = t.getSecondOperand().getAssemblerReference(tm);
 
 		String opt = getAssemblerOpt(t.getOperator());
 
-		//si ningún operando es un registro o solo el segundo es un registro y la operación NO es conmutativa
+		//si ningï¿½n operando es un registro o solo el segundo es un registro y la operaciï¿½n NO es conmutativa
 		if(!rm.isAReg(op1) && !rm.isAReg(op2) || !rm.isAReg(op1) && rm.isAReg(op2) && !isCommutative(opt)){
 
-			//si la operación es una multiplicación debemos controlar el tema de los registros
+			//si la operaciï¿½n es una multiplicaciï¿½n debemos controlar el tema de los registros
 			if(opt.equals(MUL)){
 				return;
 			}
@@ -282,20 +272,19 @@ public class AssemblerGenerator {
 			t.setResultLocation(reg.getEntire());
 		}
 		else{
-			//si entra acá es xq un operando es un registro y el otro no
+			//si entra acï¿½ es xq un operando es un registro y el otro no
 			// si el registro es el segundo operando, la operacion es conmutativa
 
-			//si la operación es conmutativa intercambiamos los operandos
+			//si la operaciï¿½n es conmutativa intercambiamos los operandos
 			if(!rm.isAReg(op1)){
 				String aux = op2;
 				op2 = op1;
 				op1 = aux;
 			}
 
-			//si la operación es una multiplicación debemos controlar el tema de los registros
+			//si la operaciï¿½n es una multiplicaciï¿½n debemos controlar el tema de los registros
 			if(opt.equals(MUL)){
 				return;
-				/*
 				Register regA = rm.getRegister("A");
 				Register regD = rm.getRegister("D");
 
@@ -310,10 +299,9 @@ public class AssemblerGenerator {
 
 					code.write("MOV " + regA.getEntire() + "," + op1);
 
-				 */
 				}
 
-			//finalmente generalmos el assembler la operación
+			//finalmente generalmos el assembler la operaciï¿½n
 			code.write( opt + " " + op1 + ", " + op2);
 			code.newLine();
 
@@ -328,8 +316,10 @@ public class AssemblerGenerator {
 
 		//los operandos pueden ser un string con una variable, un string con una constante
 		//o un resultado de un triplet que puede ser un registro
-		String op1 = getSource(t.getFirstOperand());
-		String op2 = getSource(t.getSecondOperand());
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
+		String source1 = op1.getAssemblerReference(tm);
+		String source2 = op2.getAssemblerReference(tm);
 
 		String opt = getAssemblerOpt(t.getOperator());
 
@@ -425,30 +415,124 @@ public class AssemblerGenerator {
 				
 			}
 		}
-	}
+	}*/
 
-	public void assignmentOnInt(Triplet t) throws IOException {
-		String op1 = getSource(t.getFirstOperand());
-		String op2 = getSource(t.getSecondOperand());
-
-		//si el segundo operando es una variable, lo tenemos que pasar a un registro
-		//xq no podemos hacer un MOV entre dos variables
-		if(op2.contains(":") || op2.contains("@")){
-			Register r = rm.getEntireRegisterFree();
-			AssemblerGenerator.code.write("MOV " + r.getEntire() + ", " + op2);
+	/*
+	 * Esta funciÃ³n genera el codigo assembler para sumas (ADD) y multiplicaciones (MUL)
+	 * 
+	 */
+	public void conmutativeOpInt(Triplet t) throws IOException{
+		// Obtengo los operandos del triplete
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
+		
+		// Extraigo los nombres que usare para representarlos en assembler 
+		// (constantes para las constantes, variables precedidas por "_" y registros para los punteros a tripletes)
+		String op1Name = op1.getAssemblerReference(tm);
+		String op2Name = op2.getAssemblerReference(tm); 
+		
+		// Valor de operaciÃ³n
+		String opt = getAssemblerOpt(t.getOperator());
+		
+		// Si es suma debo acomodarlo de manera para que el primer operando sea un registro 
+		if(opt.equals("ADD")) {
+			// Si ninguno es registro, entonces muevo el primer operando a un registro 
+			// y utilizo este registro como primer operando de la suma
+			if (!op1.isPointer() && !op2.isPointer()) {
+				//obtenemos un registro para pasarle el valor del operando uno
+				Register reg = rm.getEntireRegisterFree();
+					
+				//generamos el assembler
+				code.write( "MOV " + reg.getEntire() + ", " + op1Name);
+				code.newLine();
+				op1Name = reg.getEntire();
+				reg.setFree(false);
+				// ESTO QUEDA op1Name = REGISTRO op2Name = NO REGISTRO
+			} 
+			// Si el registro esta en el segundo lugar, les cambio el orden
+			else if (!op1.isPointer() && op2.isPointer()) {
+				// Switcheo los operandos si el segundo es registro y el primero no		
+				Operand opAux = op1;
+				op1 = op2;
+				op2 = opAux;
+				String aux = op1Name;
+				op1Name = op2Name;
+				op2Name = aux;			
+			}
+		} else {
+			// Si es multiplicacion entonces me aseguro que el primer operando se guarde en EAX, que siempre lo tenemos libre
+			// Para poder hacer el mul			
+			code.write( "MOV EAX, " + op1Name);
 			code.newLine();
-			op2 = r.getEntire();
-		}
+			
+			// Libero el registro que usaba op1 ya que lo pase a EAX 
+			if (op1.isPointer())
+				rm.getRegister(op1Name).setFree(true);				
 
-		//finalmente hacemos la asignación
-		AssemblerGenerator.code.write("MOV " + op1 + ", " + op2);
+			// Ahora el primer operando es EAX
+			op1Name = "EAX";
+		}
+			
+		//Generalmos el assembler la operaciï¿½n
+		code.write( opt + " " + op1Name + ", " + op2Name);
 		code.newLine();
 
-		//guardamos el nombre de la variable donde se guardo el resultado
-		t.setResultLocation(op1);
+		// ADebo guardar el resultado en otro registro para liberar EAX
+		if (opt.equals("MUL")) {
+			// Pido el libre y genero el mov
+			Register r = rm.getEntireRegisterFree();
+			code.write( "MOV " + r.getEntire() +", EAX");
+			code.newLine();
+			
+			// Marco como usado el nuevo registro
+			op1Name =  r.getEntire();
+			r.setFree(false);
+			// Libero EAX por las dudas
+			rm.getRegister("EAX").setFree(true);		
+		}
+		
+		//finalmente guardamos el resultado en el terceto
+		t.setResultLocation(op1Name);		
+		// Libero el segundo si era registro
+		if(op2.isPointer()) 
+			rm.getRegister(op2Name).setFree(true);
+		
+		
 	}
+	
+	public void assignmentOnInt(Triplet t) throws IOException {
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
+		
+		String op1Name = op1.getAssemblerReference(tm);
+		String op2Name = op2.getAssemblerReference(tm); 
+		
+		// Si ambos son variables		
+		boolean bothVars = op1.isVar() && op2.isVar();
+		
+		// Tenemos que mover la segunda var a un registro y depsues hacer la asignacion
+		if(bothVars){
+			Register r = rm.getEntireRegisterFree();
+			// Muevo la var al registro libre
+			AssemblerGenerator.code.write("MOV " + r.getEntire() + ", " + op2Name);
+			code.newLine();
+			// Guardo como nuevo operando 2 este registro
+			op2Name = r.getEntire();	
+			
+			// NO LO SETEO COMO OCUPADO PORQUE SE QUE SI O SI LO LIBERO EN LA SIGUIENTE LINEA (me ahorro esos dos pasos)
+		}			
 
-	private boolean isCommutative(String opt) {
+		//finalmente hacemos la asignaciï¿½n
+		AssemblerGenerator.code.write("MOV " + op1Name + ", " + op2Name);
+		code.newLine();		
+		
+		// Si el segundo era un registro lo libero
+		if(op2.isPointer()) 
+			rm.getRegister(op2Name).setFree(true);
+		
+	}	
+	
+	private boolean isConmutative(String opt) {
 		return opt.equals("+") || opt.equals("*");
 	}
 
