@@ -2,8 +2,7 @@ ULONGINT carlos;
 ULONGINT charles;
 ULONGINT charly;
 
-charles = carlos * 3_ul + 4_ul * 5_ul;
-carlos = carlos * 3_ul * 5_ul + 4_ul * 5_ul + 3_ul;
+charles = 3_ul / 5_ul - 4_ul / carlos / charly;
 /%
 charly = carlos + charles;
 carlos = carlos + 7_ul;

@@ -10,8 +10,8 @@ import codeGenerationPackage.*;
 
 public class AssemblerGenerator {
 	
-	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
-	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
+	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
 
@@ -74,9 +74,8 @@ public class AssemblerGenerator {
 				assignmentOnInt(t);
 			else if(isConmutative(t.getOperator()))
 				commutativeOpInt(t);
-			else
-				//arithmeticOpOnInt(t);
-				continue;
+			else if(t.getOperator().equals("/") || t.getOperator().equals("-"))
+				nonCommutativeOpInt(t);
 	};
 	
 	public void generateHeader() throws IOException {
@@ -162,6 +161,7 @@ public class AssemblerGenerator {
 			}
 			
 			code.write( "DIV " + op2Name);
+			code.newLine();		
 
 			if(!op2.isVar()) 
 				rm.getRegister(op2Name).setFree(true);
@@ -297,6 +297,7 @@ public class AssemblerGenerator {
 		// Si el segundo era un registro lo libero
 		if(op2.isPointer()) 
 			rm.getRegister(op2Name).setFree(true);
+		
 		
 	}	
 	
