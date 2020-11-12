@@ -70,5 +70,15 @@ public  class Operand {
 			return "["+ref+"]";	
 		return ref;	
 	}
+	
+	public boolean isImmediate(SymbolsTable st) {
+		if (operandType.equals(Operand.ST_POINTER))
+		{
+			Symbol s=st.getSymbol(ref);
+			if (s.getLexemeType().equals(Symbol._CONSTANT_LEXEME))
+				return true;
+		}
+		return false;
+	}
 }	
 

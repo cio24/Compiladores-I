@@ -114,14 +114,11 @@ public class AssemblerGenerator {
 		// Valor de operación
 		String opt = getAssemblerOpt(t.getOperator());
 		
-		// Si es suma debo acomodarlo de manera para que el primer operando sea un registro 
 		if(opt.equals("SUB")) {
-			// Si ninguno es registro, entonces muevo el primer operando a un registro 
-			// y utilizo este registro como primer operando de la suma
+			// Si es resta debo acomodarlo de manera para que el primer operando sea un registro 
 			if (!op1.isPointer()) {
 				//obtenemos un registro para pasarle el valor del operando uno
 				Register reg = rm.getEntireRegisterFree();
-					
 				//generamos el assembler
 				code.write( "MOV " + reg.getEntire() + ", " + op1Name);
 				code.newLine();
@@ -130,8 +127,8 @@ public class AssemblerGenerator {
 				// ESTO QUEDA op1Name = REGISTRO op2Name = NO REGISTRO
 			} 
 		} else {
-			// Si es multiplicacion entonces me aseguro que el primer operando se guarde en EAX, que siempre lo tenemos libre
-			// Para poder hacer el mul			
+			// Si es division entonces me aseguro que el primer operando se guarde en EAX, que siempre lo tenemos libre
+			// Para poder hacer el div			
 			code.write( "MOV EAX, " + op1Name);
 			code.newLine();
 			code.write( "MOV EDX, 0");
@@ -145,12 +142,34 @@ public class AssemblerGenerator {
 			op1Name = "EAX";
 		}
 			
-		//Generalmos el assembler la operaci�n
-		code.write( opt + " " + op1Name + ", " + op2Name);
-		code.newLine();
+		if (opt.equals("SUB")) {
+			//Generalmos el assembler la operaci�n
+			code.write( opt + " " + op1Name + ", " + op2Name);
+			code.newLine();
+			
+			if(op2.isPointer()) 
+				rm.getRegister(op2Name).setFree(true);
+		}
+		else
+		{
+			if (op2.isImmediate(st))
+			{
+				Register r = rm.getEntireRegisterFree();
+				code.write( "MOV " + r.getEntire() +", "+ op2Name);
+				code.newLine();
+				r.setFree(false);
+				op2Name = r.getEntire();
+			}
+			
+			code.write( "DIV " + op2Name);
 
-		// ADebo guardar el resultado en otro registro para liberar EAX
-		if (opt.equals("MUL")) {
+			if(!op2.isVar()) 
+				rm.getRegister(op2Name).setFree(true);
+		}
+			
+
+		// Debo guardar el resultado en otro registro para liberar EAX
+		if (opt.equals("DIV")) {
 			// Pido el libre y genero el mov
 			Register r = rm.getEntireRegisterFree();
 			code.write( "MOV " + r.getEntire() +", EAX");
@@ -160,14 +179,14 @@ public class AssemblerGenerator {
 			op1Name =  r.getEntire();
 			r.setFree(false);
 			// Libero EAX por las dudas
-			rm.getRegister("EAX").setFree(true);		
+			rm.getRegister("EAX").setFree(true);
+	
 		}
 		
 		//finalmente guardamos el resultado en el terceto
 		t.setResultLocation(op1Name);		
 		// Libero el segundo si era registro
-		if(op2.isPointer()) 
-			rm.getRegister(op2Name).setFree(true);
+		
 		
 	}
 	
