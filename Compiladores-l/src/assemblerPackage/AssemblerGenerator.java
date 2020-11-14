@@ -84,21 +84,12 @@ public class AssemblerGenerator {
 		code.newLine();
 
 		//declaramos una variable que vamos a usar como titulo de todas las ventanas de los mensajes que se impriman
-		declarationAndAssignmentOfVar("outTitle","OUT message");
+		stringDeclaration("outTitle","OUT message");
 
 		//declaramos una variable por cada OUT que se haga y le asignamos el mensaje
 		declareOUTVars();
 		code.newLine();
 	};
-
-	public void declarationAndAssignmentOfVar(String varName, String valueAssigned) throws IOException {
-		code.write(varName + " db \"" + valueAssigned + "\", 0");
-		code.newLine();
-	}
-
-	public String removeApostrophes(String outMessage){
-		return outMessage.substring(1,outMessage.length()-1);
-	}
 
 	public void generateCodeSection() throws IOException {
 		code.write(".code");
@@ -107,20 +98,60 @@ public class AssemblerGenerator {
 		code.newLine();
 
 		for(Triplet t: tm.triplets)
-			if(t.getOperator().equals("="))
-				assignmentOnInt(t);
-			else if(isConmutative(t.getOperator()))
-				commutativeOpInt(t);
-			else if(t.getOperator().equals("/"))
-				divOnInt(t);
-			else if(t.getOperator().equals("-"))
-				subOpInt(t);
-			else if(t.getOperator().equals("OUT"))
-				writeOUT(t);
+			switch (t.getOperator()){
+				case "-":
+					subOpInt(t);
+					break;
+				case "+":
+				case "*":
+					commutativeOpInt(t);
+					break;
+				case "/":
+					divOnInt(t);
+					break;
+				case "=":
+					assignmentOnInt(t);
+					break;
+				case "==":
+				case "<=":
+				case "<":
+				case ">":
+				case ">=":
+					writeIntComparison(t);
+					break;
+				case "OUT":
+					writeOUT(t);
+					break;
+				case "BF":
+				case "BT":
+					writeIntConJump(t);
+					break;
+				case "BI":
+					writeUnJump(t);
+					break;
+				case "PC":
+					break;
+				case "PDB":
+					break;
+				case "PDE":
+					break;
+				default:
+					//son los labels!!
+					writeLabel(t);
+			}
 
 		code.write("end start");
 		code.newLine();
 	};
+
+	public void stringDeclaration(String varName, String valueAssigned) throws IOException {
+		code.write(varName + " db \"" + valueAssigned + "\", 0");
+		code.newLine();
+	}
+
+	public String removeApostrophes(String outMessage){
+		return outMessage.substring(1,outMessage.length()-1);
+	}
 
 	public void writeMov(String dest,String src) throws IOException {
 		code.write("MOV "+dest+","+src);
@@ -326,7 +357,7 @@ public class AssemblerGenerator {
 			if(s.getDataType().equals(Symbol._STRING_TYPE)){
 
 				//generamos el asembler que declara una nueva variable para el out y le asigna el string
-				declarationAndAssignmentOfVar("out" + outCounter, removeApostrophes(s.getLexeme()));
+				stringDeclaration("out" + outCounter, removeApostrophes(s.getLexeme()));
 
 				//guardamos en un mapa el nombre de la variable asociada al string para poder usarlo cuando se quiera imprimir
 				outVars.put(s.getLexeme(),"out" + outCounter++);
@@ -434,11 +465,11 @@ public class AssemblerGenerator {
 		// Si ambos son variables		
 		boolean bothVars = op1.isVar() && op2.isVar();
 		
-		// Tenemos que mover la segunda var a un registro y depsues hacer la asignacion
+		// Tenemos que mover la segunda var a un registro y despues hacer la asignacion
 		if(bothVars){
 			Register r = rm.getEntireRegisterFree();
 			// Muevo la var al registro libre
-			AssemblerGenerator.code.write("MOV " + r.getEntire() + ", " + op2Name);
+			code.write("MOV " + r.getEntire() + ", " + op2Name);
 			code.newLine();
 			// Guardo como nuevo operando 2 este registro
 			op2Name = r.getEntire();	
@@ -446,9 +477,8 @@ public class AssemblerGenerator {
 			// NO LO SETEO COMO OCUPADO PORQUE SE QUE SI O SI LO LIBERO EN LA SIGUIENTE LINEA (me ahorro esos dos pasos)
 		}			
 
-		//finalmente hacemos la asignaci�n
-		AssemblerGenerator.code.write("MOV " + op1Name + ", " + op2Name);
-		code.newLine();		
+		//finalmente hacemos la asignacion
+		writeMov(op1Name,op2Name);
 		
 		// Si el segundo era un registro lo libero
 		if(op2.isPointer()) 
@@ -461,6 +491,100 @@ public class AssemblerGenerator {
 		return opt.equals("+") || opt.equals("*");
 	}
 
+	private void writeIntComparison(Triplet t) throws IOException {
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
+
+		String op1Name = op1.getAssemblerReference(tm);
+		String op2Name = op2.getAssemblerReference(tm);
+
+		//el primer operando no puede ser inmediato, asi que lo pasamos a un registro
+		if(op1.isImmediate(st)){
+			Register r = rm.getEntireRegisterFree();
+			writeMov(r.getEntire(),op2Name);
+			r.setFree(false);
+			op1Name = r.getEntire();
+		}
+
+		//generamos el assembler
+		code.write("CMP " + op1Name + ", " + op2Name);
+		code.newLine();
+
+		//liberamos el registro donde se guardaba el primer operando, ya que el resultado de la comparacion se ve reflejado en algunos flags
+		rm.getRegister(op1Name).setFree(true);
+
+		//si el segundo operando era un registro lo liberamos
+		if(op2.isPointer())
+			rm.getRegister(op2Name).setFree(true);
+
+		//como el resultado quedo guardado en los flags tampoco hace falta guardarlo en el terceto
+	}
+
+	private void writeIntConJump(Triplet t) throws IOException {
+
+		Operand op1 = t.getFirstOperand();
+		Operand op2 = t.getSecondOperand();
+		Triplet tCondition;
+
+		if(t.getOperator().equals("BF")){
+			tCondition = tm.getTriplet(Integer.parseInt(op1.getRef()));
+			switch (tCondition.getOperator()){
+				case "<":
+					code.write( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case "<=":
+					code.write( "JNBE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case ">":
+					code.write( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case">=":
+					code.write( "JNAE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case "==":
+					code.write( "JNEE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+			}
+		}
+		else{
+			//es un salto pro true (BT) para los LOOP UNTIL
+			tCondition = tm.getTriplet(Integer.parseInt(op1.getRef()));
+			switch (tCondition.getOperator()){
+				case "<":
+					code.write( "JB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case "<=":
+					code.write( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case ">":
+					code.write( "JA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case">=":
+					code.write( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+				case "==":
+					code.write( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+					code.newLine();
+					break;
+			}
+
+		}
+	}
+
+	private void writeLabel(Triplet t) throws IOException {
+		code.write(t.getOperator() + ":");
+		code.newLine();
+	}
+
 	private String getAssemblerOpt(String opt) {
 		switch(opt){
 			case "+": return ADD;
@@ -469,6 +593,11 @@ public class AssemblerGenerator {
 			case "/": return DIV;
 		}
 		return "unknownOperator";
+	}
+
+	private void writeUnJump(Triplet t) throws IOException {
+		code.write( "JMP " + t.getFirstOperand().getRef());
+		code.newLine();
 	}
 
 }

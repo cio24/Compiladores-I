@@ -11,8 +11,16 @@ charles = charly - carlos;
 charly = 10_ul + 20_ul;
 %/
 
-OUT('Charles');
-OUT('Charly');
-OUT('Carlos');
-OUT('Carl');
-OUT('Charles');
+ULONGINT alpha;
+ULONGINT beta;
+
+LOOP{
+	alpha = 1_ul;
+	beta = 2_ul;
+	LOOP{
+		alpha = 3_ul;
+        beta = 4_ul;
+	}
+	UNTIL ( 6_ul < 6_ul);
+}
+UNTIL ( 5_ul > 5_ul);
