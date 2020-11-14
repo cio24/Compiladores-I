@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+
 import codeGenerationPackage.*;
 
 public class AssemblerGenerator {
@@ -21,8 +23,9 @@ public class AssemblerGenerator {
 	private static final String DIV = "DIV";
 
 	public static int variablesAuxCounter;
-	private RegistersManager rm;
 	public static BufferedWriter code;
+	private RegistersManager rm;
+	private HashMap<String,String> outVars;
 
 	
 	public static SymbolsTable st;
@@ -34,6 +37,7 @@ public class AssemblerGenerator {
 		AssemblerGenerator.tm =tm;
 		variablesAuxCounter = 0;
 		rm = new RegistersManager();
+		this.outVars = new HashMap<>();
 		//this.outfilepath = outfilepath;
 	}
 	
@@ -49,8 +53,8 @@ public class AssemblerGenerator {
 	
 	public void generateAssembler() throws IOException {
 		generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
-		generateCodeSection(); // Genera la seccion donde se vuelca el codigo
 		generateDataSection(); // Genera la seccion donde se vuelca toda la informaci�n de la tabla de simbolos
+		generateCodeSection(); // Genera la seccion donde se vuelca el codigo
 	}
 
 	public void generateHeader() throws IOException {
@@ -75,7 +79,33 @@ public class AssemblerGenerator {
 
 	}
 
+	public void generateDataSection() throws IOException {
+		code.write(".data");
+		code.newLine();
+
+		//declaramos una variable que vamos a usar como titulo de todas las ventanas de los mensajes que se impriman
+		declarationAndAssignmentOfVar("outTitle","OUT message");
+
+		//declaramos una variable por cada OUT que se haga y le asignamos el mensaje
+		declareOUTVars();
+		code.newLine();
+	};
+
+	public void declarationAndAssignmentOfVar(String varName, String valueAssigned) throws IOException {
+		code.write(varName + " db \"" + valueAssigned + "\", 0");
+		code.newLine();
+	}
+
+	public String removeApostrophes(String outMessage){
+		return outMessage.substring(1,outMessage.length()-1);
+	}
+
 	public void generateCodeSection() throws IOException {
+		code.write(".code");
+		code.newLine();
+		code.write("start:");
+		code.newLine();
+
 		for(Triplet t: tm.triplets)
 			if(t.getOperator().equals("="))
 				assignmentOnInt(t);
@@ -85,10 +115,11 @@ public class AssemblerGenerator {
 				divOnInt(t);
 			else if(t.getOperator().equals("-"))
 				subOpInt(t);
-	};
+			else if(t.getOperator().equals("OUT"))
+				writeOUT(t);
 
-	public void generateDataSection() throws IOException {
-		
+		code.write("end start");
+		code.newLine();
 	};
 
 	public void writeMov(String dest,String src) throws IOException {
@@ -282,6 +313,37 @@ public class AssemblerGenerator {
 
 		//finalmente guardamos el resultado en el terceto
 		t.setResultLocation(op1Name);
+	}
+
+	public void declareOUTVars() throws IOException {
+		int outCounter = 1;
+		for(String symbolKey: st.getAll()){
+
+			//obtengo el simbolo asociado a la key
+			Symbol s = st.getSymbol(symbolKey);
+
+			//si es un string significa que se quiere imprimir con un OUT
+			if(s.getDataType().equals(Symbol._STRING_TYPE)){
+
+				//generamos el asembler que declara una nueva variable para el out y le asigna el string
+				declarationAndAssignmentOfVar("out" + outCounter, removeApostrophes(s.getLexeme()));
+
+				//guardamos en un mapa el nombre de la variable asociada al string para poder usarlo cuando se quiera imprimir
+				outVars.put(s.getLexeme(),"out" + outCounter++);
+			}
+		}
+	}
+
+	public void writeOUT(Triplet t) throws IOException {
+
+		//obtenemos el nombre de la variable que contiene el mensaje a mostrar
+		String varName = outVars.get(t.getFirstOperand().getRef());
+
+		//generamos el assembler para mostrar el mensaje en pantalla
+		code.write("invoke MessageBox, NULL, addr outTitle, addr " + varName +", MB_OK");
+		code.newLine();
+		code.write("invoke ExitProcess, 0");
+		code.newLine();
 	}
 	
 	public void commutativeOpInt(Triplet t) throws IOException{

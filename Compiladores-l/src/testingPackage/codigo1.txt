@@ -7,18 +7,23 @@ include \masm32\include\user32.inc
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
 
-MOV EAX,3
-MOV EDX,0
-MOV EBX,5
-DIV EBX
-MOV EBX,EAX
-MOV EAX,4
-MOV EDX,0
-DIV _carlos:main
-MOV ECX,EAX
-MOV EAX,ECX
-MOV EDX,0
-DIV _charly:main
-MOV ECX,EAX
-SUB EBX, EBX
-MOV _charles:main, EBX
+.data
+outTitle db "OUT message", 0
+out1 db "Carl", 0
+out2 db "Charles", 0
+out3 db "Carlos", 0
+out4 db "Charly", 0
+
+.code
+start:
+invoke MessageBox, NULL, addr outTitle, addr out2, MB_OK
+invoke ExitProcess, 0
+invoke MessageBox, NULL, addr outTitle, addr out4, MB_OK
+invoke ExitProcess, 0
+invoke MessageBox, NULL, addr outTitle, addr out3, MB_OK
+invoke ExitProcess, 0
+invoke MessageBox, NULL, addr outTitle, addr out1, MB_OK
+invoke ExitProcess, 0
+invoke MessageBox, NULL, addr outTitle, addr out2, MB_OK
+invoke ExitProcess, 0
+end start

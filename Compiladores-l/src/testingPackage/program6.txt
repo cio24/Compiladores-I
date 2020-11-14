@@ -1,11 +1,18 @@
+/%
 ULONGINT carlos;
 ULONGINT charles;
 ULONGINT charly;
 
 charles = 3_ul / 5_ul - 4_ul / carlos / charly;
-/%
+
 charly = carlos + charles;
 carlos = carlos + 7_ul;
 charles = charly - carlos;
 charly = 10_ul + 20_ul;
 %/
+
+OUT('Charles');
+OUT('Charly');
+OUT('Carlos');
+OUT('Carl');
+OUT('Charles');
