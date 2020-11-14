@@ -1,9 +1,6 @@
 package assemblerPackage;
 
 import codeGenerationPackage.Symbol;
-import codeGenerationPackage.SymbolsTable;
-import utilitiesPackage.Pair;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;

@@ -7,18 +7,18 @@ include \masm32\include\user32.inc
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
 
-MOV EAX, 3
-MOV EDX, 0
-MOV EBX, 5
+MOV EAX,3
+MOV EDX,0
+MOV EBX,5
 DIV EBX
-MOV EBX, EAX
-MOV EAX, 4
-MOV EDX, 0
+MOV EBX,EAX
+MOV EAX,4
+MOV EDX,0
 DIV _carlos:main
-MOV ECX, EAX
-MOV EAX, ECX
-MOV EDX, 0
+MOV ECX,EAX
+MOV EAX,ECX
+MOV EDX,0
 DIV _charly:main
-MOV ECX, EAX
-SUB EBX, ECX
+MOV ECX,EAX
+SUB EBX, EBX
 MOV _charles:main, EBX
