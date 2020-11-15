@@ -1,0 +1,38 @@
+/%
+ULONGINT carlos;
+ULONGINT charles;
+ULONGINT charly;
+
+charles = 3_ul / 5_ul - 4_ul / carlos / charly;
+
+charly = carlos + charles;
+carlos = carlos + 7_ul;
+charles = charly - carlos;
+charly = 10_ul + 20_ul;
+%/
+
+ULONGINT alpha;
+ULONGINT beta;
+
+DOUBLE var;
+
+LOOP{
+	alpha = 1_ul;
+	PROC procedure (DOUBLE d, ULONGINT u) NA = 2_ul SHADOWING = FALSE {
+		DOUBLE var;
+		var=5.0;
+		PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
+			var = 3.0;
+			PROC procedure3 () NA = 0_ul SHADOWING = FALSE {
+				var = 4.0;
+			};
+		};
+	};
+	beta = 2_ul;
+	LOOP{
+		alpha = 3_ul;
+        beta = 4_ul;
+	}
+	UNTIL ( 6_ul < 6_ul);
+}
+UNTIL ( 5_ul > 5_ul);

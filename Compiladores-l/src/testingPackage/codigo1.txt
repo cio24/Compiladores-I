@@ -1,3 +1,4 @@
+----------->COMIENZO HEADER
 .386
 .model flat, stdcall
 option casemap :none
@@ -6,21 +7,31 @@ include \masm32\include\kernel32.inc
 include \masm32\include\user32.inc
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
-
+----------->COMIENZO DATA
 .data
 outTitle db "OUT message", 0
-
+----------->COMIENZO PROCEDIMIENTOS
+LABEL DEL PROCEDIMIENTO procedure3:main:procedure:procedure2
+MOV _var:main:procedure,4.0
+RETURN DEL PROCEDIMIENTO procedure3:main:procedure:procedure2
+LABEL DEL PROCEDIMIENTO procedure2:main:procedure
+MOV _var:main:procedure,3.0
+RETURN DEL PROCEDIMIENTO procedure2:main:procedure
+LABEL DEL PROCEDIMIENTO procedure:main
+MOV _var:main:procedure,5.0
+RETURN DEL PROCEDIMIENTO procedure:main
+----------->COMIENZO MAIN
 .code
 start:
 Label1:
 MOV _alpha:main,1
 MOV _beta:main,2
-Label4:
+Label13:
 MOV _alpha:main,3
 MOV _beta:main,4
 MOV EBX,6
 CMP EBX, 6
-JB null
+JB Label13
 MOV EBX,5
 CMP EBX, 5
 JA Label1

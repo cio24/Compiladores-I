@@ -5,15 +5,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import codeGenerationPackage.*;
 
 public class AssemblerGenerator {
 	
 	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
-	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
 
 	public static final String FILENAME = "codigo1.txt";
@@ -23,7 +25,7 @@ public class AssemblerGenerator {
 	private static final String DIV = "DIV";
 
 	public static int variablesAuxCounter;
-	public static BufferedWriter code;
+	//public static BufferedWriter code; DEPRECATED
 	private RegistersManager rm;
 	private HashMap<String,String> outVars;
 
@@ -32,70 +34,73 @@ public class AssemblerGenerator {
 	public static TripletsManager tm;
 	//String outfilepath;
 	
+	//Contenedores de codigo assembler que luego se volcaran al archivo
+	public static List<String> headerSection; //Seccion de datos del archivo assembler
+	
+	public static List<String> dataSection; //Seccion de datos del archivo assembler
+	
+	public static List<List<String>> procList; //La lista de codigos de procedimientos (incluido el main)
+	public int actualProcList;
+	
+	public static List<String> actualCode; //Apunta al procedimiento/main al cual se está generando codigo actualmente
+
+	
 	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
 		AssemblerGenerator.st =st;
 		AssemblerGenerator.tm =tm;
 		variablesAuxCounter = 0;
 		rm = new RegistersManager();
+		
 		this.outVars = new HashMap<>();
+		
+		headerSection = new ArrayList<>();
+		
+		dataSection = new ArrayList<>();
+		
+		procList = new ArrayList<>();
+		procList.add(new ArrayList<>()); //El primer procedimiento seria el main.
+		
+		actualCode = procList.get(0); 
+		actualProcList = 0;
+		
 		//this.outfilepath = outfilepath;
 	}
 	
-	public void createAssemblerFile() throws IOException {
+	public void createAssembler() throws IOException {
 		if (/*!ErrorReceiver.hasErrors*/true) {
-			File assembler = new File(BASE_PATH+FILENAME/*outfilepath*/); ///No vale la pena hacer una clase para esto
-			FileOutputStream fos = new FileOutputStream(assembler);
-			code = new BufferedWriter(new OutputStreamWriter(fos));
-			generateAssembler();
-			code.close();
+			generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
+			generateCodeSection(); // Genera la seccion donde se vuelca el codigo
+			generateDataSection(); // Genera la seccion donde se vuelca toda la informaciï¿½n de la tabla de simbolos
+			
+			putCodeIntoFile();
 		}
-	}
-	
-	public void generateAssembler() throws IOException {
-		generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
-		generateDataSection(); // Genera la seccion donde se vuelca toda la informaciï¿½n de la tabla de simbolos
-		generateCodeSection(); // Genera la seccion donde se vuelca el codigo
 	}
 
 	public void generateHeader() throws IOException {
 
-		code.write(".386");
-		code.newLine();
-		code.write(".model flat, stdcall");
-		code.newLine();
-		code.write("option casemap :none");
-		code.newLine();
-		code.write("include \\masm32\\include\\windows.inc");
-		code.newLine();
-		code.write("include \\masm32\\include\\kernel32.inc");
-		code.newLine();
-		code.write("include \\masm32\\include\\user32.inc");
-		code.newLine();
-		code.write("includelib \\masm32\\lib\\kernel32.lib");
-		code.newLine();
-		code.write("includelib \\masm32\\lib\\user32.lib");
-		code.newLine();
-		code.newLine();
-
+		headerSection.add(".386");
+		headerSection.add(".model flat, stdcall");
+		headerSection.add("option casemap :none");
+		headerSection.add("include \\masm32\\include\\windows.inc");
+		headerSection.add("include \\masm32\\include\\kernel32.inc");
+		headerSection.add("include \\masm32\\include\\user32.inc");
+		headerSection.add("includelib \\masm32\\lib\\kernel32.lib");
+		headerSection.add("includelib \\masm32\\lib\\user32.lib");	
 	}
 
-	public void generateDataSection() throws IOException {
-		code.write(".data");
-		code.newLine();
+	public void generateDataSection(){
+		dataSection.add(".data");
 
 		//declaramos una variable que vamos a usar como titulo de todas las ventanas de los mensajes que se impriman
 		stringDeclaration("outTitle","OUT message");
 
 		//declaramos una variable por cada OUT que se haga y le asignamos el mensaje
 		declareOUTVars();
-		code.newLine();
 	};
 
 	public void generateCodeSection() throws IOException {
-		code.write(".code");
-		code.newLine();
-		code.write("start:");
-		code.newLine();
+		actualCode.add(".code");
+		actualCode.add("start:");
 
 		for(Triplet t: tm.triplets)
 			switch (t.getOperator()){
@@ -131,22 +136,29 @@ public class AssemblerGenerator {
 					break;
 				case "PC":
 					break;
-				case "PDB":
+				case "PDB": {
+					procList.add(new ArrayList<>());
+					actualProcList++;
+					actualCode = procList.get(actualProcList);
+					actualCode.add("LABEL DEL PROCEDIMIENTO "+t.getFirstOperand().getRef());
+				}
 					break;
-				case "PDE":
+				case "PDE": {
+					actualCode.add("RETURN DEL PROCEDIMIENTO "+t.getFirstOperand().getRef());
+					actualProcList--;
+					actualCode = procList.get(actualProcList);
+				}
 					break;
 				default:
 					//son los labels!!
 					writeLabel(t);
 			}
 
-		code.write("end start");
-		code.newLine();
+		actualCode.add("end start");
 	};
 
-	public void stringDeclaration(String varName, String valueAssigned) throws IOException {
-		code.write(varName + " db \"" + valueAssigned + "\", 0");
-		code.newLine();
+	public void stringDeclaration(String varName, String valueAssigned){
+		dataSection.add(varName + " db \"" + valueAssigned + "\", 0");
 	}
 
 	public String removeApostrophes(String outMessage){
@@ -154,18 +166,15 @@ public class AssemblerGenerator {
 	}
 
 	public void writeMov(String dest,String src) throws IOException {
-		code.write("MOV "+dest+","+src);
-		code.newLine();
+		actualCode.add("MOV "+dest+","+src);
 	}
 
 	public void writeOp(String opt, String op1Name, String op2Name) throws IOException {
-		code.write( opt + " " + op1Name + ", " + op2Name);
-		code.newLine();
+		actualCode.add( opt + " " + op1Name + ", " + op2Name);
 	}
 
 	public void writeOp(String opt, String opName) throws IOException {
-		code.write( opt + " " + opName);
-		code.newLine();
+		actualCode.add( opt + " " + opName);
 	}
 	
 	public void nonCommutativeOpInt(Triplet t) throws IOException {
@@ -187,8 +196,7 @@ public class AssemblerGenerator {
 				//obtenemos un registro para pasarle el valor del operando uno
 				Register reg = rm.getEntireRegisterFree();
 				//generamos el assembler
-				code.write( "MOV " + reg.getEntire() + ", " + op1Name);
-				code.newLine();
+				actualCode.add( "MOV " + reg.getEntire() + ", " + op1Name);
 				op1Name = reg.getEntire();
 				reg.setFree(false);
 				// ESTO QUEDA op1Name = REGISTRO op2Name = NO REGISTRO
@@ -196,10 +204,8 @@ public class AssemblerGenerator {
 		} else {
 			// Si es division entonces me aseguro que el primer operando se guarde en EAX, que siempre lo tenemos libre
 			// Para poder hacer el div			
-			code.write( "MOV EAX, " + op1Name);
-			code.newLine();
-			code.write( "MOV EDX, 0");
-			code.newLine();
+			actualCode.add( "MOV EAX, " + op1Name);
+			actualCode.add( "MOV EDX, 0");
 			
 			// Libero el registro que usaba op1 ya que lo pase a EAX 
 			if (op1.isPointer())
@@ -211,8 +217,7 @@ public class AssemblerGenerator {
 			
 		if (opt.equals("SUB")) {
 			//Generalmos el assembler la operaciï¿½n
-			code.write( opt + " " + op1Name + ", " + op2Name);
-			code.newLine();
+			actualCode.add( opt + " " + op1Name + ", " + op2Name);
 			
 			if(op2.isPointer()) 
 				rm.getRegister(op2Name).setFree(true);
@@ -222,14 +227,12 @@ public class AssemblerGenerator {
 			if (op2.isImmediate(st))
 			{
 				Register r = rm.getEntireRegisterFree();
-				code.write( "MOV " + r.getEntire() +", "+ op2Name);
-				code.newLine();
+				actualCode.add( "MOV " + r.getEntire() +", "+ op2Name);
 				r.setFree(false);
 				op2Name = r.getEntire();
 			}
 			
-			code.write( "DIV " + op2Name);
-			code.newLine();		
+			actualCode.add( "DIV " + op2Name);
 
 			if(!op2.isVar()) 
 				rm.getRegister(op2Name).setFree(true);
@@ -240,8 +243,7 @@ public class AssemblerGenerator {
 		if (opt.equals("DIV")) {
 			// Pido el libre y genero el mov
 			Register r = rm.getEntireRegisterFree();
-			code.write( "MOV " + r.getEntire() +", EAX");
-			code.newLine();
+			actualCode.add( "MOV " + r.getEntire() +", EAX");
 			
 			// Marco como usado el nuevo registro
 			op1Name =  r.getEntire();
@@ -346,7 +348,7 @@ public class AssemblerGenerator {
 		t.setResultLocation(op1Name);
 	}
 
-	public void declareOUTVars() throws IOException {
+	public void declareOUTVars(){
 		int outCounter = 1;
 		for(String symbolKey: st.getAll()){
 
@@ -371,10 +373,8 @@ public class AssemblerGenerator {
 		String varName = outVars.get(t.getFirstOperand().getRef());
 
 		//generamos el assembler para mostrar el mensaje en pantalla
-		code.write("invoke MessageBox, NULL, addr outTitle, addr " + varName +", MB_OK");
-		code.newLine();
-		code.write("invoke ExitProcess, 0");
-		code.newLine();
+		actualCode.add("invoke MessageBox, NULL, addr outTitle, addr " + varName +", MB_OK");
+		actualCode.add("invoke ExitProcess, 0");
 	}
 	
 	public void commutativeOpInt(Triplet t) throws IOException{
@@ -399,8 +399,7 @@ public class AssemblerGenerator {
 				Register reg = rm.getEntireRegisterFree();
 					
 				//generamos el assembler
-				code.write( "MOV " + reg.getEntire() + ", " + op1Name);
-				code.newLine();
+				actualCode.add( "MOV " + reg.getEntire() + ", " + op1Name);
 				op1Name = reg.getEntire();
 				reg.setFree(false);
 				// ESTO QUEDA op1Name = REGISTRO op2Name = NO REGISTRO
@@ -418,8 +417,7 @@ public class AssemblerGenerator {
 		} else {
 			// Si es multiplicacion entonces me aseguro que el primer operando se guarde en EAX, que siempre lo tenemos libre
 			// Para poder hacer el mul			
-			code.write( "MOV EAX, " + op1Name);
-			code.newLine();
+			actualCode.add( "MOV EAX, " + op1Name);
 			
 			// Libero el registro que usaba op1 ya que lo pase a EAX 
 			if (op1.isPointer())
@@ -430,15 +428,13 @@ public class AssemblerGenerator {
 		}
 			
 		//Generalmos el assembler la operaciï¿½n
-		code.write( opt + " " + op1Name + ", " + op2Name);
-		code.newLine();
+		actualCode.add( opt + " " + op1Name + ", " + op2Name);
 
 		// ADebo guardar el resultado en otro registro para liberar EAX
 		if (opt.equals("MUL")) {
 			// Pido el libre y genero el mov
 			Register r = rm.getEntireRegisterFree();
-			code.write( "MOV " + r.getEntire() +", EAX");
-			code.newLine();
+			actualCode.add( "MOV " + r.getEntire() +", EAX");
 			
 			// Marco como usado el nuevo registro
 			op1Name =  r.getEntire();
@@ -469,8 +465,7 @@ public class AssemblerGenerator {
 		if(bothVars){
 			Register r = rm.getEntireRegisterFree();
 			// Muevo la var al registro libre
-			code.write("MOV " + r.getEntire() + ", " + op2Name);
-			code.newLine();
+			actualCode.add("MOV " + r.getEntire() + ", " + op2Name);
 			// Guardo como nuevo operando 2 este registro
 			op2Name = r.getEntire();	
 			
@@ -507,8 +502,7 @@ public class AssemblerGenerator {
 		}
 
 		//generamos el assembler
-		code.write("CMP " + op1Name + ", " + op2Name);
-		code.newLine();
+		actualCode.add("CMP " + op1Name + ", " + op2Name);
 
 		//liberamos el registro donde se guardaba el primer operando, ya que el resultado de la comparacion se ve reflejado en algunos flags
 		rm.getRegister(op1Name).setFree(true);
@@ -530,24 +524,19 @@ public class AssemblerGenerator {
 			tCondition = tm.getTriplet(Integer.parseInt(op1.getRef()));
 			switch (tCondition.getOperator()){
 				case "<":
-					code.write( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case "<=":
-					code.write( "JNBE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNBE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case ">":
-					code.write( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case">=":
-					code.write( "JNAE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNAE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case "==":
-					code.write( "JNEE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNEE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 			}
 		}
@@ -556,24 +545,19 @@ public class AssemblerGenerator {
 			tCondition = tm.getTriplet(Integer.parseInt(op1.getRef()));
 			switch (tCondition.getOperator()){
 				case "<":
-					code.write( "JB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case "<=":
-					code.write( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case ">":
-					code.write( "JA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case">=":
-					code.write( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 				case "==":
-					code.write( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					code.newLine();
+					actualCode.add( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					break;
 			}
 
@@ -581,8 +565,7 @@ public class AssemblerGenerator {
 	}
 
 	private void writeLabel(Triplet t) throws IOException {
-		code.write(t.getOperator() + ":");
-		code.newLine();
+		actualCode.add(t.getOperator() + ":");
 	}
 
 	private String getAssemblerOpt(String opt) {
@@ -596,8 +579,53 @@ public class AssemblerGenerator {
 	}
 
 	private void writeUnJump(Triplet t) throws IOException {
-		code.write( "JMP " + t.getFirstOperand().getRef());
+		actualCode.add( "JMP " + t.getFirstOperand().getRef());
+	}
+	
+	public void putCodeIntoFile() throws IOException {
+		BufferedWriter code;
+		File assembler = new File(BASE_PATH+FILENAME/*outfilepath*/); ///No vale la pena hacer una clase para esto
+		FileOutputStream fos;
+		fos = new FileOutputStream(assembler);
+		code = new BufferedWriter(new OutputStreamWriter(fos));
+
+		code.write("----------->COMIENZO HEADER");
 		code.newLine();
+		
+		for (int i = 0; i<headerSection.size();i++) {
+			code.write(headerSection.get(i));
+			code.newLine();
+		}
+		
+		code.write("----------->COMIENZO DATA");
+		code.newLine();
+
+		for (int i = 0; i<dataSection.size();i++) {
+			code.write(dataSection.get(i));
+			code.newLine();
+		}
+		
+		code.write("----------->COMIENZO PROCEDIMIENTOS");
+		code.newLine();
+
+		for (int i = procList.size()-1; i>0; i--)
+		{
+			List<String> thisList=procList.get(i);
+			for (int j=0; j<thisList.size(); j++) {
+				code.write(thisList.get(j));
+				code.newLine();
+			}
+		}
+		
+		code.write("----------->COMIENZO MAIN");
+		code.newLine();
+		
+		for (int i=0; i<procList.get(0).size(); i++) {
+			code.write(procList.get(0).get(i));
+			code.newLine();
+		}
+	
+		code.close();
 	}
 
 }

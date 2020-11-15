@@ -62,8 +62,7 @@ public class RegistersManager {
         }
 
         //generamos el codigo para guardar los datos del registo r
-        AssemblerGenerator.code.write("MOV " + aux + "," + r.getEntire());
-        AssemblerGenerator.code.newLine();
+        AssemblerGenerator.actualCode.add("MOV " + aux + "," + r.getEntire());
 
         //guardamos una referencia del registro guardado para poder restaurarlo
         savedRegisters.put(r.getEntire(),aux);
@@ -76,8 +75,7 @@ public class RegistersManager {
 
         if(aux != null){
             //generamos el codigo para restaurar el registro r
-            AssemblerGenerator.code.write("MOV " + r.getEntire() + "," + aux);
-            AssemblerGenerator.code.newLine();
+            AssemblerGenerator.actualCode.add("MOV " + r.getEntire() + "," + aux);
 
             //eliminamos del hash el valor guardado de r
             savedRegisters.remove(r.getEntire());

@@ -9,10 +9,10 @@ import java.io.IOException;
 public class Test {
 
 	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
-	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
-	public static final String FILENAME = "program6.txt";
+	public static final String FILENAME = "program10.txt";
 
 	
 	public static void main(String[] args) throws IOException {
@@ -48,7 +48,7 @@ public class Test {
 		p.la.getSymbolsTable().print();
 		System.out.println(p.tm);
 		AssemblerGenerator ag= new AssemblerGenerator(p.la.getSymbolsTable(),p.tm);
-		ag.createAssemblerFile();
+		ag.createAssembler();
 		
 		/*
 
