@@ -43,7 +43,12 @@ public class AssemblerGenerator {
 	public int actualProcList;
 	
 	public static List<String> actualCode; //Apunta al procedimiento/main al cual se está generando codigo actualmente
+	
+	public String procLabelPrefix = "PROCLabel"; 
 
+	public int procLabelNumberCounter; //Cuenta la cantidad de labels de procedimiento usados para identificarlos unicamente
+	
+	HashMap<String, String> procLabels; //Registra los labels asociados a cada nombre de procedimiento
 	
 	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
 		AssemblerGenerator.st =st;
@@ -62,6 +67,11 @@ public class AssemblerGenerator {
 		
 		actualCode = procList.get(0); 
 		actualProcList = 0;
+		
+		procLabelNumberCounter = 0; 
+		
+		procLabels = new HashMap<String, String>();
+		
 		
 		//this.outfilepath = outfilepath;
 	}
@@ -89,7 +99,6 @@ public class AssemblerGenerator {
 	}
 
 	public void generateDataSection(){
-		dataSection.add(".data");
 
 		//declaramos una variable que vamos a usar como titulo de todas las ventanas de los mensajes que se impriman
 		stringDeclaration("outTitle","OUT message");
@@ -99,8 +108,6 @@ public class AssemblerGenerator {
 	};
 
 	public void generateCodeSection() throws IOException {
-		actualCode.add(".code");
-		actualCode.add("start:");
 
 		for(Triplet t: tm.triplets)
 			switch (t.getOperator()){
@@ -134,17 +141,31 @@ public class AssemblerGenerator {
 				case "BI":
 					writeUnJump(t);
 					break;
-				case "PC":
+				case "PC": {
+					//Se consulta la label del procedimiento siendo llamado (siempre debe existir esta label, ya que necesariamente se paso por  
+					//la declaracion del procedimiento antes de poder realizar su llamada)
+					String labelOfProcedure = procLabels.get(t.getFirstOperand().getRef());
+					//Se llama a la label adquirida
+					actualCode.add("CALL "+labelOfProcedure);
+				}
 					break;
 				case "PDB": {
-					procList.add(new ArrayList<>());
+
+					//Se inicializa una nueva label para el procedimiento siendo declarado
+					String label = procLabelPrefix+procLabelNumberCounter; 
+					procLabelNumberCounter++;
+					//Se registra la nueva label para el procedimiento
+					procLabels.put(t.getFirstOperand().getRef(),label);
+
+					
+					procList.add(new ArrayList<>()); //Se genera una nueva lista de codigo para este procedimiento
 					actualProcList++;
 					actualCode = procList.get(actualProcList);
-					actualCode.add("LABEL DEL PROCEDIMIENTO "+t.getFirstOperand().getRef());
+					actualCode.add(label+":");
 				}
 					break;
 				case "PDE": {
-					actualCode.add("RETURN DEL PROCEDIMIENTO "+t.getFirstOperand().getRef());
+					actualCode.add("RET");
 					actualProcList--;
 					actualCode = procList.get(actualProcList);
 				}
@@ -154,7 +175,6 @@ public class AssemblerGenerator {
 					writeLabel(t);
 			}
 
-		actualCode.add("end start");
 	};
 
 	public void stringDeclaration(String varName, String valueAssigned){
@@ -582,22 +602,22 @@ public class AssemblerGenerator {
 		actualCode.add( "JMP " + t.getFirstOperand().getRef());
 	}
 	
-	public void putCodeIntoFile() throws IOException {
+	public void putCodeIntoFile() throws IOException { //Itera por todas las listas de codigo en orden para ponerlas en el archivo de codigo assembler
 		BufferedWriter code;
 		File assembler = new File(BASE_PATH+FILENAME/*outfilepath*/); ///No vale la pena hacer una clase para esto
 		FileOutputStream fos;
 		fos = new FileOutputStream(assembler);
 		code = new BufferedWriter(new OutputStreamWriter(fos));
-
-		code.write("----------->COMIENZO HEADER");
-		code.newLine();
 		
 		for (int i = 0; i<headerSection.size();i++) {
 			code.write(headerSection.get(i));
 			code.newLine();
 		}
 		
-		code.write("----------->COMIENZO DATA");
+		code.newLine();
+		
+		code.write(".DATA");
+		code.newLine();
 		code.newLine();
 
 		for (int i = 0; i<dataSection.size();i++) {
@@ -605,10 +625,13 @@ public class AssemblerGenerator {
 			code.newLine();
 		}
 		
-		code.write("----------->COMIENZO PROCEDIMIENTOS");
 		code.newLine();
-
-		for (int i = procList.size()-1; i>0; i--)
+		
+		code.write(".CODE");
+		code.newLine();
+		code.newLine();
+	
+		for (int i = procList.size()-1; i>0; i--) //Se hace en este orden para que los procedimientos mas "adentro" en el anidamiento queden arriba
 		{
 			List<String> thisList=procList.get(i);
 			for (int j=0; j<thisList.size(); j++) {
@@ -617,14 +640,20 @@ public class AssemblerGenerator {
 			}
 		}
 		
-		code.write("----------->COMIENZO MAIN");
+		code.newLine();
+		
+		code.write(".START");
+		code.newLine();
 		code.newLine();
 		
 		for (int i=0; i<procList.get(0).size(); i++) {
 			code.write(procList.get(0).get(i));
 			code.newLine();
 		}
-	
+		
+		code.newLine();
+		
+		code.write("END START");
 		code.close();
 	}
 

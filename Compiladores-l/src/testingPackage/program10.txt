@@ -18,7 +18,7 @@ DOUBLE var;
 
 LOOP{
 	alpha = 1_ul;
-	PROC procedure (DOUBLE d, ULONGINT u) NA = 2_ul SHADOWING = FALSE {
+	PROC procedure () NA = 2_ul SHADOWING = FALSE {
 		DOUBLE var;
 		var=5.0;
 		PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
@@ -26,7 +26,9 @@ LOOP{
 			PROC procedure3 () NA = 0_ul SHADOWING = FALSE {
 				var = 4.0;
 			};
+			procedure3();
 		};
+		procedure2();
 	};
 	beta = 2_ul;
 	LOOP{
@@ -34,5 +36,6 @@ LOOP{
         beta = 4_ul;
 	}
 	UNTIL ( 6_ul < 6_ul);
+	procedure();
 }
 UNTIL ( 5_ul > 5_ul);
