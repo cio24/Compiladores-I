@@ -9,36 +9,29 @@ includelib \masm32\lib\user32.lib
 
 .DATA
 
-outTitle db "OUT message", 0
+; declaracion de variables
+@out1 DB "Charles can get drunk", 0
+@out2 DB "Charles cannot get drunk", 0
+outTitle DB "OUT message", 0
+_charles_age_main DD ?
+_legal_age_main DD ?
 
 .CODE
 
-PROCLabel2:
-MOV _var:main:procedure,4.0
-RET
-PROCLabel1:
-MOV _var:main:procedure,3.0
-CALL PROCLabel2
-RET
-PROCLabel0:
-MOV _var:main:procedure,5.0
-CALL PROCLabel1
-RET
 
-.START
+START:
 
-Label1:
-MOV _alpha:main,1
-MOV _beta:main,2
-Label15:
-MOV _alpha:main,3
-MOV _beta:main,4
-MOV EBX,6
-CMP EBX, 6
-JB Label15
-CALL PROCLabel0
-MOV EBX,5
-CMP EBX, 5
-JA Label1
+MOV _charles_age_main,17
+MOV _legal_age_main,18
+MOV EBX,_charles_age_main
+CMP EBX, _legal_age_main
+JNAE Label7
+invoke MessageBox, NULL, addr @out1, addr outTitle, MB_OK
+invoke ExitProcess, 0
+JMP Label9
+Label7:
+invoke MessageBox, NULL, addr @out2, addr outTitle, MB_OK
+invoke ExitProcess, 0
+Label9:
 
 END START

@@ -74,9 +74,10 @@ public class AssemblerGenerator {
 	public void createAssembler() throws IOException {
 		if (/*!ErrorReceiver.hasErrors*/true) {
 			generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
+			dataSection.add("; declaracion de variables");
 			generateCodeSection(); // Genera la seccion donde se vuelca el codigo
 			generateDataSection(); // Genera la seccion donde se vuelca toda la informaciï¿½n de la tabla de simbolos
-			
+
 			putCodeIntoFile();
 		}
 	}
@@ -100,7 +101,8 @@ public class AssemblerGenerator {
 		code.newLine();
 
 		for (int i = 0; i<dataSection.size();i++) {
-			code.write(dataSection.get(i));
+
+			code.write(replaceColons(dataSection.get(i)));
 			code.newLine();
 		}
 
@@ -114,19 +116,19 @@ public class AssemblerGenerator {
 		{
 			List<String> thisList=procList.get(i);
 			for (int j=0; j<thisList.size(); j++) {
-				code.write(thisList.get(j));
+				code.write(replaceColons(thisList.get(j)));
 				code.newLine();
 			}
 		}
 
 		code.newLine();
 
-		code.write(".START");
+		code.write("START:");
 		code.newLine();
 		code.newLine();
 
 		for (int i=0; i<procList.get(0).size(); i++) {
-			code.write(procList.get(0).get(i));
+			code.write(replaceColons(procList.get(0).get(i)));
 			code.newLine();
 		}
 
@@ -149,7 +151,7 @@ public class AssemblerGenerator {
 
 	public void generateDataSection(){
 		//declaramos una variable que vamos a usar como titulo de todas las ventanas de los mensajes que se impriman
-		dataSection.add("outTitle" + " db \"" + "OUT message" + "\", 0");
+		dataSection.add("outTitle" + " DB \"" + "OUT message" + "\", 0");
 
 		//declaramos todas las variables que se usan en la tabla de símbolos
 		writeVarDeclarations();
@@ -202,7 +204,7 @@ public class AssemblerGenerator {
 					writeConJump(t);
 					break;
 				case "BI":
-					actualCode.add( "JMP " + t.getFirstOperand().getRef());
+					actualCode.add( "JMP " + "Label" + t.getFirstOperand().getRef());
 					break;
 				case "PC":
 					//Se consulta la label del procedimiento siendo llamado (siempre debe existir esta label, ya que necesariamente se paso por  
@@ -249,11 +251,11 @@ public class AssemblerGenerator {
 		String varName = "@out" + ++outCounter;
 
 		//generamos el asembler que declara la nueva variable para el out y se le asigna el string
-		dataSection.add(varName + " db \"" + removeApostrophes(t.getFirstOperand().getRef()) + "\", 0");
+		dataSection.add(varName + " DB \"" + removeApostrophes(t.getFirstOperand().getRef()) + "\", 0");
 
 
 		//generamos el assembler para mostrar el mensaje en pantalla
-		actualCode.add("invoke MessageBox, NULL, addr outTitle, addr " + varName +", MB_OK");
+		actualCode.add("invoke MessageBox, NULL, addr " + varName + ", addr outTitle, MB_OK");
 		actualCode.add("invoke ExitProcess, 0");
 	}
 
@@ -463,9 +465,9 @@ public class AssemblerGenerator {
 		String op2Name = op2.getAssemblerReference(tm);
 
 		//el primer operando no puede ser inmediato, asi que lo pasamos a un registro
-		if(op1.isImmediate(st)){
+		if(op1.isImmediate(st) || op1.isVar()){
 			Register r = rm.getEntireRegisterFree();
-			actualCode.add("MOV " + r.getEntire() + "," + op2Name);
+			actualCode.add("MOV " + r.getEntire() + "," + op1Name);
 
 			r.setFree(false);
 			op1Name = r.getEntire();
@@ -475,7 +477,8 @@ public class AssemblerGenerator {
 		actualCode.add("CMP " + op1Name + ", " + op2Name);
 
 		//liberamos el registro donde se guardaba el primer operando, ya que el resultado de la comparacion se ve reflejado en algunos flags
-		rm.getRegister(op1Name).setFree(true);
+		if(op1.isImmediate(st) || op1.isPointer())
+			rm.getRegister(op1Name).setFree(true);
 
 		//si el segundo operando era un registro lo liberamos
 		if(op2.isPointer())
@@ -634,8 +637,14 @@ public class AssemblerGenerator {
 		for(String key: st.getAll()){
 			s = st.getSymbol(key);
 			if(s.getUse().equals(Symbol._VARIABLE_USE))
-				actualCode.add("_" + s.getLexeme() + " DD ?");
+				dataSection.add("_" + s.getLexeme() + " DD ?");
 		}
+	}
+
+	public String replaceColons(String s){
+		if(s.contains(":") && s.contains("_"))
+			return s.replaceAll(":","_");
+		return s;
 	}
 
 }

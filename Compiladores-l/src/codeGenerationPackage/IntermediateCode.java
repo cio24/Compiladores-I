@@ -100,7 +100,7 @@ public class IntermediateCode {
 				//se muestra el nombre de la variable con el scope en dondé se declaro, no en donde se encontró
 				//para hacerlo mas legible
 				t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,varIdDeclaration),expression);
-
+				t.setDataType(expression.getDataType());
 				//se incrementa la cantidad de referencias que tiene la variable
 				st.getSymbol(varIdDeclaration).addReference();
 			}
