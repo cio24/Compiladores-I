@@ -642,8 +642,8 @@ public class AssemblerGenerator {
 	}
 
 	public String replaceColons(String s){
-		if(s.contains(":") && s.contains("_"))
-			return s.replaceAll(":","_");
+		if(s.contains(":") && s.contains("@"))
+			return s.replaceAll(":","@");
 		return s;
 	}
 
