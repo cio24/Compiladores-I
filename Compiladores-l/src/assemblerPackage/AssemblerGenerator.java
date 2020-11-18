@@ -46,6 +46,7 @@ public class AssemblerGenerator {
 	
 	HashMap<String, String> procLabels; //Registra los labels asociados a cada nombre de procedimiento
 
+	public String recursiveControlPrefix; //Guarda un prefijo para las variables que nos serviran para evitar recursion en procedimientos
 
 	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
 		AssemblerGenerator.st =st;
@@ -214,6 +215,9 @@ public class AssemblerGenerator {
 					actualCode.add("CALL "+labelOfProcedure);
 					break;
 				case "PDB":
+					
+					//Control de recursion de procedimientos
+					//En la tabla de simbolos setear una variable que determina que el procedimiento esta o no activo.
 
 					//Se inicializa una nueva label para el procedimiento siendo declarado
 					String label = procLabelPrefix+procLabelNumberCounter; 
@@ -256,7 +260,6 @@ public class AssemblerGenerator {
 
 		//generamos el assembler para mostrar el mensaje en pantalla
 		actualCode.add("invoke MessageBox, NULL, addr " + varName + ", addr outTitle, MB_OK");
-		actualCode.add("invoke ExitProcess, 0");
 	}
 
 
@@ -592,7 +595,7 @@ public class AssemblerGenerator {
 					break;
 				case "==":
 					if(t.getOperator().equals("BF"))
-						actualCode.add( "JNEE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+						actualCode.add( "JNE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 					else //BT
 						actualCode.add( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 			}
