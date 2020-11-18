@@ -18,6 +18,8 @@ public class Symbol {
     public final static String _PROCEDURE_USE = "Procedure";
     public final static String _PARAMETER_USE = "Parameter";
     public final static String _UNDEFINED_USE = "Undefined";
+    public final static String _RECURSIVE_PROCEDURE_CONTROL_USE= "RecursiveProcedureControl"; //Para uso de variables auxiliares para controlar
+    																						  //que los procedimientos no se llamen recursivamente
 
     //parameter semantic
     public static String _COPY_VALUE_SEMANTIC = "Copy-Value";
@@ -30,6 +32,7 @@ public class Symbol {
     private String use;
     private String parameterSemantic;
     private ProcedureData procedureData;
+    private String initialization;
 
     //MILLONES DE CONSTRUCTORES LAY AHEAD
 
@@ -52,6 +55,16 @@ public class Symbol {
         this.dataType = dataType;
         this.use = use;
         this.parameterSemantic = parameterSemantic;
+    }
+    
+    public Symbol(String lexeme, String lexemeType, String dataType, String use, String parameterSemantic, String initialization) {
+        this.lexeme = lexeme;
+        this.lexemeType = lexemeType;
+        this.referenceCount = 1;
+        this.dataType = dataType;
+        this.use = use;
+        this.parameterSemantic = parameterSemantic;
+        this.initialization = initialization;
     }
 
     // MILLONES DE SETTERS & GETTERS UNTIL THE END OF TIMES
@@ -137,4 +150,12 @@ public class Symbol {
         System.out.println("---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     	
     }
+
+	public String getInitialization() {
+		return initialization;
+	}
+
+	public void setInitialization(String initialization) {
+		this.initialization = initialization;
+	}
 }

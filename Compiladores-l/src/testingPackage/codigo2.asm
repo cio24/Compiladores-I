@@ -10,13 +10,18 @@ includelib \masm32\lib\user32.lib
 .DATA
 
 ; declaracion de variables
+@aux1 DB "Invocacion recursiva a procedimiento invalida", 0
 outTitle DB "OUT message", 0
  @PROCISACTIVEprocedure@main DD 0
  @PROCISACTIVEprocedure1@main@procedure DD 0
+_@aux1 DD ?
 _var@main DD ?
 
 .CODE
 
+RECURSIVEERRORSUBROUTINE:
+invoke MessageBox, NULL, addr @aux1, addr outTitle, MB_OK
+invoke ExitProcess, 0
 PROCLabel1:
 FLD _var@main
 FST _var@main

@@ -20,7 +20,7 @@ LOOP{
 	alpha = 1_ul;
 	PROC procedure () NA = 2_ul SHADOWING = FALSE {
 		DOUBLE var;
-		var=5.0;
+		var=5.0 * 5.0;
 		PROC procedure2 () NA = 1_ul SHADOWING = TRUE {
 			var = 3.0;
 			PROC procedure3 () NA = 0_ul SHADOWING = FALSE {

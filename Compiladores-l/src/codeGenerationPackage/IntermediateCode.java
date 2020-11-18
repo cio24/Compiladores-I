@@ -58,6 +58,7 @@ public class IntermediateCode {
 			setVarDeclaration(varId,scope,dataType);
 		}
 	}
+	
 	public Symbol setVarDeclaration(String id, String scope, String dataType){
 		//borro el símbolo que corresponde con el identificador de la variable
 		st.removeSymbol(id);
@@ -83,6 +84,7 @@ public class IntermediateCode {
 			ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,
 					"la variable \""+ varId +"\" no está declarada.");
 			t = tm.createTriplet("=", new Operand(Operand.ST_POINTER,varId + ":undefined"),expression);
+			//t.setDataType(expression.getDataType());   																		CIO DIRA
 		} else {
 
 			//si se encuentra la declaración, se debe controlar los tipos

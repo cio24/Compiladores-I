@@ -10,15 +10,16 @@ import java.util.HashMap;
 import java.util.List;
 
 import codeGenerationPackage.*;
+import utilitiesPackage.ErrorReceiver;
 
 public class AssemblerGenerator {
 	
 	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
-	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
+	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
 	
 
-	public static final String FILENAME = "codigo1.txt";
+	public static final String FILENAME = "codigo2.asm";
 
 	public static int variablesAuxCounter;
 	//public static BufferedWriter code; DEPRECATED
@@ -46,8 +47,10 @@ public class AssemblerGenerator {
 	
 	HashMap<String, String> procLabels; //Registra los labels asociados a cada nombre de procedimiento
 
-	public String recursiveControlPrefix; //Guarda un prefijo para las variables que nos serviran para evitar recursion en procedimientos
-
+	public String recursiveControlPrefix = "@PROCISACTIVE"; //Guarda un prefijo para las variables que nos serviran para evitar recursion en procedimientos
+	
+	public String recursiveErrorSubroutineLabel = "RECURSIVEERRORSUBROUTINE";
+	
 	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
 		AssemblerGenerator.st =st;
 		AssemblerGenerator.tm =tm;
@@ -73,10 +76,13 @@ public class AssemblerGenerator {
 	}
 	
 	public void createAssembler() throws IOException {
-		if (/*!ErrorReceiver.hasErrors*/true) {
+		if (!ErrorReceiver.hasErrors) {
 			generateHeader(); // Genera la primer parte del archivo con todas las librerias y sintaxis requerida
 			dataSection.add("; declaracion de variables");
 			generateCodeSection(); // Genera la seccion donde se vuelca el codigo
+			
+			generateErrorCodeSection();
+			
 			generateDataSection(); // Genera la seccion donde se vuelca toda la informaciï¿½n de la tabla de simbolos
 
 			putCodeIntoFile();
@@ -208,6 +214,18 @@ public class AssemblerGenerator {
 					actualCode.add( "JMP " + "Label" + t.getFirstOperand().getRef());
 					break;
 				case "PC":
+					
+					//->Control de recursion de procedimientos<-
+					//Verificar que la variable de control del procedimiento que se está llamando no este en 0
+					actualCode.add("CMP " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "0");
+					//Se salta si efectivamente no esta en 0 a la rutina que se encargara de mostrar que hubo error y terminar el programa
+					actualCode.add("JNE " + recursiveErrorSubroutineLabel);
+					//Pero si no se salto, se debe continuar con la llamada al procedimiento, seteando su variable de control en 1
+					actualCode.add("MOV " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "1");
+					//->Control de recursion de procedimientos<-
+					
+					
+					
 					//Se consulta la label del procedimiento siendo llamado (siempre debe existir esta label, ya que necesariamente se paso por  
 					//la declaracion del procedimiento antes de poder realizar su llamada)
 					String labelOfProcedure = procLabels.get(t.getFirstOperand().getRef());
@@ -216,22 +234,37 @@ public class AssemblerGenerator {
 					break;
 				case "PDB":
 					
-					//Control de recursion de procedimientos
-					//En la tabla de simbolos setear una variable que determina que el procedimiento esta o no activo.
-
+					
+					
+					//->Control de recursion de procedimientos<-
+					//En la tabla de simbolos setear una variable que determina que el procedimiento esta o no activo, y 
+					//dicha variable se inicializa en 0.
+					st.addSymbol(recursiveControlPrefix+t.getFirstOperand().getRef(), 
+							new Symbol(recursiveControlPrefix+t.getFirstOperand().getRef(),Symbol._IDENTIFIER_LEXEME,
+									Symbol._ULONGINT_TYPE,Symbol._RECURSIVE_PROCEDURE_CONTROL_USE,"-",/*este es el valor de inicializacion*/"0")); 
+					//Por ahora para probar uso una variable del tipo ulongint
+					//->Control de recursion de procedimientos<-
+					
+					
+					
 					//Se inicializa una nueva label para el procedimiento siendo declarado
 					String label = procLabelPrefix+procLabelNumberCounter; 
 					procLabelNumberCounter++;
 					//Se registra la nueva label para el procedimiento
 					procLabels.put(t.getFirstOperand().getRef(),label);
-
-					
 					procList.add(new ArrayList<>()); //Se genera una nueva lista de codigo para este procedimiento
 					actualProcList++;
 					actualCode = procList.get(actualProcList);
 					actualCode.add(label+":");
 					break;
 				case "PDE":
+					
+					//->Control de recursion de procedimientos<-
+					//al finalizar el procedimiento se setea la variable que indica que está activo en falso (0)
+					actualCode.add("MOV " + recursiveControlPrefix+t.getFirstOperand().getRef()+","+"0");
+					//->Control de recursion de procedimientos<-
+					
+					
 					actualCode.add("RET");
 					actualProcList--;
 					actualCode = procList.get(actualProcList);
@@ -627,7 +660,7 @@ public class AssemblerGenerator {
 	public String getNewVarAux(String suffix) {
 		String varName = "@aux" + suffix + ++variablesAuxCounter;
 		st.addSymbol(varName,new Symbol(varName,Symbol._IDENTIFIER_LEXEME,Symbol._DOUBLE_TYPE,Symbol._VARIABLE_USE));
-		actualCode.add(varName + " DD ?");
+
 		return varName;
 	}
 
@@ -637,17 +670,35 @@ public class AssemblerGenerator {
 
 	public void writeVarDeclarations() {
 		Symbol s;
+		boolean uno = false;
+		boolean dos = false;
 		for(String key: st.getAll()){
 			s = st.getSymbol(key);
 			if(s.getUse().equals(Symbol._VARIABLE_USE))
 				dataSection.add("_" + s.getLexeme() + " DD ?");
+			else if (s.getUse().equals(Symbol._RECURSIVE_PROCEDURE_CONTROL_USE))
+				dataSection.add(" " + s.getLexeme() + " DD " + s.getInitialization());
 		}
 	}
 
 	public String replaceColons(String s){
-		if(s.contains(":") && s.contains("@"))
+		if(s.contains(":") && (s.contains("@") || s.contains("_")))
 			return s.replaceAll(":","@");
 		return s;
+	}
+	
+	public void generateErrorCodeSection() {
+		ArrayList<String> errorCodeSection = new ArrayList<String>();
+		errorCodeSection.add(recursiveErrorSubroutineLabel+":");
+		
+		String var=getNewVarAux();
+		
+		dataSection.add(var + " DB \"" + "Invocacion recursiva a procedimiento invalida" + "\", 0");
+		errorCodeSection.add("invoke MessageBox, NULL, addr " + var + ", addr outTitle, MB_OK");
+		errorCodeSection.add("invoke ExitProcess, 0");
+		
+		procList.add(errorCodeSection);
+		
 	}
 
 }
