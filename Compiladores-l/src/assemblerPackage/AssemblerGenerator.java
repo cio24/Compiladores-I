@@ -150,6 +150,9 @@ public class AssemblerGenerator {
 	public void generateDataSection(){
 		//declaramos una variable que vamos a usar como titulo de todas las ventanas de los mensajes que se impriman
 		dataSection.add("outTitle" + " db \"" + "OUT message" + "\", 0");
+
+		//declaramos todas las variables que se usan en la tabla de símbolos
+		writeVarDeclarations();
 	};
 
 	public void generateCodeSection() {
@@ -158,28 +161,28 @@ public class AssemblerGenerator {
 			switch (t.getOperator()){
 				case "-":
 					if(t.getDataType().equals(Symbol._ULONGINT_TYPE))
-						subOpInt(t);
+						writeSubOfInt(t);
 					else
 						writeAritOpOnDouble(t);
 					break;
 				case "+":
 				case "*":
 					if(t.getDataType().equals(Symbol._ULONGINT_TYPE))
-						commutativeOpInt(t);
+						writeCommutativeOpInt(t);
 					else
 						writeAritOpOnDouble(t);
 					break;
 				case "/":
 					if(t.getDataType().equals(Symbol._ULONGINT_TYPE))
-						divOnInt(t);
+						writeDivOfInt(t);
 					else
 						writeAritOpOnDouble(t);
 					break;
 				case "=":
 					if(t.getDataType().equals(Symbol._ULONGINT_TYPE))
-						assignmentOnInt(t);
+						writeAssignmentOfInt(t);
 					else
-						assignmentOnDouble(t);
+						writeAassignmentOfDouble(t);
 					break;
 				case "==":
 				case "<=":
@@ -257,7 +260,7 @@ public class AssemblerGenerator {
 
 	//############## ENTEROS ##############
 
-	public void subOpInt(Triplet t) {
+	public void writeSubOfInt(Triplet t) {
 
 		// Obtengo los operandos del triplet
 		Operand op1 = t.getFirstOperand();
@@ -293,7 +296,7 @@ public class AssemblerGenerator {
 		t.setResultLocation(op1Name);
 	}
 
-	public void divOnInt(Triplet t) {
+	public void writeDivOfInt(Triplet t) {
 
 		// Obtengo los operandos del triplet
 		Operand op1 = t.getFirstOperand();
@@ -347,7 +350,7 @@ public class AssemblerGenerator {
 		t.setResultLocation(op1Name);
 	}
 	
-	public void commutativeOpInt(Triplet t) {
+	public void writeCommutativeOpInt(Triplet t) {
 		// Obtengo los operandos del triplete
 		Operand op1 = t.getFirstOperand();
 		Operand op2 = t.getSecondOperand();
@@ -421,7 +424,7 @@ public class AssemblerGenerator {
 		
 	}
 	
-	public void assignmentOnInt(Triplet t) {
+	public void writeAssignmentOfInt(Triplet t) {
 		Operand op1 = t.getFirstOperand();
 		Operand op2 = t.getSecondOperand();
 		
@@ -511,25 +514,12 @@ public class AssemblerGenerator {
 		//como no vi que haya instrucciones para flotantes inmediatos, se crea una variable
 		// para guardar c/u de estos y se guarda en la tabla de simbolos
 		if(op.isImmediate(st))
-			opName = immediateDoubleToVar(opName);
+			opName = getNewVarAux();
 
 		return opName;
 	}
 
-	public String immediateDoubleToVar(String immediate) {
-		String opName = "@aux" + ++variablesAuxCounter;
-
-		//guardo la nueva variable en la tabla de simbolos
-		st.addSymbol(opName,new Symbol(opName,Symbol._IDENTIFIER_LEXEME,Symbol._DOUBLE_TYPE,Symbol._VARIABLE_USE));
-
-		//declaro la variable en el assembler y le asigno el inmediato
-		dataSection.add(opName + " DD " + immediate);
-
-		//retorno el nombre que le di a la variable
-		return opName;
-	}
-
-	public void assignmentOnDouble(Triplet t) {
+	public void writeAassignmentOfDouble(Triplet t) {
 		//si es un inmediato se obtiene el nombre de una nueva variable auxiliar donde se guarda el resultado
 		//sino se obtiene el assemblerReference
 		String op2Name  = getDoubleVarName(t.getFirstOperand());
@@ -560,6 +550,7 @@ public class AssemblerGenerator {
 		actualCode.add("MOV " + "AX," + varAux);
 		actualCode.add("SAHF");
 	}
+
 
 	//############## OTROS ##############
 
@@ -627,9 +618,10 @@ public class AssemblerGenerator {
 		return "unknownOperator";
 	}
 
-	public String getNewVarAux(String suffix){
+	public String getNewVarAux(String suffix) {
 		String varName = "@aux" + suffix + ++variablesAuxCounter;
 		st.addSymbol(varName,new Symbol(varName,Symbol._IDENTIFIER_LEXEME,Symbol._DOUBLE_TYPE,Symbol._VARIABLE_USE));
+		actualCode.add(varName + " DD ?");
 		return varName;
 	}
 
@@ -637,5 +629,13 @@ public class AssemblerGenerator {
 		return getNewVarAux("");
 	}
 
+	public void writeVarDeclarations() {
+		Symbol s;
+		for(String key: st.getAll()){
+			s = st.getSymbol(key);
+			if(s.getUse().equals(Symbol._VARIABLE_USE))
+				actualCode.add("_" + s.getLexeme() + " DD ?");
+		}
+	}
 
 }
