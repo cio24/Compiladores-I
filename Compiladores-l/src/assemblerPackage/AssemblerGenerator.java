@@ -19,7 +19,7 @@ public class AssemblerGenerator {
 
 	public static SymbolsTable st;
 	public static TripletsManager tm;
-	public static final String FILENAME = "testCase5.asm";
+	public static final String FILENAME = "testCase4.asm";
 	public static int variablesAuxCounter;
 	private RegistersManager rm;
 	//private String outfilepath;
@@ -34,8 +34,8 @@ public class AssemblerGenerator {
 	public String procLabelPrefix = "PROCLabel";
 	public int procLabelNumberCounter; //Cuenta la cantidad de labels de procedimiento usados para identificarlos unicamente
 	HashMap<String, String> procLabels; //Registra los labels asociados a cada nombre de procedimiento
-	public String recursiveControlPrefix = "@PROCISACTIVE"; //Guarda un prefijo para las variables que nos serviran para evitar recursion en procedimientos
-	public String recursiveErrorSubroutineLabel = "RECURSIVEERRORSUBROUTINE";
+	//public String recursiveControlPrefix = "@PROCISACTIVE"; //Guarda un prefijo para las variables que nos serviran para evitar recursion en procedimientos
+	//public String recursiveErrorSubroutineLabel = "RECURSIVEERRORSUBROUTINE";
 	public String negativeErrorLabel = "NEGATIVEERRORLABEL";
 
 
@@ -184,11 +184,11 @@ public class AssemblerGenerator {
 				case "PC":
 					//->Control de recursion de procedimientos<-
 					//Verificar que la variable de control del procedimiento que se est� llamando no este en 0
-					actualCode.add("CMP " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "0");
+					//actualCode.add("CMP " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "0");
 					//Se salta si efectivamente no esta en 0 a la rutina que se encargara de mostrar que hubo error y terminar el programa
-					actualCode.add("JNE " + recursiveErrorSubroutineLabel);
+					//actualCode.add("JNE " + recursiveErrorSubroutineLabel);
 					//Pero si no se salto, se debe continuar con la llamada al procedimiento, seteando su variable de control en 1
-					actualCode.add("MOV " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "1");
+					//actualCode.add("MOV " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "1");
 					//->Control de recursion de procedimientos<-
 					
 					//Se consulta la label del procedimiento siendo llamado (siempre debe existir esta label, ya que necesariamente se paso por  
@@ -202,10 +202,10 @@ public class AssemblerGenerator {
 					//->Control de recursion de procedimientos<-
 					//En la tabla de simbolos setear una variable que determina que el procedimiento esta o no activo, y 
 					//dicha variable se inicializa en 0.
-					Symbol s = new Symbol(recursiveControlPrefix+t.getFirstOperand().getRef(),Symbol._IDENTIFIER_LEXEME,
-											Symbol._ULONGINT_TYPE,Symbol._RECURSIVE_PROCEDURE_CONTROL_USE,"-");
-					s.setInitialValue("0");
-					st.addSymbol(recursiveControlPrefix+t.getFirstOperand().getRef(),s);
+					//Symbol s = new Symbol(recursiveControlPrefix+t.getFirstOperand().getRef(),Symbol._IDENTIFIER_LEXEME,
+					//						Symbol._ULONGINT_TYPE,Symbol._RECURSIVE_PROCEDURE_CONTROL_USE,"-");
+					//s.setInitialValue("0");
+					//st.addSymbol(recursiveControlPrefix+t.getFirstOperand().getRef(),s);
 					//Por ahora para probar uso una variable del tipo ulongint
 					//->Control de recursion de procedimientos<-
 
@@ -223,7 +223,7 @@ public class AssemblerGenerator {
 				case "PDE":
 					//->Control de recursion de procedimientos<-
 					//al finalizar el procedimiento se setea la variable que indica que est� activo en falso (0)
-					actualCode.add("MOV " + recursiveControlPrefix+t.getFirstOperand().getRef()+","+"0");
+					//actualCode.add("MOV " + recursiveControlPrefix+t.getFirstOperand().getRef()+","+"0");
 					//->Control de recursion de procedimientos<-
 					
 					actualCode.add("RET");
@@ -665,11 +665,14 @@ public class AssemblerGenerator {
 	
 	public void generateErrorCodeSection() {
 		ArrayList<String> errorCodeSection = new ArrayList<String>();
-		errorCodeSection.add(recursiveErrorSubroutineLabel+":");
+		
+		/*
+		 * errorCodeSection.add(recursiveErrorSubroutineLabel+":");
 		String var = getNewVarAux(Symbol._STRING_TYPE);
 		dataSection.add(var + " DB \"" + "Invocacion recursiva a procedimiento invalida" + "\", 0");
 		errorCodeSection.add("invoke printf, cfm$(\"%s\"), OFFSET " + var);
 		errorCodeSection.add("invoke ExitProcess, 0");
+		*/
 		
 		errorCodeSection.add(negativeErrorLabel+":");
 		String var2 = getNewVarAux(Symbol._STRING_TYPE);
