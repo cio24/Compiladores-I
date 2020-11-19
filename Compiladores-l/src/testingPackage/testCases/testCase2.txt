@@ -1,0 +1,29 @@
+/%
+    este codigo muestra el correcto funcionamiento del OUT y las declaraciones,
+    asignaciones y comparaciones de enteros en conjunto con el uso de if,
+    contemplando los casos en donde hay (o no) else y el anidamiento también xD
+%/
+
+ULONGINT charles_age;
+ULONGINT legal_age;
+
+charles_age = 17_ul;
+legal_age = 18_ul;
+
+IF(charles_age >= legal_age)
+    OUT('Charles can get drunk');
+ELSE
+    OUT('Charles cannot get drunk');
+END_IF;
+
+IF(1_ul < 2_ul){
+    IF(0_ul == 0_ul)
+        OUT('Nested if');
+    END_IF;
+}
+END_IF;
+
+
+
+
+
