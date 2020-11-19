@@ -207,7 +207,7 @@ public class AssemblerGenerator {
 					//s.setInitialValue("0");
 					//st.addSymbol(recursiveControlPrefix+t.getFirstOperand().getRef(),s);
 					//Por ahora para probar uso una variable del tipo ulongint
-					//->Control de recursion de procedimientos<-
+					// ->Control de recursion de procedimientos<-
 
 					//Se inicializa una nueva label para el procedimiento siendo declarado
 					String label = procLabelPrefix+procLabelNumberCounter; 
