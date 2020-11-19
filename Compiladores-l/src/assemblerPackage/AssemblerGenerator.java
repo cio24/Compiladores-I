@@ -44,7 +44,7 @@ public class AssemblerGenerator {
 		this.tm = tm;
 
 		variablesAuxCounter = 0;
-		actualCode = procList.get(0);
+
 		actualProcList = 0;
 		procLabelNumberCounter = 0;
 
@@ -53,6 +53,7 @@ public class AssemblerGenerator {
 		dataSection = new ArrayList<>();
 		procList = new ArrayList<>();
 		procList.add(new ArrayList<>()); //El primer procedimiento seria el main.
+		actualCode = procList.get(0);
 		procLabels = new HashMap<String, String>();
 		//this.outfilepath = outfilepath;
 	}
@@ -200,9 +201,10 @@ public class AssemblerGenerator {
 					//->Control de recursion de procedimientos<-
 					//En la tabla de simbolos setear una variable que determina que el procedimiento esta o no activo, y 
 					//dicha variable se inicializa en 0.
-					st.addSymbol(recursiveControlPrefix+t.getFirstOperand().getRef(), 
-							new Symbol(recursiveControlPrefix+t.getFirstOperand().getRef(),Symbol._IDENTIFIER_LEXEME,
-									Symbol._ULONGINT_TYPE,Symbol._RECURSIVE_PROCEDURE_CONTROL_USE,"-",/*este es el valor de inicializacion*/"0")); 
+					Symbol s = new Symbol(recursiveControlPrefix+t.getFirstOperand().getRef(),Symbol._IDENTIFIER_LEXEME,
+											Symbol._ULONGINT_TYPE,Symbol._RECURSIVE_PROCEDURE_CONTROL_USE,"-");
+					s.setInitialValue("0");
+					st.addSymbol(recursiveControlPrefix+t.getFirstOperand().getRef(),s);
 					//Por ahora para probar uso una variable del tipo ulongint
 					//->Control de recursion de procedimientos<-
 
@@ -502,7 +504,8 @@ public class AssemblerGenerator {
 
 		//guardo el resultado en una variable auxiliar que se guarda en la tabla de simbolos
 		String result = getNewVarAux(Symbol._DOUBLE_TYPE);
-		actualCode.add("FST " + result);
+		actualCode.add("FSTP " + result);
+		t.setResultLocation(result);
 
 	}
 
@@ -512,7 +515,7 @@ public class AssemblerGenerator {
 		//como no vi que haya instrucciones para flotantes inmediatos, se crea una variable
 		// para guardar c/u de estos y se guarda en la tabla de simbolos
 		if(op.isImmediate(st))
-			opName = getNewVarAux(Symbol._ULONGINT_TYPE);
+			opName = getNewVarAux(opName,Symbol._DOUBLE_TYPE);
 
 		return opName;
 	}
@@ -520,13 +523,13 @@ public class AssemblerGenerator {
 	public void writeAassignmentOfDouble(Triplet t) {
 		//si es un inmediato se obtiene el nombre de una nueva variable auxiliar donde se guarda el resultado
 		//sino se obtiene el assemblerReference
-		String op2Name  = getDoubleVarName(t.getFirstOperand());
+		String op2Name  = getDoubleVarName(t.getSecondOperand());
 
 		//cargo en el ST de la pila lo que hay que la variable del operando 2
 		actualCode.add("FLD " + op2Name);
 
 		//guardo el resultado en la variable del operando 1
-		actualCode.add("FST " + t.getFirstOperand().getAssemblerReference(tm));
+		actualCode.add("FSTP " + t.getFirstOperand().getAssemblerReference(tm));
 	}
 
 	public void writeDoubleComparison(Triplet t) {
@@ -616,35 +619,41 @@ public class AssemblerGenerator {
 		return "unknownOperator";
 	}
 
-	public String getNewVarAux(String suffix,String type) {
-		String varName = "@aux" + suffix + ++variablesAuxCounter;
-		st.addSymbol(varName,new Symbol(varName,Symbol._IDENTIFIER_LEXEME,type,Symbol._VARIABLE_USE));
+
+	public String getNewVarAux(String initialValue,String type) {
+		String varName = "@aux" + ++variablesAuxCounter;
+		Symbol s = new Symbol(varName,Symbol._IDENTIFIER_LEXEME,type,Symbol._VARIABLE_USE);
+		s.setInitialValue(initialValue);
+		st.addSymbol(varName,s);
 		return varName;
 	}
 
 	public String getNewVarAux(String type){
-		return getNewVarAux("",type);
+		return getNewVarAux(null,type);
 	}
 
 	public void writeVarDeclarations() {
 		Symbol s;
-		boolean uno = false;
-		boolean dos = false;
 		for(String key: st.getAll()){
 			s = st.getSymbol(key);
-			if(s.getUse().equals(Symbol._VARIABLE_USE)) {
-				if (s.getDataType().equals(Symbol._ULONGINT_TYPE))
-					dataSection.add("_" + s.getLexeme() + " DD ?");
-				else if(s.getDataType().equals(Symbol._DOUBLE_TYPE))
-					dataSection.add("_" + s.getLexeme() + " DQ ?");
-			}
-			else if (s.getUse().equals(Symbol._RECURSIVE_PROCEDURE_CONTROL_USE)) {
-				if (s.getDataType().equals(Symbol._ULONGINT_TYPE))
-					dataSection.add("_" + s.getLexeme() + " DD ?");
-				else if (s.getDataType().equals(Symbol._DOUBLE_TYPE))
-					dataSection.add("_" + s.getLexeme() + " DQ ?");
+			String type = s.getDataType();
+
+			if(s.getUse().equals(Symbol._VARIABLE_USE) || s.getUse().equals(Symbol._RECURSIVE_PROCEDURE_CONTROL_USE)) {
+				if (type.equals(Symbol._ULONGINT_TYPE))
+					dataSection.add(addUnderscore(s.getLexeme()) + " DD ?");
+				else if(type.equals(Symbol._DOUBLE_TYPE))
+					if(s.getInitialValue() == null)
+						dataSection.add(addUnderscore(s.getLexeme()) + " DQ ?");
+					else
+						dataSection.add(addUnderscore(s.getLexeme()) + " DQ " + s.getInitialValue());
 			}
 		}
+	}
+
+	public String addUnderscore(String s){
+		if(s.startsWith("@"))
+			return s;
+		return "_" + s;
 	}
 
 	public String replaceColons(String s){
