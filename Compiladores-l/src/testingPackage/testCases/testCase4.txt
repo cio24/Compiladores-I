@@ -51,3 +51,38 @@ charmander = 6.0;
 accumulator = carl + carlos + carlitos + charly + charles + charmander;
 average = accumulator / 6.0;
 %/
+
+
+
+
+
+
+
+
+
+
+
+/%
+DOUBLE carlos;
+DOUBLE carlitos;
+DOUBLE charly;
+DOUBLE charles;
+DOUBLE charmander;
+DOUBLE accumulator;
+DOUBLE average;
+%/
+
+
+
+/%
+carlos = 2.0;
+carlitos = 3.0;
+charly = 4.0;
+charles = 5.0;
+charmander = 6.0;
+%/
+
+/%
+accumulator = carl + carlos + carlitos + charly + charles + charmander;
+average = accumulator / 6.0;
+%/

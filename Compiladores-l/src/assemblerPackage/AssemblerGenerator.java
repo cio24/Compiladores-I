@@ -19,7 +19,7 @@ public class AssemblerGenerator {
 
 	public static SymbolsTable st;
 	public static TripletsManager tm;
-	public static final String FILENAME = "testCase4.asm";
+	public static final String FILENAME = "testCase5.asm";
 	public static int variablesAuxCounter;
 	private RegistersManager rm;
 	//private String outfilepath;
@@ -36,6 +36,7 @@ public class AssemblerGenerator {
 	HashMap<String, String> procLabels; //Registra los labels asociados a cada nombre de procedimiento
 	public String recursiveControlPrefix = "@PROCISACTIVE"; //Guarda un prefijo para las variables que nos serviran para evitar recursion en procedimientos
 	public String recursiveErrorSubroutineLabel = "RECURSIVEERRORSUBROUTINE";
+	public String negativeErrorLabel = "NEGATIVEERRORLABEL";
 
 
 
@@ -80,23 +81,23 @@ public class AssemblerGenerator {
 		code = new BufferedWriter(new OutputStreamWriter(fos));
 
 		for (int i = 0; i < headerSection.size();i++)
-			code.write("\t" + headerSection.get(i) + "\n");
+			code.write(headerSection.get(i) + "\n");
 
 		code.write( "\n" + ".DATA" + "\n");
 
 		for (int i = 0; i<dataSection.size();i++)
-			code.write("\t" + replaceColons(dataSection.get(i)) + "\n");
+			code.write(replaceColons(dataSection.get(i)) + "\n");
 
-		code.write( "\n" + ".CODE" + "\n" + "\t" + "; declaracion de procedimientos" + "\n" + "\n");
+		code.write( "\n.CODE\n; declaracion de procedimientos\n\n");
 
 		for (int i = procList.size()-1; i>0; i--) //Se hace en este orden para que los procedimientos mas "adentro" en el anidamiento queden arriba
 		{
 			List<String> thisList=procList.get(i);
 			for (int j=0; j<thisList.size(); j++) {
 				if(j == 0)
-					code.write("\t" + replaceColons(thisList.get(j))+ "\n");
+					code.write(replaceColons(thisList.get(j))+ "\n");
 				else
-					code.write("\t" + "\t" + replaceColons(thisList.get(j)) + "\n");
+					code.write(replaceColons(thisList.get(j)) + "\n");
 			}
 			code.newLine();
 		}
@@ -104,10 +105,10 @@ public class AssemblerGenerator {
 		code.write("START:" + "\n");
 
 		for (int i=0; i<procList.get(0).size(); i++) {
-			code.write("\t" + replaceColons(procList.get(0).get(i)) + "\n");
+			code.write(replaceColons(procList.get(0).get(i)) + "\n");
 		}
 
-		code.write( "\n" + "\t" + "jmp $" + "\t" + "; ignoren esta croteada, es para que no se cierre la consola xD" + "\n");
+		code.write( "\njmp $ ; ignoren esta croteada, es para que no se cierre la consola xD" + "\n");
 		code.write("END START");
 		code.close();
 	}
@@ -286,7 +287,7 @@ public class AssemblerGenerator {
 
 		//Generalmos el assembler la operacion
 		actualCode.add( "SUB" + " " + op1Name + ", " + op2Name);
-
+		actualCode.add( "JS " + negativeErrorLabel);
 		//si el segundo operando era un registro lo liberamos
 		if(op2.isPointer())
 			rm.getRegister(op2Name).setFree(true);
@@ -668,6 +669,12 @@ public class AssemblerGenerator {
 		String var = getNewVarAux(Symbol._STRING_TYPE);
 		dataSection.add(var + " DB \"" + "Invocacion recursiva a procedimiento invalida" + "\", 0");
 		errorCodeSection.add("invoke printf, cfm$(\"%s\"), OFFSET " + var);
+		errorCodeSection.add("invoke ExitProcess, 0");
+		
+		errorCodeSection.add(negativeErrorLabel+":");
+		String var2 = getNewVarAux(Symbol._STRING_TYPE);
+		dataSection.add(var2 + " DB \"" + "Resultado negativo luego de operación entre enteros sin signo" + "\", 0");
+		errorCodeSection.add("invoke printf, cfm$(\"%s\"), OFFSET " + var2);
 		errorCodeSection.add("invoke ExitProcess, 0");
 		procList.add(errorCodeSection);
 	}

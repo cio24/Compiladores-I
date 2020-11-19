@@ -1,0 +1,10 @@
+/% resta con resultado negativo de enteros positivos %/
+
+ULONGINT var1;
+ULONGINT var2;
+ULONGINT var3;
+
+var1 = 0_ul;
+var2 = 2_ul;
+
+var3 = var1 - var2;
