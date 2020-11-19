@@ -50,7 +50,7 @@ LOOP{
 }
 UNTIL(counter < target);
 
-IF(accumulator == 55_ul)
+IF(accumulator == 55_ul) 
     OUT('la sumatoria de los primeros 10 numeros es 55 xD');
 ELSE
     OUT('nunca entro a ningun if xD');
