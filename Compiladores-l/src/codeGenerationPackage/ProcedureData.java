@@ -5,8 +5,11 @@ public class ProcedureData {
     private boolean shadowingActivated;
     private int NA = -1;
     private String firstFormalParameterType;
+    private Symbol firstParameterSymbol;
     private String secondFormalParameterType;
+    private Symbol secondParameterSymbol;
     private String thirdFormalParameterType;
+    private Symbol thirdParameterSymbol;
     private int parametersAmount = 0;
     private String fullProcId;
 
@@ -24,6 +27,15 @@ public class ProcedureData {
     public String getThirdFormalParameterType() {
         return thirdFormalParameterType;
     }
+    public Symbol getFirstParameterSymbol() {
+    	return this.firstParameterSymbol;
+    }  
+    public Symbol getSecondParameterSymbol() {
+    	return this.secondParameterSymbol;
+    }  
+    public Symbol getThirdParameterSymbol() {
+    	return this.thirdParameterSymbol;
+    }    
     public int getParametersAmount(){
         return this.parametersAmount;
     }
@@ -52,8 +64,16 @@ public class ProcedureData {
     }
     public void setShadowing(boolean shadowing){
         this.shadowingActivated = shadowing;
+    }  
+    public void setFirstParameterSymbol(Symbol s) {
+    	this.firstParameterSymbol = s;
     }
-
+    public void setSecondParameterSymbol(Symbol s) {
+    	this.secondParameterSymbol = s;
+    }
+    public void setThirdParameterSymbol(Symbol s) {
+    	this.thirdParameterSymbol = s;
+    }
 
     public int addNA(){
         return ++this.NA;

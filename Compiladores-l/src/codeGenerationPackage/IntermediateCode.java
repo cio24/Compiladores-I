@@ -173,7 +173,7 @@ public class IntermediateCode {
 
 
 	//controles en la declaracion de procedimiento
-	public void realParameterControl(String parameterId, String scope) {
+	public String realParameterControl(String parameterId, String scope) {
 		String fullId = parameterId + scope;
 
 		//obtengo el id de la delaración de la variable del ambito más cercano
@@ -197,14 +197,17 @@ public class IntermediateCode {
 
 			//obtengo el símbolo que se corresponde con el id de la variable que se pasa por parametro
 			Symbol sp = st.getSymbol(idDeclaration);
-
+			
 			//le incremento las referencias
 			sp.addReference();
-
+			
 			//agrego el tipo de este identificador a la lista de parametros reales así se puede controlar
 			//cuando se terminen de leer los parametros
 			realParametersTypes.add(sp.getDataType());
+			
+			return idDeclaration;
 		}
+		return null;
 	}
 	public void cleanRealParameters(){
 		this.realParametersTypes = new ArrayList<>();
@@ -260,7 +263,7 @@ public class IntermediateCode {
 
 
 	//contorles en la invocación de procedimiento
-	public void procedureCall(String id,String scope) {
+	public void procedureCall(String id,String scope, ArrayList<String> ids) {
 
 		//cuando se escribe el id del procedimiento nuevo se crea un nuevo símbolo en la tabla para ese id
 		//se borra xq se supone que se esta llamando a un procedimiento que existe cuyo id también registra el scope
@@ -274,8 +277,23 @@ public class IntermediateCode {
 			Symbol is = st.getSymbol(idDeclaration);
 			if(is.getUse().equals(Symbol._PROCEDURE_USE)){
 				//obtenemos los datos del procedimiento
-				ProcedureData pd = is.getProcedureData();
+				ProcedureData pd = is.getProcedureData();				
 				if(areParametersCallCorrect(idDeclaration,this.realParametersTypes,pd)){
+					if(ids.size() > 0) {
+						Symbol s1 = pd.getFirstParameterSymbol();						
+						Triplet t1 = tm.createTriplet("=",new Operand(Operand.ST_POINTER,s1.getLexeme()),new Operand(Operand.ST_POINTER,ids.get(0),s1.getDataType()));
+						t1.setDataType(s1.getDataType());
+						if(ids.size() > 1) {
+							Symbol s2 = pd.getFirstParameterSymbol();						
+							Triplet t2 = tm.createTriplet("=",new Operand(Operand.ST_POINTER,s2.getLexeme()),new Operand(Operand.ST_POINTER,ids.get(1),s2.getDataType()));
+							t2.setDataType(s2.getDataType());
+							if(ids.size() > 2) {
+								Symbol s3 = pd.getFirstParameterSymbol();						
+								Triplet t3 = tm.createTriplet("=",new Operand(Operand.ST_POINTER,s3.getLexeme()),new Operand(Operand.ST_POINTER,ids.get(2),s3.getDataType()));
+								t3.setDataType(s3.getDataType());
+							}
+						}
+					}
 					//guardamos un terceto asociado a la llamada del procedimiento
 					tm.createTriplet("PC",new Operand(Operand.ST_POINTER,idDeclaration));
 

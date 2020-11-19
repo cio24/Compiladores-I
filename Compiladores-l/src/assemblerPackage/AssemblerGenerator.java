@@ -13,13 +13,13 @@ import utilitiesPackage.ErrorReceiver;
 
 public class AssemblerGenerator {
 
-	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/";
+	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/testCases/";
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\testCases\\";
+	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\testCases\\";
 
 	public static SymbolsTable st;
 	public static TripletsManager tm;
-	public static final String FILENAME = "testCase3.asm";
+	public static final String FILENAME = "testCase4.asm";
 	public static int variablesAuxCounter;
 	private RegistersManager rm;
 	//private String outfilepath;
@@ -30,7 +30,7 @@ public class AssemblerGenerator {
 	public static List<List<String>> procList; //La lista de codigos de procedimientos (incluido el main)
 
 	public int actualProcList;
-	public static List<String> actualCode; //Apunta al procedimiento/main al cual se está generando codigo actualmente
+	public static List<String> actualCode; //Apunta al procedimiento/main al cual se estï¿½ generando codigo actualmente
 	public String procLabelPrefix = "PROCLabel";
 	public int procLabelNumberCounter; //Cuenta la cantidad de labels de procedimiento usados para identificarlos unicamente
 	HashMap<String, String> procLabels; //Registra los labels asociados a cada nombre de procedimiento
@@ -126,7 +126,7 @@ public class AssemblerGenerator {
 		headerSection.add("printf PROTO C :VARARG");
 	}
 
-	//declaramos todas las variables que se usan en la tabla de símbolos
+	//declaramos todas las variables que se usan en la tabla de sï¿½mbolos
 	public void generateDataSection(){
 		writeVarDeclarations();
 	};
@@ -182,7 +182,7 @@ public class AssemblerGenerator {
 
 				case "PC":
 					//->Control de recursion de procedimientos<-
-					//Verificar que la variable de control del procedimiento que se está llamando no este en 0
+					//Verificar que la variable de control del procedimiento que se estï¿½ llamando no este en 0
 					actualCode.add("CMP " + recursiveControlPrefix + t.getFirstOperand().getRef() + "," + "0");
 					//Se salta si efectivamente no esta en 0 a la rutina que se encargara de mostrar que hubo error y terminar el programa
 					actualCode.add("JNE " + recursiveErrorSubroutineLabel);
@@ -221,7 +221,7 @@ public class AssemblerGenerator {
 
 				case "PDE":
 					//->Control de recursion de procedimientos<-
-					//al finalizar el procedimiento se setea la variable que indica que está activo en falso (0)
+					//al finalizar el procedimiento se setea la variable que indica que estï¿½ activo en falso (0)
 					actualCode.add("MOV " + recursiveControlPrefix+t.getFirstOperand().getRef()+","+"0");
 					//->Control de recursion de procedimientos<-
 					

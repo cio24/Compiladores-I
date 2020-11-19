@@ -295,7 +295,8 @@ parameter_list  :  parameter
 
 	if(!pd.getFullProcId().equals("ERROR")){
 		//le agrego el tipo del primer parametro
-		pd.setFirstFormalParameterType($1.sval);
+		pd.setFirstFormalParameterType($1.sval);		
+		pd.setFirstParameterSymbol((Symbol)$1.obj);
 	}
 }
 				
@@ -307,8 +308,10 @@ parameter_list  :  parameter
 
 	if(!pd.getFullProcId().equals("ERROR")){
 		//le agrego el tipo del primer parametro
-		pd.setFirstFormalParameterType($1.sval);
-		pd.setSecondFormalParameterType($3.sval);
+		pd.setFirstFormalParameterType($1.sval);	
+		pd.setFirstParameterSymbol((Symbol)$1.obj);
+		pd.setSecondFormalParameterType($3.sval);	
+		pd.setSecondParameterSymbol((Symbol)$3.obj);
 	}
 }
 				
@@ -320,9 +323,12 @@ parameter_list  :  parameter
 
 	if(!pd.getFullProcId().equals("ERROR")){
 		//le agrego el tipo del primer parametro
-		pd.setFirstFormalParameterType($1.sval);
-		pd.setSecondFormalParameterType($3.sval);
-		pd.setThirdFormalParameterType($5.sval);
+		pd.setFirstFormalParameterType($1.sval);	
+		pd.setFirstParameterSymbol((Symbol)$1.obj);
+		pd.setSecondFormalParameterType($3.sval);	
+		pd.setSecondParameterSymbol((Symbol)$3.obj);
+		pd.setThirdFormalParameterType($5.sval);	
+		pd.setThirdParameterSymbol((Symbol)$5.obj);
 	}
 }
 				
@@ -342,9 +348,10 @@ parameter  :  type  ID
 	String fullId = $2.sval + scope;
 	Symbol sp = new Symbol(fullId, Symbol._IDENTIFIER_LEXEME, $1.sval, Symbol._PARAMETER_USE, Symbol._COPY_VALUE_SEMANTIC);
 	st.addSymbol(fullId, sp);
-
+		
 	//guardo solo el tipo del parametro para poder usarlo para controlar más tarde cuando se invoque al procedimiento
 	$$.sval = $1.sval;
+	$$.obj = sp;
 }
 
 	   |  type
@@ -364,22 +371,34 @@ id_list  :  ID
 	showMessage("Lista de identificadores detectada.");
 	//chequea que el parametro haga referencia a una variable
 	//si es correcto seguarda en un arreglo para más adelante controlar si el tipo se corresponde
-	ic.realParameterControl($1.sval,scope);
+	ArrayList ids = new ArrayList<>();
+	
+	ids.add(ic.realParameterControl($1.sval,scope));
+	
+	$$.obj = ids;
 }
 			
 	 |  ID  ','  ID
 {
 	showMessage("Lista de identificadores detectada.");
-	ic.realParameterControl($1.sval,scope);
-	ic.realParameterControl($3.sval,scope);
+	ArrayList ids = new ArrayList<>();
+	
+	ids.add(ic.realParameterControl($1.sval,scope));
+	ids.add(ic.realParameterControl($3.sval,scope));
+	
+	$$.obj = ids;
 }
 		 
 	 |  ID  ','  ID  ','  ID
 {
 	showMessage("Lista de identificadores detectada.");
-	ic.realParameterControl($1.sval,scope);
-	ic.realParameterControl($3.sval,scope);
-	ic.realParameterControl($5.sval,scope);
+		ArrayList ids = new ArrayList<>();
+	
+	ids.add(ic.realParameterControl($1.sval,scope));
+	ids.add(ic.realParameterControl($3.sval,scope));
+	ids.add(ic.realParameterControl($5.sval,scope));
+	
+	$$.obj = ids;
 }
 		 
 	 |  ID  ','  ID  ','  ID  ',' id_list
@@ -395,7 +414,7 @@ id_list  :  ID
 
 procedure_call :  ID  '('  id_list  ')'
 {
-	ic.procedureCall($1.sval,scope);
+	ic.procedureCall($1.sval,scope,(ArrayList)$3.obj);
 
 	//vaciamos la lista para cuando se vuelva a llamar a otro procedimiento
 	ic.cleanRealParameters();
@@ -403,7 +422,7 @@ procedure_call :  ID  '('  id_list  ')'
 
 	       |  ID  '('  ')'
 {
-	ic.procedureCall($1.sval,scope);
+	ic.procedureCall($1.sval,scope,new ArrayList<>());
 
 	//vaciamos la lista para cuando se vuelva a llamar a otro procedimiento
 	ic.cleanRealParameters();
