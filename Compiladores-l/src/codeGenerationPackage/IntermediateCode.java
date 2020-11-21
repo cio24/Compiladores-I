@@ -282,11 +282,11 @@ public class IntermediateCode {
 						Triplet t1 = tm.createTriplet("=",new Operand(Operand.ST_POINTER,s1.getLexeme()),new Operand(Operand.ST_POINTER,ids.get(0),s1.getDataType()));
 						t1.setDataType(s1.getDataType());
 						if(ids.size() > 1) {
-							Symbol s2 = pd.getFirstParameterSymbol();						
+							Symbol s2 = pd.getSecondParameterSymbol();
 							Triplet t2 = tm.createTriplet("=",new Operand(Operand.ST_POINTER,s2.getLexeme()),new Operand(Operand.ST_POINTER,ids.get(1),s2.getDataType()));
 							t2.setDataType(s2.getDataType());
 							if(ids.size() > 2) {
-								Symbol s3 = pd.getFirstParameterSymbol();						
+								Symbol s3 = pd.getThirdParameterSymbol();
 								Triplet t3 = tm.createTriplet("=",new Operand(Operand.ST_POINTER,s3.getLexeme()),new Operand(Operand.ST_POINTER,ids.get(2),s3.getDataType()));
 								t3.setDataType(s3.getDataType());
 							}

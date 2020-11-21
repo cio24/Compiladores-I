@@ -1,0 +1,4 @@
+ULONGINT a;
+DOUBLE b;
+
+a = b + 3.0;

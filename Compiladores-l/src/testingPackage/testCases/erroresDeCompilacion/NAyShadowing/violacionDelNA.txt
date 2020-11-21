@@ -1,0 +1,5 @@
+PROC a() NA = 0_ul SHADOWING = FALSE {
+    PROC b() NA = 0_ul SHADOWING = FALSE {
+        OUT('supera el nivel de anidamiento maximo de a');
+    };
+};

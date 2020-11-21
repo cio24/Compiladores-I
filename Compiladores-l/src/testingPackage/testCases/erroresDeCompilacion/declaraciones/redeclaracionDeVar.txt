@@ -1,0 +1,4 @@
+ULONGINT a;
+a = 3_ul;
+
+DOUBLE a;

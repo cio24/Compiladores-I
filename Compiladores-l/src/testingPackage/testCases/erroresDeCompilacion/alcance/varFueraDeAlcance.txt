@@ -1,0 +1,4 @@
+PROC p() NA = 0_ul SHADOWING = FALSE {
+    DOUBLE b;
+};
+b = 3.0;

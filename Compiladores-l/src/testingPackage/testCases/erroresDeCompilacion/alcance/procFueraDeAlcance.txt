@@ -1,0 +1,7 @@
+PROC a() NA = 1_ul SHADOWING = FALSE {
+    PROC b() NA = 0_ul SHADOWING = FALSE {
+        OUT('FUERA DE ALCANCE');
+    };
+};
+
+b();

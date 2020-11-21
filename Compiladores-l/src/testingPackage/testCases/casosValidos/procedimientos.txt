@@ -1,0 +1,83 @@
+/% testeo procedimientos %/
+
+/%
+
+OUT('invocacion de procedimiento sin parametros');
+
+PROC print_hello_world() NA = 1000_ul SHADOWING = FALSE {
+    OUT('Hello World!, Funciona correctamente');
+};
+
+print_hello_world();
+
+OUT(' ');
+OUT('invocacion de procedimiento con parametros');
+
+%/
+
+ULONGINT a,b,c;
+
+a = 1_ul;
+b = 1_ul;
+c = 1_ul;
+
+OUT(' ');
+OUT('invocacion de procedimiento con un solo parametros');
+
+PROC print_valor(ULONGINT a) NA = 1000_ul SHADOWING = FALSE {
+    IF(a == 1_ul)
+        OUT('a = 1, entonces funciona correctamente');
+    ELSE
+        OUT('anda mal');
+    END_IF;
+};
+
+print_valor(a);
+
+OUT(' ');
+OUT('invocacion de procedimiento con dos parametros');
+
+PROC print_suma_dos_valores(ULONGINT a, ULONGINT b) NA = 1000_ul SHADOWING = FALSE {
+    a = a + b;
+    IF(a == 2_ul)
+        OUT('a = 2, entonces funciona correctamente');
+    ELSE
+        OUT('anda mal');
+    END_IF;
+};
+
+print_suma_dos_valores(a,b);
+
+
+OUT(' ');
+OUT('invocacion de procedimiento con tres parametros');
+
+PROC print_suma_tres_valores(ULONGINT a, ULONGINT b, ULONGINT c) NA = 1000_ul SHADOWING = FALSE {
+    a = a + b + c;
+    IF(a == 3_ul)
+        OUT('a = 3, entonces funciona correctamente');
+    ELSE
+        OUT('anda mal');
+    END_IF;
+};
+
+print_suma_tres_valores(a,b,c);
+
+OUT(' ');
+OUT('declaracion e invocacion de procedimientos anidados restringiendo el nivel de anidamientos y variando el shadowing');
+
+PROC print_hello_world1() NA = 3_ul SHADOWING = TRUE {
+    PROC print_hello_world2() NA = 2_ul SHADOWING = FALSE {
+        PROC print_hello_world3() NA = 1_ul SHADOWING = TRUE {
+            PROC print_hello_world4() NA = 0_ul SHADOWING = FALSE {
+                OUT('Hello World!,funciona correctamente!');
+            };
+            print_hello_world4();
+        };
+        print_hello_world3();
+    };
+    print_hello_world2();
+};
+print_hello_world1();
+
+

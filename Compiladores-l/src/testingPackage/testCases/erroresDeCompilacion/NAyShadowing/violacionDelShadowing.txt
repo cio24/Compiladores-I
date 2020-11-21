@@ -1,0 +1,5 @@
+DOUBLE b;
+
+PROC a() NA = 0_ul SHADOWING = TRUE {
+    DOUBLE b;
+};

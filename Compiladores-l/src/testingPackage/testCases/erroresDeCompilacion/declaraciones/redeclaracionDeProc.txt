@@ -1,0 +1,7 @@
+PROC p1() NA = 0_ul SHADOWING = TRUE {
+    OUT('hola');
+};
+
+PROC p1() NA = 1_ul SHADOWING = FALSE {
+    OUT('chau');
+};

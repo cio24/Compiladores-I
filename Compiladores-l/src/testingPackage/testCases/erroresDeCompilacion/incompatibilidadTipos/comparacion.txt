@@ -1,0 +1,3 @@
+IF(3.0 < 3_ul)
+    OUT("ANDA MAL");
+END_IF;

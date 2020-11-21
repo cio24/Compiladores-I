@@ -940,7 +940,7 @@ public void parse(){
 
 public void yyerror(String errorMessage){
 	if(errorMessage.equals("syntax error")){
-		//System.out.println("[Linea " + la.getCurrentLine()+ "] " + s + ".");
+		ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver.SINTACTICO,"Error de sintaxis");
 	}
 
 }

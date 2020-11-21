@@ -1,0 +1,7 @@
+PROC a() NA = 0_ul SHADOWING = FALSE {
+    b();
+};
+
+PROC b() NA = 0_ul SHADOWING = FALSE {
+    a();
+};

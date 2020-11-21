@@ -1,0 +1,2 @@
+DOUBLE a;
+a = 3_ul;

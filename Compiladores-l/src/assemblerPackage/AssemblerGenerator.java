@@ -112,7 +112,7 @@ public class AssemblerGenerator {
 			code.write(replaceColons(procList.get(0).get(i)) + "\n");
 		}
 
-		code.write( "\njmp $ ; ignoren esta croteada, es para que no se cierre la consola xD" + "\n");
+		code.write( "\nJMP $\n");
 		code.write("END START");
 		code.close();
 	}
@@ -643,7 +643,7 @@ public class AssemblerGenerator {
 			s = st.getSymbol(key);
 			String type = s.getDataType();
 
-			if(s.getUse().equals(Symbol._VARIABLE_USE) || s.getUse().equals(Symbol._RECURSIVE_PROCEDURE_CONTROL_USE)) {
+			if(s.getUse().equals(Symbol._VARIABLE_USE) || s.getUse().equals(Symbol._PARAMETER_USE)) {
 				if (type.equals(Symbol._ULONGINT_TYPE))
 					dataSection.add(addUnderscore(s.getLexeme()) + " DD ?");
 				else if(type.equals(Symbol._DOUBLE_TYPE))
@@ -680,9 +680,10 @@ public class AssemblerGenerator {
 		
 		errorCodeSection.add(negativeErrorLabel+":");
 		String var2 = getNewVarAux(Symbol._STRING_TYPE);
-		dataSection.add(var2 + " DB \"" + "Resultado negativo luego de operación entre enteros sin signo" + "\", 0");
+		dataSection.add(var2 + " DB \"" + "Error de ejecucion - resultado de una resta entre enteros sin signo es negativa! " + "\", 0");
 		errorCodeSection.add("invoke printf, cfm$(\"%s\"), OFFSET " + var2);
-		errorCodeSection.add("invoke ExitProcess, 0");
+		//errorCodeSection.add("invoke ExitProcess, 0");
+		errorCodeSection.add( "\nJMP $\n");
 		procList.add(errorCodeSection);
 	}
 
