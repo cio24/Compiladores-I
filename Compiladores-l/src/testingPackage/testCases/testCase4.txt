@@ -1,88 +1,55 @@
-/% procs%/
+/% testeo de IF %/
 
-DOUBLE var;
-var = 3.6;
+OUT('if anidados sin else');
 
-PROC procedure (DOUBLE var2) NA = 1_ul SHADOWING = TRUE {
-	var = 3.0;
-	var2 = var;
-};
+IF(0.0 == 0.0)
+    IF(0.0 == 0.0)
+        OUT('funciona bien');
+    END_IF;
+END_IF;
 
-PROC procedure1 () NA = 0_ul SHADOWING = FALSE {
-		var = 4.0;
-		procedure(var);
-};
+OUT('TIENE QUE HABER UN FUNCIONA BIEN ANTES DE ESTE OUT');
 
-procedure(var);
+OUT('if anidados con else');
 
+IF(0.0 == 0.0)
+    IF(0.0 < 0.0)
+        OUT('funciona mal');
+    ELSE
+        OUT('funciona bien');
+    END_IF;
+ELSE
+    OUT('funciona mal');
+END_IF;
 
+OUT('if anidados sin else con bloques');
 
+IF(0.0 == 0.0){
+    OUT('funciona bien');
+    IF(0.0 < 0.0){
+        OUT('funciona mal');
+        OUT('funciona muy mal');
+    }
+    END_IF;
+}
+END_IF;
 
+OUT('if anidados con else y con bloques');
 
-
-
-
-
-
-
-
-
-/%
-DOUBLE carlos;
-DOUBLE carlitos;
-DOUBLE charly;
-DOUBLE charles;
-DOUBLE charmander;
-DOUBLE accumulator;
-DOUBLE average;
-%/
-
-
-
-/%
-carlos = 2.0;
-carlitos = 3.0;
-charly = 4.0;
-charles = 5.0;
-charmander = 6.0;
-%/
-
-/%
-accumulator = carl + carlos + carlitos + charly + charles + charmander;
-average = accumulator / 6.0;
-%/
-
-
-
-
-
-
-
-
-
-
-
-/%
-DOUBLE carlos;
-DOUBLE carlitos;
-DOUBLE charly;
-DOUBLE charles;
-DOUBLE charmander;
-DOUBLE accumulator;
-DOUBLE average;
-%/
-
-
-
-/%
-carlos = 2.0;
-carlitos = 3.0;
-charly = 4.0;
-charles = 5.0;
-charmander = 6.0;
-%/
-
-/%
-accumulator = carl + carlos + carlitos + charly + charles + charmander;
-average = accumulator / 6.0;
-%/
+IF(0.0 < 0.0){
+    OUT('funciona mal');
+    IF(0.0 < 0.0){
+        OUT('funciona mal');
+        OUT('funciona muy mal');
+    }
+    ELSE{
+        OUT('funciona bien pero el if externo funciona mal');
+        OUT('funciona bien pero el if externo funciona mal');
+    }
+    END_IF;
+}
+ELSE{
+    OUT('funciona bien');
+    OUT('funciona MUY bien');
+}
+END_IF;

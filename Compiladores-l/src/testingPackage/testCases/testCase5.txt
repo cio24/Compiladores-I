@@ -1,10 +1,23 @@
-/% resta con resultado negativo de enteros positivos %/
+/% testeo procedimientos %/
 
-ULONGINT var1;
-ULONGINT var2;
-ULONGINT var3;
 
-var1 = 0_ul;
-var2 = 2_ul;
+OUT('invocacion de procedimiento sin parametros');
 
-var3 = var1 - var2;
+PROC print_hello_world() NA = 1000_ul SHADOWING = FALSE {
+    OUT('Hello World!');
+};
+
+print_hello_world();
+
+OUT('invocacion de procedimiento con parametros');
+
+ULONGINT a,b;
+
+a = 1_ul;
+b = 1_ul;
+
+PROC print_suma(ULONGINT a, ULONGINT b) NA = 1000_ul SHADOWING = TRUE {
+    a = b;
+}
+
+print_suma();

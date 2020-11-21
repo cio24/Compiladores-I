@@ -1,158 +1,78 @@
 /%
-    este codigo muestra el correcto funcionamiento de las comparaciones
+    este codigo muestra el correcto funcionamiento de las operaciones aritmeticas
+    declaraciones multiples de variables
+    out
+    asignaciones
 %/
 
-
-OUT('comparacion entre constantes enteras');
-
-IF(0_ul == 0_ul)
-    OUT('0 = 0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(0_ul <= 1_ul)
-    OUT('0 <= 1');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(0_ul < 1_ul)
-    OUT('0 < 1');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(1_ul > 0_ul)
-    OUT('1 > 0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(1_ul >= 0_ul)
-    OUT('1 >= 0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-
-
-OUT('comparacion entre constantes dobles');
-
-IF(0.0 == 0.0)
-    OUT('0.0 = 0.0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(0.0 <= 1.0)
-    OUT('0.0 <= 1.0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(0.0 < 1.0)
-    OUT('0.0 < 1.0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(1.0 > 0.0)
-    OUT('1.0 > 0.0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-IF(1.0 >= 0.0)
-    OUT('1.0 >= 0.0');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-
-OUT('comparacion entre variables enteras');
-
-OUT('a = 0 y b = 1');
+OUT('operaciones entre constantes enteras');
 
 ULONGINT a;
-ULONGINT b;
 
-a = 0_ul;
-b = 1_ul;
+OUT('se esta calculando la operacion a = 30*7 - 55 + 60/5');
 
-IF(a == a)
-    OUT('a = a');
+a = 30_ul*7_ul - 55_ul + 60_ul/5_ul;
+
+IF(a == 167_ul)
+    OUT('a = 167');
 ELSE
-    OUT('la comparacion no funciona bien');
+    OUT('las operaciones no funcionan bien');
 END_IF;
 
-IF(a <= b)
-    OUT('a <= b');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
+OUT('operaciones entre variables enteras');
 
-IF(a < b)
-    OUT('a < b');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
+ULONGINT b,c,d,e,f,g;
+b = 30_ul;
+c = 7_ul;
+d = 55_ul;
+e = 60_ul;
+f = 5_ul;
+g = 167_ul;
 
-IF(b > a)
-    OUT('b > a');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
+OUT('b = 30, c = 7, d = 55, e = 60, f = 5 y g = 167');
+OUT('se esta calculando la operacion a = b*c - d + e/f y se compara a con g');
 
-IF(b >= a)
-    OUT('b >= a');
+a = b*c - d + e/f;
+
+IF(a == g)
+    OUT('a = g');
 ELSE
-    OUT('la comparacion no funciona bien');
+    OUT('las operaciones no funcionan bien');
 END_IF;
 
 
 
-OUT('comparacion entre variables dobles');
+OUT('operaciones entre constantes dobles');
 
-DOUBLE c;
-DOUBLE d;
+DOUBLE h;
 
-OUT('c = 0.0 y d = 1.0');
-c = 0.0;
-d = 1.0;
+OUT('se esta calculando la operacion h = 12.5*7.3 - 55.4 + 60.0/0.5');
 
+h = 12.5*7.3 - 55.4 + 60.0/0.5;
 
-IF(c == c)
-    OUT('c = c');
+IF(h == 155.85)
+    OUT('h = 155.85');
 ELSE
-    OUT('la comparacion no funciona bien');
+    OUT('las operaciones no funcionan bien');
 END_IF;
 
+OUT('operaciones entre variables dobles');
 
-IF(c <= d)
-    OUT('c <= d');
+DOUBLE i,j,k,l,m,n;
+i = 12.5;
+j = 7.3;
+k = 55.4;
+l = 60.0;
+m = 0.5;
+n = 155.85;
+
+OUT('i = 12.5, j = 7.3, k = 55.4, l = 60.0, m = 0.5 y n = 155.85');
+OUT('se esta calculando la operacion h = i*j - k + l/m y se compara h con n');
+
+h = i*j - k + l/m;
+
+IF(h == n)
+    OUT('h = n');
 ELSE
-    OUT('la comparacion no funciona bien');
+    OUT('las operaciones no funcionan bien');
 END_IF;
-
-
-IF(c < d)
-    OUT('c < d');
-ELSE
-    OUT('la comparacion no funciona bien');
-END_IF;
-
-
-IF(d > c)
-    OUT('d > c');
-ELSE
-    OUT('la comparacion d > c no funciona bien');
-END_IF;
-
-IF(d >= c)
-    OUT('d >= c');
-ELSE
-    OUT('la comparacion d >= c no funciona bien');
-END_IF;
-
-

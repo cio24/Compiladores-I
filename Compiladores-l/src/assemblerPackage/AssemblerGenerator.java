@@ -174,7 +174,6 @@ public class AssemblerGenerator {
 					writeOUT(t);
 					break;
 				case "BF":
-				case "BT":
 					writeConJump(t);
 					break;
 				case "BI":
@@ -237,8 +236,6 @@ public class AssemblerGenerator {
 			}
 	};
 
-
-
 	//############## CADENAS ##############
 
 	public String removeApostrophes(String outMessage){
@@ -256,7 +253,6 @@ public class AssemblerGenerator {
 		//generamos el assembler para mostrar el mensaje por consola
 		actualCode.add("invoke printf, cfm$(\"%s\\n\"), OFFSET " + varName);
 	}
-
 
 	//############## ENTEROS ##############
 
@@ -321,7 +317,7 @@ public class AssemblerGenerator {
 		//si el segundo operando es un valor inmediato lo movemos a un registro
 		if (op2.isImmediate(st)){
 			Register r = rm.getEntireRegisterFree();
-			actualCode.add("MOV " + r.getEntire() + "," + op1Name);
+			actualCode.add("MOV " + r.getEntire() + "," + op2Name);
 			r.setFree(false);
 
 			//ahora el segundo operando es el registro
@@ -372,7 +368,7 @@ public class AssemblerGenerator {
 				Register reg = rm.getEntireRegisterFree();
 
 				//generamos el assembler
-				actualCode.add( "MOV " + reg.getEntire() + ", " + op1Name);
+				actualCode.add( "MOV " + reg.getEntire() + "," + op1Name);
 				op1Name = reg.getEntire();
 				reg.setFree(false);
 				// ESTO QUEDA op1Name = REGISTRO op2Name = NO REGISTRO
@@ -390,7 +386,7 @@ public class AssemblerGenerator {
 		} else {
 			// Si es multiplicacion entonces me aseguro que el primer operando se guarde en EAX, que siempre lo tenemos libre
 			// Para poder hacer el mul
-			actualCode.add( "MOV EAX, " + op1Name);
+			actualCode.add( "MOV EAX," + op1Name);
 
 			// Libero el registro que usaba op1 ya que lo pase a EAX
 			if (op1.isPointer())
@@ -402,7 +398,7 @@ public class AssemblerGenerator {
 			//si el segundo operando es un valor inmediato lo movemos a un registro
 			if (op2.isImmediate(st)){
 				Register r = rm.getEntireRegisterFree();
-				actualCode.add("MOV " + r.getEntire() + "," + op1Name);
+				actualCode.add("MOV " + r.getEntire() + "," + op2Name);
 				r.setFree(false);
 
 				//ahora el segundo operando es el registro
@@ -410,14 +406,17 @@ public class AssemblerGenerator {
 			}
 		}
 
-		//Generalmos el assembler la operaci�n
-		actualCode.add( opt + " " + op1Name + ", " + op2Name);
+		//Generalmos el assembler la operacion
+		if (opt.equals("MUL"))
+			actualCode.add( opt + " " + op2Name);
+		else
+			actualCode.add( opt + " " + op1Name + "," + op2Name);
 
 		// Debo guardar el resultado en otro registro para liberar EAX
 		if (opt.equals("MUL")) {
 			// Pido el libre y genero el mov
 			Register r = rm.getEntireRegisterFree();
-			actualCode.add( "MOV " + r.getEntire() +", EAX");
+			actualCode.add( "MOV " + r.getEntire() +",EAX");
 
 			// Marco como usado el nuevo registro
 			op1Name =  r.getEntire();
@@ -462,8 +461,7 @@ public class AssemblerGenerator {
 		// Si el segundo era un registro lo libero
 		if(op2.isPointer()) 
 			rm.getRegister(op2Name).setFree(true);
-		
-		
+
 	}
 
 	private void writeIntComparison(Triplet t) {
@@ -484,7 +482,7 @@ public class AssemblerGenerator {
 		}
 
 		//generamos el assembler
-		actualCode.add("CMP " + op1Name + ", " + op2Name);
+		actualCode.add("CMP " + op1Name + "," + op2Name);
 
 		//liberamos el registro donde se guardaba el primer operando, ya que el resultado de la comparacion se ve reflejado en algunos flags
 		rm.getRegister(op1Name).setFree(true);

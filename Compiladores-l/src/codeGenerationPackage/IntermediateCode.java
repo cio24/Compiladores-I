@@ -1,8 +1,6 @@
 package codeGenerationPackage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import lexicalAnalyzerPackage.LexicalAnalyzer;
 import utilitiesPackage.ErrorReceiver;
 
