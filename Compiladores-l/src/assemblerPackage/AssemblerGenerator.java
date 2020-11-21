@@ -8,6 +8,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
+
 import codeGenerationPackage.*;
 import utilitiesPackage.ErrorReceiver;
 
@@ -29,6 +31,8 @@ public class AssemblerGenerator {
 	public static List<List<String>> procList; //La lista de codigos de procedimientos (incluido el main)
 
 	public int actualProcList;
+	public Stack<Integer> procedureListToGoBackStack; //Señala a que indice de la lista de procedimientos hay que retornar 
+													//cuando termina la declaracion de un procedimiento
 	public static List<String> actualCode; //Apunta al procedimiento/main al cual se estï¿½ generando codigo actualmente
 	public String procLabelPrefix = "PROCLabel";
 	public int procLabelNumberCounter; //Cuenta la cantidad de labels de procedimiento usados para identificarlos unicamente
@@ -54,6 +58,7 @@ public class AssemblerGenerator {
 		dataSection = new ArrayList<>();
 		procList = new ArrayList<>();
 		procList.add(new ArrayList<>()); //El primer procedimiento seria el main.
+		procedureListToGoBackStack = new Stack<Integer>();
 		actualCode = procList.get(0);
 		procLabels = new HashMap<String, String>();
 	}
@@ -213,8 +218,12 @@ public class AssemblerGenerator {
 					procLabelNumberCounter++;
 					//Se registra la nueva label para el procedimiento
 					procLabels.put(t.getFirstOperand().getRef(),label);
-					procList.add(new ArrayList<>()); //Se genera una nueva lista de codigo para este procedimiento
-					actualProcList++;
+					
+					//Almacenar el indice de la lista del procedimiento al que habrá que retornar
+					procedureListToGoBackStack.push(actualProcList);
+					
+					procList.add(new ArrayList<>()); //Se genera una nueva lista de codigo para este nuevo procedimiento declarado
+					actualProcList = procList.size() - 1;
 					actualCode = procList.get(actualProcList);
 					actualCode.add(label+":");
 					break;
@@ -226,7 +235,10 @@ public class AssemblerGenerator {
 					//->Control de recursion de procedimientos<-
 					
 					actualCode.add("RET");
-					actualProcList--;
+					
+					//Se vuelve a la lista de procedimientos en la que estábamos antes de saltar a la lista actual
+					actualProcList = procedureListToGoBackStack.peek();
+					procedureListToGoBackStack.pop();
 					actualCode = procList.get(actualProcList);
 					break;
 
