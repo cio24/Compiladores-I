@@ -1,60 +1,22 @@
+/% testeo de LOOP UNTIL en donde se puede observar que funciona bien el anidamiento de los mismos%/
 
-/%
-ULONGINT counter;
-ULONGINT fibonacci;
-ULONGINT target;
-ULONGINT aux;
-ULONGINT fibonacci_prev;
+ULONGINT counter1;
+counter1 = 0_ul;
 
-fibonacci_prev = 0_ul;
-target = 10_ul;
-fibonacci = 1_ul;
-counter = 1_ul;
+ULONGINT counter2;
+counter2 = 0_ul;
 
 LOOP{
-    aux = fibonacci;
-    fibonacci = fibonacci + fibonacci_prev;
-    fibonacci_prev = aux;
-    counter = counter + 1_ul;
+    OUT('loop externo');
+    counter1 = counter1 + 1_ul;
+    LOOP{
+        OUT('    loop  interno');
+        counter2 = counter2 + 1_ul;
+    }
+    UNTIL(counter2 == 3_ul);
+    counter2 = 0_ul;
 }
-UNTIL(counter < target);
-
-
-IF(fibonacci == 55_ul)
-    OUT('fibonacci es 55 xD');
-ELSE{
-    IF(fibonacci == 34_ul)
-        OUT('fibonacci es 34 xD');
-    ELSE
-        OUT('nunca entro a ningun if xD');
-    END_IF;
-
-}
-END_IF;
-
-%/
-
-
-ULONGINT counter;
-ULONGINT accumulator;
-ULONGINT target;
-
-target = 10_ul;
-accumulator = 0_ul;
-counter = 0_ul;
-
-
-LOOP{
-    counter = counter + 1_ul;
-    accumulator = accumulator + counter;
-}
-UNTIL(counter < target);
-
-IF(accumulator == 55_ul) 
-    OUT('la sumatoria de los primeros 10 numeros es 55 xD');
-ELSE
-    OUT('nunca entro a ningun if xD');
-END_IF;
+UNTIL(counter1 == 4_ul);
 
 
 

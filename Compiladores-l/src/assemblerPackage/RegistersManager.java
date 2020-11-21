@@ -92,4 +92,15 @@ public class RegistersManager {
         }
         return false;
     }
+
+    public String toString(){
+        String s = " - ";
+        for(Register r: registers){
+            if(r.isFree())
+                s = s + "0 -";
+            else
+                s = s + "1 -";
+        }
+        return s;
+    }
 }

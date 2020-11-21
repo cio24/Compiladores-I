@@ -21,7 +21,8 @@ public class SA07DoubleConstantFound extends SemanticAction {
 		BigDecimal number = new BigDecimal(snumber);
 
 		lexicalAnalyzer.returnLastCharacterRead();
-		if (number.compareTo(Constants.MAX_RANGE_DOUBLE) < 0  && Constants.MIN_RANGE_DOUBLE.compareTo(number)< 0) {
+		if (number.compareTo(Constants.MAX_RANGE_DOUBLE) < 0  && Constants.MIN_RANGE_DOUBLE.compareTo(number)< 0
+				|| number.compareTo(new BigDecimal("0.0e1")) == 0) {
 			lexicalAnalyzer.setTokenId(Constants.CONSTANT);
 			// Utilizamos como lexema de los double el valor pasado a string del BigDecimal, para unificar los 2.0515 con los 0.20515d+1
 			String lexeme = new String(number.toString());
@@ -30,8 +31,7 @@ public class SA07DoubleConstantFound extends SemanticAction {
 			lexicalAnalyzer.getSymbolsTable().addSymbol(lexeme,s);
 			lexicalAnalyzer.getYylval().sval = lexeme;
 			}
-		else 
-		{
+		else {
 			ErrorReceiver.displayError(ErrorReceiver.ERROR,lexicalAnalyzer.getCurrentLine(),ErrorReceiver.LEXICO,"constante ("+lexem+") de tipo DOUBLE fuera de rango.");
 			lexicalAnalyzer.setNextState(0);
 		}

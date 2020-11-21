@@ -27,7 +27,7 @@ program :  /* EMPTY */
 		
 	|  sentences
 {
-	showMessage( "Programa completo.");
+
 }
 		
 	|  error
@@ -691,7 +691,7 @@ ErrorReceiver.displayError(ErrorReceiver.ERROR,la.getCurrentLine(),ErrorReceiver
 
 loop_condition : '('  condition  ')'
 {
-	Triplet t = tm.createBTriplet($2.obj,"BT"); //Desapilar la direccion de salto del comienzo del loop.
+	Triplet t = tm.createBTriplet($2.obj,"BF"); //Desapilar la direccion de salto del comienzo del loop.
 	//$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition //Comentado porque no sabemos para que lo queremos.
 }
 				
@@ -930,7 +930,7 @@ public Parser(String path) throws FileNotFoundException {
 	
 	scope = ":main";
 	
-	System.out.println(" ****** Secuencía de generación de código intermedio ******\n");
+	System.out.println(" ****** Errores y Warnings ******\n");
 	
 }
 
@@ -952,7 +952,7 @@ int yylex(){
 }
 
 public void showMessage(String message) {
-	System.out.println("[Linea " + la.getCurrentLine() + "] " + message);
+	//System.out.println("[Linea " + la.getCurrentLine() + "] " + message);
 }
 
 public void showErrorMessage(String message) {

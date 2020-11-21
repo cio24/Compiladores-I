@@ -13,16 +13,15 @@ import utilitiesPackage.ErrorReceiver;
 
 public class AssemblerGenerator {
 
-	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/testCases/";
+	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/testCases/";
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\testCases\\";
+	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\testCases\\";
 
 	public static SymbolsTable st;
 	public static TripletsManager tm;
-	public static final String FILENAME = "testCase4.asm";
 	public static int variablesAuxCounter;
 	private RegistersManager rm;
-	//private String outfilepath;
+	private String outAssemblerFile;
 	
 	//Contenedores de codigo assembler que luego se volcaran al archivo
 	public static List<String> headerSection; //Seccion de datos del archivo assembler
@@ -40,7 +39,8 @@ public class AssemblerGenerator {
 
 
 
-	public AssemblerGenerator(SymbolsTable st,TripletsManager tm /*,String outfilepath*/) {
+	public AssemblerGenerator(SymbolsTable st,TripletsManager tm ,String outAssemblerFile) {
+		this.outAssemblerFile = outAssemblerFile;
 		this.st = st;
 		this.tm = tm;
 
@@ -56,7 +56,6 @@ public class AssemblerGenerator {
 		procList.add(new ArrayList<>()); //El primer procedimiento seria el main.
 		actualCode = procList.get(0);
 		procLabels = new HashMap<String, String>();
-		//this.outfilepath = outfilepath;
 	}
 	
 	public void createAssembler() throws IOException {
@@ -75,7 +74,7 @@ public class AssemblerGenerator {
 		BufferedWriter code;
 
 		//No vale la pena hacer una clase para esto
-		File assembler = new File(BASE_PATH+FILENAME/*outfilepath*/);
+		File assembler = new File(BASE_PATH + outAssemblerFile);
 		FileOutputStream fos;
 		fos = new FileOutputStream(assembler);
 		code = new BufferedWriter(new OutputStreamWriter(fos));
@@ -116,6 +115,7 @@ public class AssemblerGenerator {
 	public void generateHeader() {
 		headerSection.add(".386");
 		headerSection.add(".model flat, stdcall");
+		headerSection.add(".stack 200h");
 		headerSection.add("option casemap :none");
 		headerSection.add("include \\masm32\\include\\windows.inc");
 		headerSection.add("include \\masm32\\include\\kernel32.inc");
@@ -254,7 +254,7 @@ public class AssemblerGenerator {
 		dataSection.add(varName + " DB \"" + removeApostrophes(t.getFirstOperand().getRef()) + "\", 0");
 
 		//generamos el assembler para mostrar el mensaje por consola
-		actualCode.add("invoke printf, cfm$(\"%s\"), OFFSET " + varName);
+		actualCode.add("invoke printf, cfm$(\"%s\\n\"), OFFSET " + varName);
 	}
 
 
@@ -398,12 +398,22 @@ public class AssemblerGenerator {
 
 			// Ahora el primer operando es EAX
 			op1Name = "EAX";
+
+			//si el segundo operando es un valor inmediato lo movemos a un registro
+			if (op2.isImmediate(st)){
+				Register r = rm.getEntireRegisterFree();
+				actualCode.add("MOV " + r.getEntire() + "," + op1Name);
+				r.setFree(false);
+
+				//ahora el segundo operando es el registro
+				op2Name = r.getEntire();
+			}
 		}
 
 		//Generalmos el assembler la operaci�n
 		actualCode.add( opt + " " + op1Name + ", " + op2Name);
 
-		// ADebo guardar el resultado en otro registro para liberar EAX
+		// Debo guardar el resultado en otro registro para liberar EAX
 		if (opt.equals("MUL")) {
 			// Pido el libre y genero el mov
 			Register r = rm.getEntireRegisterFree();
@@ -418,8 +428,9 @@ public class AssemblerGenerator {
 
 		//finalmente guardamos el resultado en el terceto
 		t.setResultLocation(op1Name);
-		// Libero el segundo si era registro
-		if(op2.isPointer())
+
+		// Libero el segundo si era registro o si era un inmediato y la operacion era una MUL xq no se puede en este caso
+		if(op2.isPointer() || (opt.equals("MUL") && op2.isImmediate(st)))
 			rm.getRegister(op2Name).setFree(true);
 
 	}
@@ -463,6 +474,7 @@ public class AssemblerGenerator {
 		String op2Name = op2.getAssemblerReference(tm);
 
 		//el primer operando no puede ser inmediato, asi que lo pasamos a un registro
+		//o bien, si el primer operando es una variable lo pasamos a un registro xq no puede haber dos variables
 		if(op1.isImmediate(st) || op1.isVar()){
 			Register r = rm.getEntireRegisterFree();
 			actualCode.add("MOV " + r.getEntire() + "," + op1Name);
@@ -475,8 +487,7 @@ public class AssemblerGenerator {
 		actualCode.add("CMP " + op1Name + ", " + op2Name);
 
 		//liberamos el registro donde se guardaba el primer operando, ya que el resultado de la comparacion se ve reflejado en algunos flags
-		if(op1.isImmediate(st) || op1.isPointer())
-			rm.getRegister(op1Name).setFree(true);
+		rm.getRegister(op1Name).setFree(true);
 
 		//si el segundo operando era un registro lo liberamos
 		if(op2.isPointer())
@@ -505,9 +516,8 @@ public class AssemblerGenerator {
 
 		//guardo el resultado en una variable auxiliar que se guarda en la tabla de simbolos
 		String result = getNewVarAux(Symbol._DOUBLE_TYPE);
-		actualCode.add("FSTP " + result);
+		actualCode.add("FSTP " + result); //se usa FSTP y no FST para ir liberando la pila
 		t.setResultLocation(result);
-
 	}
 
 	public String getDoubleVarName(Operand op) {
@@ -544,10 +554,11 @@ public class AssemblerGenerator {
 		actualCode.add("FLD " + op1Name);
 
 		//comparo el operando 2 con el operando 1
-		actualCode.add("FCOM " + op2Name);
+		actualCode.add("FCOMP " + op2Name); //se tiene que usar FCOMP y no FCOM para que se libere la memoria
 
 		//almacena la palabra de estado en memoria usando una variable auxiliar que se guarda en la tabla de simbolos
-		String varAux = getNewVarAux("mem2bytes");
+		String varAux = "@aux2bytes" + ++variablesAuxCounter;
+        dataSection.add( varAux + " DW ?");
 		actualCode.add("FSTSW " + varAux);
 		actualCode.add("MOV " + "AX," + varAux);
 		actualCode.add("SAHF");
@@ -562,39 +573,22 @@ public class AssemblerGenerator {
 		Operand op2 = t.getSecondOperand();
 		Triplet tCondition;
 
-		if(t.getOperator().equals("BF")){
-			tCondition = tm.getTriplet(Integer.parseInt(op1.getRef()));
-			switch (tCondition.getOperator()){
-				case "<":
-					if(t.getOperator().equals("BF"))
-						actualCode.add( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					else //BT
-						actualCode.add( "JB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					break;
-				case "<=":
-					if(t.getOperator().equals("BF"))
-						actualCode.add( "JNBE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					else //BT
-						actualCode.add( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					break;
-				case ">":
-					if(t.getOperator().equals("BF"))
-						actualCode.add( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					else //BT
-						actualCode.add( "JA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					break;
-				case">=":
-					if(t.getOperator().equals("BF"))
-						actualCode.add( "JNAE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					else //BT
-						actualCode.add( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					break;
-				case "==":
-					if(t.getOperator().equals("BF"))
-						actualCode.add( "JNE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-					else //BT
-						actualCode.add( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
-			}
+		tCondition = tm.getTriplet(Integer.parseInt(op1.getRef()));
+		switch (tCondition.getOperator()){
+			case "<":
+				actualCode.add( "JNB " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
+			case "<=":
+				actualCode.add( "JNBE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
+			case ">":
+				actualCode.add( "JNA " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
+			case">=":
+				actualCode.add( "JNAE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
+			case "==":
+				actualCode.add( "JNE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
 		}
 	}
 

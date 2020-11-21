@@ -1,29 +1,158 @@
 /%
-    este codigo muestra el correcto funcionamiento del OUT y las declaraciones,
-    asignaciones y comparaciones de enteros en conjunto con el uso de if,
-    contemplando los casos en donde hay (o no) else y el anidamiento también xD
+    este codigo muestra el correcto funcionamiento de las comparaciones
 %/
 
-ULONGINT charles_age;
-ULONGINT legal_age;
 
-charles_age = 17_ul;
-legal_age = 18_ul;
+OUT('comparacion entre constantes enteras');
 
-IF(charles_age >= legal_age)
-    OUT('Charles can get drunk');
+IF(0_ul == 0_ul)
+    OUT('0 = 0');
 ELSE
-    OUT('Charles cannot get drunk');
+    OUT('la comparacion no funciona bien');
 END_IF;
 
-IF(1_ul < 2_ul){
-    IF(0_ul == 0_ul)
-        OUT('Nested if');
-    END_IF;
-}
+IF(0_ul <= 1_ul)
+    OUT('0 <= 1');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(0_ul < 1_ul)
+    OUT('0 < 1');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(1_ul > 0_ul)
+    OUT('1 > 0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(1_ul >= 0_ul)
+    OUT('1 >= 0');
+ELSE
+    OUT('la comparacion no funciona bien');
 END_IF;
 
 
 
+OUT('comparacion entre constantes dobles');
+
+IF(0.0 == 0.0)
+    OUT('0.0 = 0.0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(0.0 <= 1.0)
+    OUT('0.0 <= 1.0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(0.0 < 1.0)
+    OUT('0.0 < 1.0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(1.0 > 0.0)
+    OUT('1.0 > 0.0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(1.0 >= 0.0)
+    OUT('1.0 >= 0.0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+
+OUT('comparacion entre variables enteras');
+
+OUT('a = 0 y b = 1');
+
+ULONGINT a;
+ULONGINT b;
+
+a = 0_ul;
+b = 1_ul;
+
+IF(a == a)
+    OUT('a = a');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(a <= b)
+    OUT('a <= b');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(a < b)
+    OUT('a < b');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(b > a)
+    OUT('b > a');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(b >= a)
+    OUT('b >= a');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+
+
+OUT('comparacion entre variables dobles');
+
+DOUBLE c;
+DOUBLE d;
+
+OUT('c = 0.0 y d = 1.0');
+c = 0.0;
+d = 1.0;
+
+
+IF(c == c)
+    OUT('c = c');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+
+IF(c <= d)
+    OUT('c <= d');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+
+IF(c < d)
+    OUT('c < d');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+
+IF(d > c)
+    OUT('d > c');
+ELSE
+    OUT('la comparacion d > c no funciona bien');
+END_IF;
+
+IF(d >= c)
+    OUT('d >= c');
+ELSE
+    OUT('la comparacion d >= c no funciona bien');
+END_IF;
 
 

@@ -1,18 +1,18 @@
 package testingPackage;
 
 import lexicalAnalyzerPackage.Parser;
-
 import assemblerPackage.AssemblerGenerator;
+import utilitiesPackage.ErrorReceiver;
 
 import java.io.IOException;
 
 public class Test {
 
-	public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/testCases/";
+	//public static final String BASE_PATH = "/home/chequeado/Documentos/Facultad/Compiladores/Compiladores-I/Compiladores-l/src/testingPackage/testCases/";
 	//public static final String BASE_PATH = "C:\\Users\\Thomas\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\";
-	//public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\testCases\\";
+	public static final String BASE_PATH = "C:\\Users\\Cio\\git\\Compiladores-I\\Compiladores-l\\src\\testingPackage\\testCases\\";
 	
-	public static final String FILENAME = "testCase4.txt";
+	public static final String FILENAME = "testCase2.txt";
 
 	
 	public static void main(String[] args) throws IOException {
@@ -20,25 +20,7 @@ public class Test {
 	}
 	
 	public Test() throws IOException {
-
 		test();
-
-		/*
-		System.out.println("TEST CADENAS: ");
-		test("cadenas.txt");
-		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
-		System.out.println("TEST COMENTARIOS: ");
-		test("comentarios.txt");
-		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
-		System.out.println("TEST DOUBLES: ");
-		test("doubles.txt");
-		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
-		System.out.println("TEST IDENTIFICADORES: ");
-		test("identificadores.txt");
-		System.out.println("* * * * * * * * * * * * * *  * * * * *\n");
-		System.out.println("TEST PALABRAS RESERVADAS: ");
-		test("palabras_reservadas.txt");
-		*/
 	}
 	
 	public void test() throws IOException {
@@ -47,7 +29,13 @@ public class Test {
 		p.parse();
 		p.la.getSymbolsTable().print();
 		System.out.println(p.tm);
-		AssemblerGenerator ag= new AssemblerGenerator(p.la.getSymbolsTable(),p.tm);
+		if(!ErrorReceiver.hasErrors)
+			System.out.println( "Compilacion exitosa");
+		else
+			System.out.println( "Compilacion fallida");
+
+		String outAssemblerFile = FILENAME.substring(0,FILENAME.indexOf(".")) + ".asm";
+		AssemblerGenerator ag= new AssemblerGenerator(p.la.getSymbolsTable(),p.tm, outAssemblerFile);
 		ag.createAssembler();
 		
 		/*

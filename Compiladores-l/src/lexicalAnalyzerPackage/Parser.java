@@ -607,7 +607,7 @@ public Parser(String path) throws FileNotFoundException {
 	
 	scope = ":main";
 	
-	System.out.println(" ****** Secuencía de generación de código intermedio ******\n");
+	System.out.println(" ****** Errores y Warnings ******\n");
 	
 }
 
@@ -629,7 +629,7 @@ int yylex(){
 }
 
 public void showMessage(String message) {
-	System.out.println("[Linea " + la.getCurrentLine() + "] " + message);
+	//System.out.println("[Linea " + la.getCurrentLine() + "] " + message);
 }
 
 public void showErrorMessage(String message) {
@@ -798,7 +798,7 @@ break;
 case 2:
 //#line 29 "specification.y"
 {
-	showMessage( "Programa completo.");
+
 }
 break;
 case 3:
@@ -1476,7 +1476,7 @@ break;
 case 90:
 //#line 693 "specification.y"
 {
-	Triplet t = tm.createBTriplet(val_peek(1).obj,"BT"); /*Desapilar la direccion de salto del comienzo del loop.*/
+	Triplet t = tm.createBTriplet(val_peek(1).obj,"BF"); /*Desapilar la direccion de salto del comienzo del loop.*/
 	/*$$.obj = new Operand(Operand.TRIPLET_POINTER,t.getId()); //finally we associate an operand created with the tiplet to the loop_condition //Comentado porque no sabemos para que lo queremos.*/
 }
 break;
