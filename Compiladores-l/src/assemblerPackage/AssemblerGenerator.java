@@ -456,8 +456,9 @@ public class AssemblerGenerator {
 		Operand op2 = t.getSecondOperand();
 		
 		String op1Name = op1.getAssemblerReference(tm);
-		String op2Name = op2.getAssemblerReference(tm); 
-		
+		String op2Name = op2.getAssemblerReference(tm);
+		// Comentario: bothVars es una comparación overkill, con verificar si el segundo operando es variable alcanza
+		// ya que el primero, al ser una asignación, siempre será una variable.
 		// Si ambos son variables		
 		boolean bothVars = op1.isVar() && op2.isVar();
 		
