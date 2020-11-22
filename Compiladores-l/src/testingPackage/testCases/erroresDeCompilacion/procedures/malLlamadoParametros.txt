@@ -7,4 +7,4 @@ PROC proc1 (ULONGINT param1, ULONGINT param2) NA = 0_ul SHADOWING = FALSE {
 
 proc1(a,b,c);
 proc1(a);
-proc1(a,b,d);
+proc1(a,d);
