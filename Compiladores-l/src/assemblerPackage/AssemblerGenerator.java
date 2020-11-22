@@ -699,8 +699,9 @@ public class AssemblerGenerator {
 
 		//generamos el assembler para mostrar el mensaje por consola
 		errorCodeSection.add("invoke MessageBox, NULL, addr " + var + ", addr errorTitle, MB_OK");
-		
+		errorCodeSection.add("invoke ExitProcess, 0");
 		procList.add(errorCodeSection);
+		
 	}
 
 }
