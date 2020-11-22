@@ -1,0 +1,10 @@
+ULONGINT a,b,c;
+DOUBLE d;
+
+PROC proc1 (ULONGINT param1, ULONGINT param2) NA = 0_ul SHADOWING = FALSE {
+    
+};
+
+proc1(a,b,c);
+proc1(a);
+proc1(a,b,d);

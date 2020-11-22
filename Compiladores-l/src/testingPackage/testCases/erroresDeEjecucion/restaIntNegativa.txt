@@ -1,0 +1,5 @@
+ULONGINT int1,int2,int3;
+int1 = 1.0;
+int2 = 2.0;
+
+int3 = int1 - int2;

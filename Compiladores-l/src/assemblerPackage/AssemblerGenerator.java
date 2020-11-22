@@ -82,7 +82,7 @@ public class AssemblerGenerator {
 		BufferedWriter code;
 
 		//No vale la pena hacer una clase para esto
-		File assembler = new File(BASE_PATH + outAssemblerFile);
+		File assembler = new File(outAssemblerFile);
 		FileOutputStream fos;
 		fos = new FileOutputStream(assembler);
 		code = new BufferedWriter(new OutputStreamWriter(fos));
