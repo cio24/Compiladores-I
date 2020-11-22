@@ -1,1 +1,0 @@
-/% El lenguaje no lo permite y tira error de ejecución %/
