@@ -175,6 +175,7 @@ public class AssemblerGenerator {
 				case "<":
 				case ">":
 				case ">=":
+				case "!=":
 					if(t.getDataType().equals(Symbol._ULONGINT_TYPE))
 						writeIntComparison(t);
 					else
