@@ -557,6 +557,10 @@ public class AssemblerGenerator {
 		actualCode.add("FLD " + op2Name);
 
 		//guardo el resultado en la variable del operando 1
+		//Al utilizar el metodo de variables auxiliares para operaciones con doubles, no puede ocurrir que el 
+		//operando origen haya sido un registro, siempre son variables, por lo que no hay 
+		//necesidad de verificar que tenga que ser liberado.
+
 		actualCode.add("FSTP " + t.getFirstOperand().getAssemblerReference(tm));
 	}
 
