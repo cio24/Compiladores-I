@@ -7,12 +7,19 @@ import utilitiesPackage.ErrorReceiver;
 
 public class Main {
 		
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		// Extraemos el path absoluto del archivo a compilar
 		String path = args[0];
 		
-		// Creamos el parser
-		Parser p = new Parser(path);
+		Parser p;
+		try{
+			// Creamos el parser
+			p = new Parser(path);
+	    }
+	    catch(IOException ex){
+	        System.out.println("No se encontró el archivo " + path);
+	        return;
+	    }
 
 		// Parseamos el código, si hay errores se imprimen acá
 		p.parse();
@@ -33,10 +40,14 @@ public class Main {
 		String outAssemblerFile = path.substring(0,path.indexOf(".")) + ".asm";
 		// Creo el generador de assembler
 		AssemblerGenerator ag= new AssemblerGenerator(p.la.getSymbolsTable(),p.tm, outAssemblerFile);
-		// Genero el código
-		ag.createAssembler();
-		
-		//Test test=new Test();
 
+		try{
+			// Genero el código
+			ag.createAssembler();
+	    }
+	    catch(IOException ex){
+	        System.out.println("No se pudo crear el archivo assembler en  " + outAssemblerFile +". Valida que la dirección sea correcta.");
+	        return;
+	    }
 	}
 }
