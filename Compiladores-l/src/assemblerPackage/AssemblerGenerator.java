@@ -23,6 +23,8 @@ public class AssemblerGenerator {
 	public static TripletsManager tm;
 	public static int variablesAuxCounter;
 	private RegistersManager rm;
+	
+	private int outCounter;
 	private String outAssemblerFile;
 	
 	//Contenedores de codigo assembler que luego se volcaran al archivo
@@ -31,7 +33,7 @@ public class AssemblerGenerator {
 	public static List<List<String>> procList; //La lista de codigos de procedimientos (incluido el main)
 
 	public int actualProcList;
-	public Stack<Integer> procedureListToGoBackStack; //Señala a que indice de la lista de procedimientos hay que retornar 
+	public Stack<Integer> procedureListToGoBackStack; //Seï¿½ala a que indice de la lista de procedimientos hay que retornar 
 													//cuando termina la declaracion de un procedimiento
 	public static List<String> actualCode; //Apunta al procedimiento/main al cual se estï¿½ generando codigo actualmente
 	public String procLabelPrefix = "PROCLabel";
@@ -49,7 +51,8 @@ public class AssemblerGenerator {
 		this.tm = tm;
 
 		variablesAuxCounter = 0;
-
+		this.outCounter = 0;	
+		
 		actualProcList = 0;
 		procLabelNumberCounter = 0;
 
@@ -79,7 +82,7 @@ public class AssemblerGenerator {
 		BufferedWriter code;
 
 		//No vale la pena hacer una clase para esto
-		File assembler = new File(BASE_PATH + outAssemblerFile);
+		File assembler = new File(outAssemblerFile);
 		FileOutputStream fos;
 		fos = new FileOutputStream(assembler);
 		code = new BufferedWriter(new OutputStreamWriter(fos));
@@ -112,7 +115,6 @@ public class AssemblerGenerator {
 			code.write(replaceColons(procList.get(0).get(i)) + "\n");
 		}
 
-		code.write( "\nJMP $\n");
 		code.write("END START");
 		code.close();
 	}
@@ -134,6 +136,9 @@ public class AssemblerGenerator {
 
 	//declaramos todas las variables que se usan en la tabla de sï¿½mbolos
 	public void generateDataSection(){
+		dataSection.add("outTitle" + " DB \"" + "OUT message" + "\", 0");	
+		dataSection.add("errorTitle" + " DB \"" + "ERROR message" + "\", 0");
+
 		writeVarDeclarations();
 	};
 
@@ -170,6 +175,7 @@ public class AssemblerGenerator {
 				case "<":
 				case ">":
 				case ">=":
+				case "!=":
 					if(t.getDataType().equals(Symbol._ULONGINT_TYPE))
 						writeIntComparison(t);
 					else
@@ -219,7 +225,7 @@ public class AssemblerGenerator {
 					//Se registra la nueva label para el procedimiento
 					procLabels.put(t.getFirstOperand().getRef(),label);
 					
-					//Almacenar el indice de la lista del procedimiento al que habrá que retornar
+					//Almacenar el indice de la lista del procedimiento al que habrï¿½ que retornar
 					procedureListToGoBackStack.push(actualProcList);
 					
 					procList.add(new ArrayList<>()); //Se genera una nueva lista de codigo para este nuevo procedimiento declarado
@@ -236,7 +242,7 @@ public class AssemblerGenerator {
 					
 					actualCode.add("RET");
 					
-					//Se vuelve a la lista de procedimientos en la que estábamos antes de saltar a la lista actual
+					//Se vuelve a la lista de procedimientos en la que estï¿½bamos antes de saltar a la lista actual
 					actualProcList = procedureListToGoBackStack.peek();
 					procedureListToGoBackStack.pop();
 					actualCode = procList.get(actualProcList);
@@ -256,14 +262,14 @@ public class AssemblerGenerator {
 
 	public void writeOUT(Triplet t) {
 
-		//Creamos una variable auxiliar del tipo string y la agregamos a la tabla de simbolos
-		String varName = getNewVarAux(Symbol._STRING_TYPE);
+		//Creamos una variable a la cual le vamos a asignar el valor del string			
+		String varName = "@out" + ++outCounter;			
 
-		//generamos el asembler que declara la nueva variable para el out y se le asigna el string que se quiere mostrar
+		//generamos el asembler que declara la nueva variable para el out y se le asigna el string			
 		dataSection.add(varName + " DB \"" + removeApostrophes(t.getFirstOperand().getRef()) + "\", 0");
 
 		//generamos el assembler para mostrar el mensaje por consola
-		actualCode.add("invoke printf, cfm$(\"%s\\n\"), OFFSET " + varName);
+		actualCode.add("invoke MessageBox, NULL, addr " + varName + ", addr outTitle, MB_OK");
 	}
 
 	//############## ENTEROS ##############
@@ -451,8 +457,9 @@ public class AssemblerGenerator {
 		Operand op2 = t.getSecondOperand();
 		
 		String op1Name = op1.getAssemblerReference(tm);
-		String op2Name = op2.getAssemblerReference(tm); 
-		
+		String op2Name = op2.getAssemblerReference(tm);
+		// Comentario: bothVars es una comparaciÃ³n overkill, con verificar si el segundo operando es variable alcanza
+		// ya que el primero, al ser una asignaciÃ³n, siempre serÃ¡ una variable.
 		// Si ambos son variables		
 		boolean bothVars = op1.isVar() && op2.isVar();
 		
@@ -599,6 +606,10 @@ public class AssemblerGenerator {
 				break;
 			case "==":
 				actualCode.add( "JNE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
+			case "!=":
+				actualCode.add( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
 		}
 	}
 
@@ -681,9 +692,16 @@ public class AssemblerGenerator {
 		errorCodeSection.add(negativeErrorLabel+":");
 		String var2 = getNewVarAux(Symbol._STRING_TYPE);
 		dataSection.add(var2 + " DB \"" + "Error de ejecucion - resultado de una resta entre enteros sin signo es negativa! " + "\", 0");
-		errorCodeSection.add("invoke printf, cfm$(\"%s\"), OFFSET " + var2);
-		//errorCodeSection.add("invoke ExitProcess, 0");
-		errorCodeSection.add( "\nJMP $\n");
+
+		//Creamos una variable a la cual le vamos a asignar el valor del string			
+		String varName = "@out" + ++outCounter;			
+
+		//generamos el asembler que declara la nueva variable para el out y se le asigna el string			
+		dataSection.add(varName + " DB \"Error: resta de enteros positivos arrojo resultado negativo\", 0");
+
+		//generamos el assembler para mostrar el mensaje por consola
+		actualCode.add("invoke MessageBox, NULL, addr " + varName + ", addr errorTitle, MB_OK");
+		
 		procList.add(errorCodeSection);
 	}
 
