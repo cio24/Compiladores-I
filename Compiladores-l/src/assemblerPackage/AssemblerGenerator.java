@@ -694,17 +694,11 @@ public class AssemblerGenerator {
 		*/
 		
 		errorCodeSection.add(negativeErrorLabel+":");
-		String var2 = getNewVarAux(Symbol._STRING_TYPE);
-		dataSection.add(var2 + " DB \"" + "Error de ejecucion - resultado de una resta entre enteros sin signo es negativa! " + "\", 0");
-
-		//Creamos una variable a la cual le vamos a asignar el valor del string			
-		String varName = "@out" + ++outCounter;			
-
-		//generamos el asembler que declara la nueva variable para el out y se le asigna el string			
-		dataSection.add(varName + " DB \"Error: resta de enteros positivos arrojo resultado negativo\", 0");
+		String var = getNewVarAux(Symbol._STRING_TYPE);
+		dataSection.add(var + " DB \"" + "Error de ejecucion - resultado de una resta entre enteros sin signo es negativa! " + "\", 0");
 
 		//generamos el assembler para mostrar el mensaje por consola
-		actualCode.add("invoke MessageBox, NULL, addr " + varName + ", addr errorTitle, MB_OK");
+		errorCodeSection.add("invoke MessageBox, NULL, addr " + var + ", addr errorTitle, MB_OK");
 		
 		procList.add(errorCodeSection);
 	}
