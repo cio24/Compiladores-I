@@ -293,7 +293,7 @@ public class AssemblerGenerator {
 			// ESTO QUEDA op1Name = REGISTRO op2Name = NO REGISTRO
 		}
 
-		//Generalmos el assembler la operacion
+		//Generamos el assembler de la operacion
 		actualCode.add( "SUB" + " " + op1Name + ", " + op2Name);
 		actualCode.add( "JS " + negativeErrorLabel);
 		//si el segundo operando era un registro lo liberamos
