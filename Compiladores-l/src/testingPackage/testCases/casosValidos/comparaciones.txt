@@ -11,6 +11,12 @@ ELSE
     OUT('la comparacion no funciona bien');
 END_IF;
 
+IF(0_ul != 1_ul)
+    OUT('0 != 1');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
 IF(0_ul <= 1_ul)
     OUT('0 <= 1');
 ELSE
@@ -41,6 +47,12 @@ OUT('comparacion entre constantes dobles');
 
 IF(0.0 == 0.0)
     OUT('0.0 = 0.0');
+ELSE
+    OUT('la comparacion no funciona bien');
+END_IF;
+
+IF(0.0 != 1.0)
+    OUT('0.0 != 1.0');
 ELSE
     OUT('la comparacion no funciona bien');
 END_IF;

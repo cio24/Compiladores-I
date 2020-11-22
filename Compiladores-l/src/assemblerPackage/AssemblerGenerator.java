@@ -605,6 +605,10 @@ public class AssemblerGenerator {
 				break;
 			case "==":
 				actualCode.add( "JNE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
+			case "!=":
+				actualCode.add( "JE " + tm.getTriplet(Integer.parseInt(op2.getRef())).getOperator());
+				break;
 		}
 	}
 
